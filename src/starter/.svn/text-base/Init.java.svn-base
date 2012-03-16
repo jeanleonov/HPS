@@ -1,0 +1,115 @@
+package core.Main;
+import java.io.*;
+import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.Vector;
+import core.Genome.*;
+
+import jade.core.Agent;
+import jade.core.behaviours.*;
+
+public class Init extends OneShotBehaviour{
+	
+	//Individuals distribution ( HashMap(zoneID, DistributionUnit) )
+	protected HashMap<Integer, DistributionUnit> info = new HashMap<Integer, DistributionUnit>();		// LAO: see changes (comments) in DistributionUnit
+	
+	// number of expirements
+	protected int expirementNum;
+	
+	// source file
+	protected String source = new String();
+	
+	//number of modeling years
+	protected int years;
+	
+	public Init(String source){
+		super();
+		this.source = source;
+	}
+	
+	public Init(Agent a, String Source){
+		super(a);
+		this.source = Source;
+	}
+	
+	public void action(){
+		/*//>>>>>>!!!!!!!!!-------------------- LAO: temporary commented (stub!)
+			BufferedReader in = null;
+			boolean flag = false;
+			for(int i = 0; i < source.length(); i++){
+				if(source.charAt(i) == '.'){
+					flag = true;
+					break;
+				}
+			}
+			try {
+				if(flag == true){
+					in = new BufferedReader(new FileReader(source));
+				}
+				else{
+					in = new BufferedReader(new FileReader(source + ".hpsi"));
+				}
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			try	{
+				years = Integer.parseInt(in.readLine());				//number of modeling years
+				expirementNum = Integer.parseInt(in.readLine());		// number of experiments
+				int dNum = Integer.parseInt(in.readLine());				// number of distribution units
+																		// at the beginning of modeling
+				for(int i = 0; i < dNum; i++){ 	// for each genotype		
+				//	in.readLine();		// LAOcommented (wtf?)
+					int zone = Integer.parseInt(in.readLine());
+					
+					//----- genotype initialisation ----------------------------------------------
+//-------------------------initialization with set of genomes-------------------------------------					
+//					TreeSet<Genome> gen = new TreeSet<Genome>();		
+//					int genomeNum = Integer.parseInt(in.readLine());
+//					for(int j = 0; j < genomeNum; j++)
+//						gen.add(new Genome(Integer.parseInt(in.readLine())));
+//					Genotype type = new Genotype(gen);
+					
+//-------------------------initialization with genotype ID----------------------------------------					
+					int key = Integer.parseInt(readAndPrintLine(in));
+					int genomeMaximalKeySize = Integer.parseInt(readAndPrintLine(in));
+					int genotypeSize = Integer.parseInt(readAndPrintLine(in));
+					Genotype type = new Genotype(key, genomeMaximalKeySize, genotypeSize);
+					
+					//----- reading age - number distribution ------------------------------------
+					int age = Integer.parseInt(in.readLine());
+					int count = Integer.parseInt(in.readLine());
+					
+					info.put(zone, new DistributionUnit(type, age, count));
+				}
+			}
+			catch(NumberFormatException e) {
+				e.printStackTrace();							// LAO: added for debugging
+				System.out.println("Incorrect file format");
+				System.exit(0);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Initiator n = new Initiator(myAgent, expirementNum, years, info);
+				!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!------------------------------<<<<<*/
+			expirementNum = 100;						// LAO: temporary added
+														//		you can configurate count of Experiments here
+			Initiator n = new Initiator(
+					myAgent, expirementNum, 0, info);		// LAO: temporary added
+			myAgent.addBehaviour(n);
+	}
+	
+	private String readAndPrintLine(BufferedReader in) throws IOException{	// LAO: added for debugging
+																			//it return the read line, but print it too
+		String s = in.readLine();											//DMY: printing by the middle line
+		System.out.println(s);
+		return s;
+	}
+	
+}

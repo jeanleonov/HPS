@@ -1,0 +1,70 @@
+package core.Main;
+
+import core.Genome.*;
+
+public class DistributionUnit{
+	//== LAO: ======================================= IMPORTANTLY!!! =======
+	// LAO: It must contain Pair ( ZoneID, List<LocalDistributionUnit> ), 
+	// LAO: where LocalDistributionUnit is (Genotype, age, count).
+	// DMY: Removing zoneID to use HashMap(zoneID, DistributionUnit) in initialization
+		
+	//private int zoneId; // DMY: Removing zoneID
+	private Genotype genotype;
+	private int age;				// KAS: float -> int; see appropriate changes below (*)
+	private int count;
+
+	
+	public DistributionUnit(/*int zoneId,*/ Genotype genotype, int age, int count){   		// (*)
+		//this.zoneId = zoneId; // DMY: Removing zoneID
+		this.genotype = genotype;
+		this.age = age;
+		this.count = count;
+	}
+	
+	// DMY: Removing zoneID
+/*	public int getZoneId(){
+		return zoneId;
+	}
+*/
+	
+	public Genotype getGenotype(){
+		return genotype;
+	}
+	
+	public int getAge(){																// (*)
+		return age;
+	}
+	
+	public int getCount(){
+		return count;
+	}
+
+	// DMY: Removing zoneID
+/*	public void setZoneId(int zoneId){
+		this.zoneId = zoneId;
+	}
+*/	
+	
+	public void setGenotype(Genotype genotype){
+		this.genotype = genotype;
+	}
+	
+	public void setAge(int age){														// (*)
+		this.age = age;
+	}
+	
+	public void setCount(int count){
+		this.count = count;
+	}
+	/**
+	* For more convienient zone creating
+	*/
+	public Object[] toArray() {				// LAO: FIXED (added public)
+		Object[] arr = new Object[3]; //[4];// DMY: Removing zoneID
+		arr[0] = this.age;
+		arr[1] = this.count;
+		arr[2] = this.genotype;
+		//arr[3] = this.zoneId; // DMY: Removing zoneID
+		return arr;
+	}
+}

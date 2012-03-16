@@ -1,0 +1,80 @@
+package core.Main;
+
+import jade.core.Agent;
+import jade.lang.acl.ACLMessage;
+import core.Genome.*;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.wrapper.AgentController;
+import jade.wrapper.ControllerException;
+import jade.wrapper.PlatformController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public class Initiator extends OneShotBehaviour
+	{
+		int iterations;
+		int years;
+		//DMY: according to changes in DistributionUnit 
+		HashMap<Integer, DistributionUnit> list; //List<DistributionUnit> list;
+
+		//DMY: according to changes in DistributionUnit
+		public Initiator(int iterations, int years, HashMap<Integer, DistributionUnit> list)//List<DistributionUnit> list)
+		{
+			super();
+			this.iterations = iterations;
+			this.list = list;
+			this.years = years;
+		}
+
+		//DMY: according to changes in DistributionUnit
+		public Initiator(Agent a, int iterations, int years, HashMap<Integer, DistributionUnit> list) //List<DistributionUnit> list)
+		{
+			super(a);
+			this.iterations = iterations;
+			this.list = list;
+			this.years = years;
+		}
+
+		@Override
+		public void action()
+		{
+			PlatformController container = myAgent.getContainerController();
+			for(int i = 0; i < iterations; i++)
+			{
+				try
+				{	//================================// EXPERIMENTS IS CREATED HERE!!!
+					String name = "Experiment_" + i;
+					AgentController exp = container.createNewAgent(
+							name, 
+							"core.Environment.Experiment",
+							new Object[] { list, years, myAgent.getAID(), i });
+					exp.start();
+				}
+				catch (ControllerException ex)
+				{
+					Logger.getLogger(MainAgent.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+			
+			int feedback = 0;
+			while(feedback < iterations)
+			{
+				ACLMessage msg = myAgent.blockingReceive();
+				if(msg.getPerformative() == ACLMessage.INFORM)
+				{
+					feedback++;
+				}
+			}
+			// call statistic dispatcher
+		}
+		
+		public int onEnd()
+		{
+			myAgent.doDelete();
+			return super.onEnd();
+		}
+	}
