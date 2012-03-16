@@ -15,12 +15,12 @@ public class StatisticDispatcher {
 
 	static int currentRow = 0;
 
-	static final int EXPERIMENT_ID_POS = 1;
-	static final int ZONE_ID_POS = 2;
-	static final int ITERATION_POS = 3;
-	static final int AGE_POS = 4;
-	static final int GENOTYPE_POS = 5;
-	static final int NUMBER_POS = 6;
+	public static final int EXPERIMENT_ID_POS = 1;
+	public static final int ZONE_ID_POS = 2;
+	public static final int ITERATION_POS = 3;
+	public static final int AGE_POS = 4;
+	public static final int GENOTYPE_POS = 5;
+	public static final int NUMBER_POS = 6;
 
 	private final String FILE_LOCATION = "statistic.xls";
 	private Vector<StatisticPackage> packages;

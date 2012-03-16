@@ -2,6 +2,7 @@ package statistic;
 
 import java.util.Random;
 
+
 public class Tester {
 	private static Random rnd = new Random();
 

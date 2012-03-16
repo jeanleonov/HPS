@@ -8,20 +8,20 @@ public interface Vocabulary {
 	public static final int GenomeCount = 13;
 
 	public enum Param {
-		Lifetime, // Продолжительность жизни
-		Spawning, // Возраст первого нереста
-		Survival, // Выживаемость
-		SurvivalFactor, // |- Коэффициент
-		SurvivalFactorFirst, // |- Первого года
-		Competitiveness, // Конкурентоспособность
-		CompetitivenessFactor, // |- Коэффициент
-		CompetitivenessFactorFirst, // |- Первого года
-		Reproduction, // Вероятость размножения
-		ReproductionFactor, // |- Коэффициент
-		Fertility, // Плодовитость
-		FertilityFactor, // |- Коэффициент
-		AmplexusRepeat, // Вероятность повторения аплексусов
-		AmplexusRepeatFactor // |- Коэффициент
+		Lifetime, 					// Продолжительность жизни
+		Spawning, 					// Возраст первого нереста
+		Survival, 					// Выживаемость
+		SurvivalFactor, 			// |- Коэффициент
+		SurvivalFactorFirst, 		// |- Первого года
+		Competitiveness, 			// Конкурентоспособность
+		CompetitivenessFactor, 		// |- Коэффициент
+		CompetitivenessFactorFirst,	// |- Первого года
+		Reproduction, 				// Вероятость размножения
+		ReproductionFactor,			// |- Коэффициент
+		Fertility,					// Плодовитость
+		FertilityFactor,			// |- Коэффициент
+		AmplexusRepeat,				// Вероятность повторения аплексусов
+		AmplexusRepeatFactor		// |- Коэффициент
 	}
 
 	// This is the temporary fix used for Posterity
