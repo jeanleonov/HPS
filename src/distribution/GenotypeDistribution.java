@@ -1,8 +1,11 @@
 package distribution;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class GenotypeDistribution {
+public class GenotypeDistribution implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	HashMap <Integer, Integer> ageDistributions;
 	

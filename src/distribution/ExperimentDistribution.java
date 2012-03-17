@@ -1,9 +1,12 @@
 package distribution;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public class ExperimentDistribution {
+public class ExperimentDistribution implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	Vector <ZoneDistribution> zoneDistributions;
 	
 	public ExperimentDistribution() {
