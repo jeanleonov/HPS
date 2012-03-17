@@ -7,6 +7,13 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 	private static final long serialVersionUID = 1L;
 	
 	// TODO
+	
+	private Scenario scenario;
+	
+	public ExperimentBehaviour(Scenario scenario) {
+		// TODO Auto-generated constructor stub
+		this.scenario = scenario;
+	}
 
 	@Override
 	public void action() {
