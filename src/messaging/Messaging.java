@@ -8,7 +8,7 @@ public interface Messaging {
 	String START_DIE 		= "die";					//1 Experiment -> Zone, Zone -> Individual
 	  String OKKEY			= "ok";						//1 Individual -> Zone, Zone -> Experiment
 	
-	String STRAT_MOVE 		= "move";					//2 Experiment -> Zone, Zone -> Individual
+	String START_MOVE 		= "move";					//2 Experiment -> Zone, Zone -> Individual
 //	  String OKKEY			= "ok";						//2 Individual -> Zone, Zone -> Experiment
 	
 	String START_LAST_PHASE	= "lastPhase";				//3 Experiment -> Zone
