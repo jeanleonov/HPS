@@ -1,15 +1,15 @@
 package settings;
 
 public class PosterityResultPair {
-	private Vocabulary.Genome genome;
+	private genotype.Genotype genome;
 	private float probability;
 
-	public PosterityResultPair(Vocabulary.Genome genome, float probability) {
+	public PosterityResultPair(genotype.Genotype genome, float probability) {
 		this.genome = genome;
 		this.probability = probability;
 	}
 
-	public void setGenome(Vocabulary.Genome genome) {
+	public void setGenome(genotype.Genotype genome) {
 		this.genome = genome;
 	}
 
@@ -17,7 +17,7 @@ public class PosterityResultPair {
 		this.probability = probability;
 	}
 
-	public Vocabulary.Genome getGenome() {
+	public genotype.Genotype getGenome() {
 		return genome;
 	}
 
