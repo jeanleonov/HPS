@@ -19,6 +19,8 @@ public class Experiment extends Agent {
 
 	// TODO
 	
+	Scenario scenario;
+	
 	@Override
 	protected void setup(){
 		ContainerController controller = this.getContainerController();
@@ -27,12 +29,12 @@ public class Experiment extends Agent {
 		
 		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
 		Scenario scenario = (Scenario)getArguments()[1];
+		Object[] objs = new Object[2];
+		objs[1] = getAID();
 		
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
-			Object[] objs = new Object[2];
 			objs[0] = zoneDistr;
-			objs[1] = getAID();
 			String name = "" + getLocalName() + "_Zone_" + i;
 			try {
 				zoneAgents.add(controller.createNewAgent(name, "zone.Zone", objs));			// agent created

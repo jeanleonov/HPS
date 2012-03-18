@@ -1,6 +1,9 @@
 package experiment;
 
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
+
+import java.util.Vector;
 
 public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour should be here*/ {
 
@@ -8,11 +11,9 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 	
 	// TODO
 	
-	private Scenario scenario;
-	
 	public ExperimentBehaviour(Scenario scenario) {
 		// TODO Auto-generated constructor stub
-		this.scenario = scenario;
+		((Experiment)myAgent).scenario = scenario;
 	}
 
 	@Override
@@ -25,6 +26,12 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 	public boolean done() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	// method for reading scenario commands
+	private ACLMessage[] convertCommandsToACLMessages(Vector<Command> commands){
+		// TODO
+		return null;
 	}
 
 }
