@@ -15,7 +15,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-public class StatisticDispatcher extends Agent{			// WHY IT IS NOT AGENT???
+public class StatisticDispatcher extends Agent{
 
 	static int currentRow = 0;
 
