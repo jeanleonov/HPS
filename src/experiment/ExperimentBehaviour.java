@@ -3,6 +3,7 @@ package experiment;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
+import java.io.IOException;
 import java.util.Vector;
 
 public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour should be here*/ {
@@ -22,7 +23,12 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 	@Override
 	public void action() {
 		// TODO Auto-generated method stub
-		scenarioCommandsProcessing();			// yearCursor (in Scenario) move HERE!!!
+		try {
+			scenarioCommandsProcessing();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			// yearCursor (in Scenario) move HERE!!!
 		dieProcessing();
 		moveProcessing();
 		lastPhaseProcessing();
@@ -36,14 +42,23 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 	}
 	
 	// method for reading scenario commands
-	private ACLMessage[] convertCommandsToACLMessages(Vector<ExperimentCommand> commands){
+	private ACLMessage[] convertCommandsToACLMessages(Vector<ExperimentCommand> commands) throws IOException{
 		// TODO
 		countOfMessages=0;
-		// *shit-variable += command.zonesNumbers			// shit-code
+		int i=0;
+		ACLMessage[] messages = new ACLMessage[commands.size()];
+		for (ExperimentCommand command : commands){
+			countOfMessages += command.zonesNumbers.length;
+			messages[i] = new ACLMessage();
+			for (int j=0; j<command.zonesNumbers.length; j++)
+				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers[i]));
+			messages[i].setContentObject(command.command);
+			// may be should be append...
+		}
 		return null;
 	}
 
-	private void scenarioCommandsProcessing(){
+	private void scenarioCommandsProcessing() throws IOException{
 		ACLMessage[] commands = convertCommandsToACLMessages(
 									experiment.scenario.getCommandsForNextYear());			// yearCursor (in Scenario) move HERE!!!
 		for (ACLMessage command : commands)				// send commands

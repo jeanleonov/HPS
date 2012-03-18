@@ -61,4 +61,8 @@ public class Experiment extends Agent {
 		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
 	}
 	
+	AID getZoneAID(int zoneNumber){
+		return zonesAIDs.get(zoneNumber);					// if invalid zoneNumber, then ignore it.		
+	}
+	
 }
