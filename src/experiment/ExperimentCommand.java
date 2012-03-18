@@ -1,6 +1,10 @@
 package experiment;
 
-class ExperimentCommand {
+import java.io.Serializable;
+
+class ExperimentCommand implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	int[] zonesNumbers;
 	ZoneCommand command;

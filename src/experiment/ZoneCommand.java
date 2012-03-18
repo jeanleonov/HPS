@@ -1,7 +1,11 @@
 package experiment;
 
-public class ZoneCommand {
+import java.io.Serializable;
+
+public class ZoneCommand implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	final static public short 	ADD_RESOURCES = 1,
 								ADD_INDIVIDUALS = 2,
 								MULTIPLY_RESOURCES = 3,

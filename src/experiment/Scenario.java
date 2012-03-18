@@ -1,10 +1,13 @@
 package experiment;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Vector;
 
-public class Scenario {
+public class Scenario implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	final static public byte UNSTARTED = -1;
 	
 	private int yearCursor=UNSTARTED;
@@ -60,5 +63,9 @@ public class Scenario {
 		updateRuleLists();
 		yearCursor++;
 		return commands;
+	}
+
+	public int getYearCursor() {
+		return yearCursor;
 	}
 }
