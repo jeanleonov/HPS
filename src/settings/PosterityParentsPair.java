@@ -4,27 +4,27 @@ public class PosterityParentsPair implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Vocabulary.Genome male;
-	private Vocabulary.Genome female;
+	private genotype.Genotype male;
+	private genotype.Genotype female;
 
-	public PosterityParentsPair(Vocabulary.Genome female, Vocabulary.Genome male) {
+	public PosterityParentsPair(genotype.Genotype female, genotype.Genotype male) {
 		this.male = male;
 		this.female = female;
 	}
 
-	public void setMale(Vocabulary.Genome genome) {
+	public void setMale(genotype.Genotype genome) {
 		male = genome;
 	}
 
-	public void setFemale(Vocabulary.Genome param) {
+	public void setFemale(genotype.Genotype param) {
 		female = param;
 	}
 
-	public Vocabulary.Genome getMale() {
+	public genotype.Genotype getMale() {
 		return male;
 	}
 
-	public Vocabulary.Genome getFemale() {
+	public genotype.Genotype getFemale() {
 		return female;
 	}
 

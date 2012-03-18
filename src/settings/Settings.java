@@ -79,18 +79,17 @@ public class Settings extends Agent implements Vocabulary {
 
 		private void ViabilityFill() {
 			try {
-				Genome[] genomeOrder = new Genome[GenomeCount];
+				genotype.Genotype[] genomeOrder = new genotype.Genotype[GenomeCount];
 				BufferedReader reader = new BufferedReader(viabilityReader);
 				String orderLine = reader.readLine();
 				OrderFill(genomeOrder, orderLine, 3);
-				reader.readLine(); // verbal description
 
 				String str;
 				while ((str = reader.readLine()) != null) {
 					String[] strArr = str.split(";");
 					if (strArr.length < genomeOrder.length + 3)
 						continue;
-					for (Genome gm : genomeOrder) {
+					for (genotype.Genotype gm : genomeOrder) {
 						Param param = Convertor.keyToParam(Integer.parseInt(
 								strArr[2], 10));
 						for (int i = 3; i < genomeOrder.length; i++)
@@ -105,22 +104,20 @@ public class Settings extends Agent implements Vocabulary {
 
 		private void PosterityFill() {
 			try {
-				Genome[] genomeOrder = new Genome[GenomeCount];
+				genotype.Genotype[] genomeOrder = new genotype.Genotype[GenomeCount];
 				BufferedReader reader = new BufferedReader(posterityReader);
 				String orderLine = reader.readLine();
-				OrderFill(genomeOrder, orderLine, 4);
-				reader.readLine(); // verbal description
+				OrderFill(genomeOrder, orderLine, 2);
 
 				String str;
 				while ((str = reader.readLine()) != null) {
 					String[] strArr = str.split(";");
-					if (strArr.length < genomeOrder.length + 4)
+					if (strArr.length < genomeOrder.length + 2)
 						continue;
-					for (Genome gm : genomeOrder) {
-						Genome gm1 = Convertor.keyToGenome(Integer.parseInt(
-								strArr[2], 10)), gm2 = Convertor
-								.keyToGenome(Integer.parseInt(strArr[3], 10));
-						for (int i = 4; i < genomeOrder.length; i++) {
+					for (genotype.Genotype gm : genomeOrder) {
+						genotype.Genotype gm1 = genotype.Genotype.getGenotype(strArr[0]),
+								gm2 = genotype.Genotype.getGenotype(strArr[1]);
+						for (int i = 2; i < genomeOrder.length; i++) {
 							float value = Float.parseFloat(strArr[i]);
 							if (value == 0)
 								continue;
@@ -142,13 +139,12 @@ public class Settings extends Agent implements Vocabulary {
 			}
 		}
 
-		private void OrderFill(Genome[] arr, String str, int startFrom) {
+		private void OrderFill(genotype.Genotype[] arr, String str, int startFrom) {
 			String[] strArr = str.split(";");
 			int size = Math.min(strArr.length, arr.length);
 			try {
 				for (int i = startFrom; i < size; i++) {
-					arr[i - startFrom] = Convertor.keyToGenome(Integer
-							.parseInt(strArr[i], 10));
+					arr[i - startFrom] = genotype.Genotype.getGenotype(strArr[i]);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

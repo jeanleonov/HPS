@@ -4,15 +4,15 @@ public class ViabilityPair implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Vocabulary.Genome genome;
+	private genotype.Genotype genome;
 	private Vocabulary.Param param;
 
-	public ViabilityPair(Vocabulary.Genome genome, Vocabulary.Param param) {
+	public ViabilityPair(genotype.Genotype genome, Vocabulary.Param param) {
 		this.genome = genome;
 		this.param = param;
 	}
 
-	public void setGenome(Vocabulary.Genome genome) {
+	public void setGenome(genotype.Genotype genome) {
 		this.genome = genome;
 	}
 
@@ -20,7 +20,7 @@ public class ViabilityPair implements java.io.Serializable {
 		this.param = param;
 	}
 
-	public Vocabulary.Genome getGenome() {
+	public genotype.Genotype getGenome() {
 		return genome;
 	}
 
