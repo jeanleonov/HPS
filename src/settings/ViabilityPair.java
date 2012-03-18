@@ -4,24 +4,24 @@ public class ViabilityPair implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private genotype.Genotype genome;
+	private Float value;
 	private Vocabulary.Param param;
 
-	public ViabilityPair(genotype.Genotype genome, Vocabulary.Param param) {
-		this.genome = genome;
+	public ViabilityPair(Float value, Vocabulary.Param param) {
+		this.value = value;
 		this.param = param;
 	}
 
-	public void setGenome(genotype.Genotype genome) {
-		this.genome = genome;
+	public void setValue(Float value) {
+		this.value = value;
 	}
 
 	public void setParam(Vocabulary.Param param) {
 		this.param = param;
 	}
 
-	public genotype.Genotype getGenome() {
-		return genome;
+	public Float getValue() {
+		return value;
 	}
 
 	public Vocabulary.Param getParam() {
@@ -35,10 +35,10 @@ public class ViabilityPair implements java.io.Serializable {
 			return false;
 
 		ViabilityPair pair = (ViabilityPair) obj;
-		return pair.genome == genome && pair.param == param;
+		return pair.value == value && pair.param == param;
 	}
 
 	public int hashCode() {
-		return genome.hashCode() * 1000 + param.hashCode();
+		return value.hashCode() * 1000 + param.hashCode();
 	}
 }

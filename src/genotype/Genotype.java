@@ -1,11 +1,12 @@
 package genotype;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 
 // Important!  constructor of Genotype is PRIVATE
 //   USE static methods for getting Genotype or Id of Genotype
-public class Genotype {
+public class Genotype implements Serializable {
 	
 //==============================| Class Genotype: |===
 	private Genome[] genomes;

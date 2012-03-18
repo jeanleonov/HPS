@@ -20,8 +20,9 @@ public class Settings extends Agent implements Vocabulary {
 
 	private final static String serviceName = "Settings";
 	private Reader viabilityReader, posterityReader;
-	private HashMap<ViabilityPair, Float> viabilityTable = new HashMap<ViabilityPair, Float>();
+	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
+	private boolean isDataReady = false;
 
 	@Override
 	protected void setup() {
@@ -64,6 +65,7 @@ public class Settings extends Agent implements Vocabulary {
 	}
 
 	private void BehaviourRegister() {
+		addBehaviour(new DataFill());
 		addBehaviour(new SettingsMessageListener());
 	}
 
@@ -75,6 +77,8 @@ public class Settings extends Agent implements Vocabulary {
 		public void action() {
 			ViabilityFill();
 			PosterityFill();
+			
+			isDataReady = true;
 		}
 
 		private void ViabilityFill() {
@@ -92,9 +96,10 @@ public class Settings extends Agent implements Vocabulary {
 					for (genotype.Genotype gm : genomeOrder) {
 						Param param = Convertor.keyToParam(Integer.parseInt(
 								strArr[2], 10));
+						ArrayList<ViabilityPair> arr = new ArrayList<ViabilityPair>();
 						for (int i = 3; i < genomeOrder.length; i++)
-							viabilityTable.put(new ViabilityPair(gm, param),
-									Float.parseFloat(strArr[i]));
+							arr.add(new ViabilityPair(Float.parseFloat(strArr[i]), param));
+						viabilityTable.put(gm, arr);
 					}
 				}
 			} catch (Exception ex) {
@@ -167,13 +172,15 @@ public class Settings extends Agent implements Vocabulary {
 			try {
 				ACLMessage reply = msg.createReply();
 
-				if (msg.getPerformative() == ACLMessage.QUERY_REF) {
+				if(!isDataReady)
+				{
+					reply.setPerformative(ACLMessage.FAILURE);
+				}
+				else if (msg.getPerformative() == ACLMessage.QUERY_REF) {
 					Object content = msg.getContentObject();
-					if (content instanceof ViabilityPair) {
-						ViabilityPair pair = (ViabilityPair) content;
-						Float value = viabilityTable.get(pair);
-						if (value == null)
-							value = 0f;
+					if (content instanceof genotype.Genotype) {
+						genotype.Genotype pair = (genotype.Genotype) content;
+						ArrayList<ViabilityPair> value = viabilityTable.get(pair);
 						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(value);
 					} else if (content instanceof PosterityParentsPair) {
