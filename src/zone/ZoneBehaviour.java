@@ -1,6 +1,5 @@
 package zone;
 
-
 import java.io.IOException;
 
 import messaging.Messaging;
@@ -31,7 +30,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void scenarioCommandProcessing() {
-		// TODO Обработка комманд сценария
+		String message = getMessage();
+		
 		
 	}
 	private void dieProcessing() {

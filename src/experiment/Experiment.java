@@ -16,6 +16,7 @@ public class Experiment extends Agent {
 	private static final long serialVersionUID = 1L;
 	
 	private Vector<AID> zonesAIDs;
+	private int countOfModellingYears;
 
 	// TODO
 	
@@ -27,8 +28,10 @@ public class Experiment extends Agent {
 		Vector<AgentController> zoneAgents = new Vector<AgentController>();
 		zonesAIDs = new Vector<AID>();
 		
+		// Danya!!! Look here!!!
 		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
 		Scenario scenario = (Scenario)getArguments()[1];
+		countOfModellingYears = (int)((Integer)getArguments()[2]);
 		Object[] objs = new Object[2];
 		objs[1] = getAID();
 		

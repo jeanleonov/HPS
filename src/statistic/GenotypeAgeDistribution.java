@@ -1,5 +1,6 @@
 package statistic;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 
@@ -7,7 +8,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-public class GenotypeAgeDistribution {
+public class GenotypeAgeDistribution implements Serializable {
 
 	private Vector<GenotypeAgeNumberTrio> gants;
 

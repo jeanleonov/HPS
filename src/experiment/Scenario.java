@@ -29,7 +29,7 @@ public class Scenario {
 		}
 	}
 	
-	public void start(){
+	void start(){
 		yearCursor = 0;
 		updateRuleLists();
 	}
@@ -53,8 +53,8 @@ public class Scenario {
 		}
 	}
 	
-	public Vector<Command> getCommandsForNextYear(){
-		Vector<Command> commands = new Vector<Command>();
+	public Vector<ExperimentCommand> getCommandsForNextYear(){
+		Vector<ExperimentCommand> commands = new Vector<ExperimentCommand>();
 		for (Rule rule : activeRules)
 			commands.addAll(rule.getCommandsForIteration(yearCursor));
 		updateRuleLists();

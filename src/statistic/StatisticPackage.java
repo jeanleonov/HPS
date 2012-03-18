@@ -1,12 +1,14 @@
 package statistic;
 
+import java.io.Serializable;
+
 import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
 
-public class StatisticPackage {
+public class StatisticPackage implements Serializable {
 	
 	private int experimentId;
 	private int zoneId;
