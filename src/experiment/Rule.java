@@ -1,9 +1,12 @@
 package experiment;
 
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Rule {
+public class Rule implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	final static public byte	FINISHED = 1,
 								ACTIVE = 2,
 								UNSTARTED = 3,

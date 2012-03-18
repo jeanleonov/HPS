@@ -36,6 +36,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	private void dieProcessing() {
 		sendMessageToIndividuals(START_DIE);
+		getAnswersOnMessage(START_DIE);
+		// TODO
 	}
 
 	private void moveProcessing() {
@@ -76,5 +78,4 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			e.printStackTrace();
 		}		
 	}
-
 }
