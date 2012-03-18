@@ -45,11 +45,4 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 			ex.printStackTrace();
 		}
 	}
-
-	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }
