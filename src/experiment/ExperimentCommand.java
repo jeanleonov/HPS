@@ -1,11 +1,11 @@
 package experiment;
 
-class Command {
+class ExperimentCommand {
 	
 	int[] zonesNumbers;
-	String command;
+	ZoneCommand command;
 	
-	Command(int[] zonesNumbers, String command){
+	ExperimentCommand(int[] zonesNumbers, ZoneCommand command){
 		this.zonesNumbers = zonesNumbers;
 		this.command = command;
 	}

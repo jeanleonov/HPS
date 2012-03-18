@@ -6,5 +6,5 @@ abstract public class Action {
 	/*
 	 * generation of commands to Zones
 	 */
-	abstract public Command getCommand();
+	abstract public ExperimentCommand getCommand();
 }

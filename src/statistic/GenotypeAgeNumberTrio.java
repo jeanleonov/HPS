@@ -1,11 +1,13 @@
 package statistic;
 
+import java.io.Serializable;
+
 import jxl.write.Number;
 import jxl.write.WritableSheet;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-public class GenotypeAgeNumberTrio {
+public class GenotypeAgeNumberTrio implements Serializable{
 
 	private int genotype; // not int ???
 	private int age;
