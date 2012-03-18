@@ -29,7 +29,7 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 	}
 	
 	// method for reading scenario commands
-	private ACLMessage[] convertCommandsToACLMessages(Vector<Command> commands){
+	private ACLMessage[] convertCommandsToACLMessages(Vector<ExperimentCommand> commands){
 		// TODO
 		return null;
 	}
