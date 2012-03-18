@@ -1,8 +1,12 @@
 package statistic;
 
+import jade.core.Agent;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
+
+import zone.ZoneBehaviour;
 
 import jxl.*;
 import jxl.write.Label;
@@ -11,7 +15,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-public class StatisticDispatcher {			// WHY IT IS NOT AGENT???
+public class StatisticDispatcher extends Agent{			// WHY IT IS NOT AGENT???
 
 	static int currentRow = 0;
 
@@ -25,9 +29,10 @@ public class StatisticDispatcher {			// WHY IT IS NOT AGENT???
 	private final String FILE_LOCATION = "statistic.xls";
 	private Vector<StatisticPackage> packages;
 
-	public StatisticDispatcher() {
+	@Override
+	protected void setup(){
 		packages = new Vector<StatisticPackage>();
-		// born
+		addBehaviour(new StatisticDispatcherBehaviour());
 	}
 
 	public void addPackage(StatisticPackage pack) {
