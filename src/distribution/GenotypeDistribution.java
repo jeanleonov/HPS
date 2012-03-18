@@ -7,17 +7,17 @@ public class GenotypeDistribution implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	HashMap <Integer, Float> ageDistributions;
+	HashMap <Integer, Integer> ageDistributions;
 	
 	public GenotypeDistribution() {
-		ageDistributions = new HashMap <Integer, Float>();
+		ageDistributions = new HashMap <Integer, Integer>();
 	}
 	
-	public void addZoneDistribution (Integer age, Float measure) {
+	public void addAgeDistribution (Integer age, Integer measure) {
 		ageDistributions.put(age,measure);
 	}
 	
-	public HashMap <Integer, Float> getAgeDistributions(){
+	public HashMap <Integer, Integer> getAgeDistributions(){
 		return ageDistributions;
 	}
 }

@@ -15,8 +15,8 @@ public class Experiment extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
-	private Vector<AID> zonesAIDs;
-	private int countOfModellingYears;
+	Vector<AID> zonesAIDs;
+	int numberOfModelingYears;
 
 	// TODO
 	
@@ -30,8 +30,8 @@ public class Experiment extends Agent {
 		
 		// Danya!!! Look here!!!
 		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
-		Scenario scenario = (Scenario)getArguments()[1];
-		countOfModellingYears = (int)((Integer)getArguments()[2]);
+		scenario = (Scenario)getArguments()[1];
+		numberOfModelingYears = (int)((Integer)getArguments()[2]);
 		Object[] objs = new Object[2];
 		objs[1] = getAID();
 		
@@ -58,7 +58,7 @@ public class Experiment extends Agent {
 			}
 		}
 			
-		addBehaviour(new ExperimentBehaviour(scenario/*,???*/));			// implement ExperimentBehaviour and define constructor args
+		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
 	}
 	
 }
