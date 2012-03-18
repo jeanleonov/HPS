@@ -1,8 +1,6 @@
 package individual;
 
-import jade.core.behaviours.Behaviour;
-
-public class FemaleBehaviour extends Behaviour /*!!! may be CyrclicBehaviour should be here*/ {
+public class FemaleBehaviour extends IndividualBehaviour {
 
 	private static final long serialVersionUID = 1L;
 
