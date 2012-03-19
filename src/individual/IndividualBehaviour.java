@@ -36,6 +36,9 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 						reply.setContent(YES);
 					}
 				}
+				else if(query == START_MOVE) {
+					
+				}
 			} else {
 				reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 			}

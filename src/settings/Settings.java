@@ -185,8 +185,7 @@ public class Settings extends Agent implements Vocabulary {
 						reply.setContentObject(value);
 					} else if (content instanceof PosterityParentsPair) {
 						PosterityParentsPair pair = (PosterityParentsPair) content;
-						PosterityResultPair[] result = (PosterityResultPair[]) posterityTable
-								.get(pair).toArray();
+						ArrayList<PosterityResultPair> result = posterityTable.get(pair);
 						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(result);
 					} else {
