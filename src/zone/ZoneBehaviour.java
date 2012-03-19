@@ -14,7 +14,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	@Override
 	public void action() {
-		String message = getMessage();
+		String message = getMessageContent();
 		if (message.compareTo(SCENARIO_COMMANDS) == 0){
 			scenarioCommandProcessing();
 		}
@@ -30,14 +30,30 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void scenarioCommandProcessing() {
-		String message = getMessage();
-		
-		
+		String message = getMessageContent();
+		// TODO 
 	}
 	private void dieProcessing() {
 		sendMessageToIndividuals(START_DIE);
-		getAnswersOnMessage(START_DIE);
-		// TODO
+		getAnswersOnDieMessage();
+		// asddsa
+	}
+
+	private void getAnswersOnDieMessage() {
+		ACLMessage message;
+		int individualCounter = ((Zone)myAgent).getIndividualsNumber();
+		for (int i = individualCounter; i > 0; i--){	//warning
+			message = getMessage();
+			if (message.getContent().compareTo(this.YES) == 0){
+				killIndividual(message.getSender());
+			}
+		}
+	}
+
+	private void killIndividual(AID sender) {
+		//myAgent.getAMS().
+		//how to kill agent ?
+		
 	}
 
 	private void moveProcessing() {
@@ -47,13 +63,26 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		// TODO Auto-generated method stub
 		
 	}
-	private String getMessage(){
+	private ACLMessage getMessage(){
+		ACLMessage message = myAgent.blockingReceive();
+		if (message != null){
+			return message;
+		}
+		return null;
+	}	
+	private Integer getMessagePerformative(){
+		ACLMessage message = myAgent.blockingReceive();
+		if (message != null){
+			return message.getPerformative();
+		}
+		return null;
+	}
+	private String getMessageContent(){
 		ACLMessage message = myAgent.blockingReceive();
 		if (message != null){
 			return message.getContent();
 		}
-		else
-			return null;
+		return null;
 	}	
 	
 	private void sendMessageToIndividuals(String message) {

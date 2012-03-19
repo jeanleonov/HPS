@@ -18,6 +18,8 @@ public class Zone extends Agent {
 	Vector<AID> immatures;
 	Vector<AID> yarlings;
 	
+	int resources;
+	
 	private Vector<Individual> strangers;
 
 	public Zone(){
@@ -30,6 +32,13 @@ public class Zone extends Agent {
 		addBehaviour(new ZoneBehaviour());
 	}
 	
+	int getIndividualsNumber(){
+		return males.size() + females.size() + immatures.size();
+	}
 	
+	float getAttractivness(){
+		
+		return 0;
+	}
 	// TODO
 }
