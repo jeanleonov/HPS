@@ -1,25 +1,23 @@
 package distribution;
 
-import genotype.Genotype;
-
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Vector;
 
 public class ZoneDistribution implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	HashMap <Genotype, GenotypeDistribution> genotypeDistributions;
+	Vector<GenotypeAgeNumberTrio> genotypeAgeNumberTrio;
 	
 	public ZoneDistribution() {
-		genotypeDistributions = new HashMap <Genotype, GenotypeDistribution>();
+		genotypeAgeNumberTrio = new Vector<GenotypeAgeNumberTrio>();
 	}
 	
-	public void addGenotypeDistribution (Genotype genotype, GenotypeDistribution distribution) {
-		genotypeDistributions.put(genotype,distribution);
+	public void addGenotypeDistribution (GenotypeAgeNumberTrio trio) {
+		genotypeAgeNumberTrio.add(trio);
 	}
 	
-	public HashMap <Genotype, GenotypeDistribution> getGenotypeDistributions(){
-		return genotypeDistributions;
+	public Vector<GenotypeAgeNumberTrio> getGenotypeDistributions(){
+		return genotypeAgeNumberTrio;
 	}
 }

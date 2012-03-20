@@ -64,7 +64,7 @@ public class Initiator extends OneShotBehaviour {
 					//----- genotype distribution initialisation ---------------------------------
 					while(res != ";")
 					{
-						GenotypeDistribution gen = new GenotypeDistribution();
+						GenotypeAgeNumberTrio gen = new GenotypeAgeNumberTrio();
 						
 						res = in.readLine();
 						Genotype type = Genotype.getGenotype(res);
