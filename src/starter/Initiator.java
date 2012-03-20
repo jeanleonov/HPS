@@ -74,43 +74,6 @@ public class Initiator extends OneShotBehaviour {
 			{
 				years = Integer.parseInt(in.readLine());
 				iterationNum = Integer.parseInt(in.readLine());			// number of distribution units
-																				// at the beginning of modeling
-/*				String res = new String(in.readLine());
-				while(res != null) //for(int i = 0; i < dNum; i++) 	// for each genotype
-				{
-					//in.readLine();
-					
-					ZoneDistribution zone = new ZoneDistribution();
-					
-					//----- genotype distribution initialisation ---------------------------------
-					while(res != ";")
-					{
-						GenotypeDistribution gen = new GenotypeDistribution();
-						
-						res = in.readLine();
-						Genotype type = Genotype.getGenotype(res);
-						
-						//----- reading age - number distribution ------------------------------------
-						res = in.readLine();
-						while(res != "\n")
-						{
-							int age = Integer.parseInt(res);
-							
-							res = in.readLine();
-							int measure = Integer.parseInt(res);
-							
-							gen.addAgeDistribution(age, measure);
-							res = in.readLine();
-						}
-						
-						zone.addGenotypeDistribution(type, gen);
-						
-					}
-					//----------------------------------------------
-					
-					exp.addZoneDistribution(zone);
-				}*/
-				
 				String res = new String(in.readLine());
 				while(res != null){
 					res += in.readLine();
@@ -171,26 +134,5 @@ public class Initiator extends OneShotBehaviour {
 	private String getExperimentName(int i){
 		return "" + myAgent.getLocalName() + "_Experiment_" + i;
 	}
-//	@Override
-//	public void action() {
-		// TODO
-		
-		// call of Experiment, Settings, StatisticDispatcher setups will be around here!!
-		// SOMETHING LIKE THIS:
-		
-// ~ 	ContainerController controller = this.getContainerController();
-//		Vector<AgentController> experimentAgents = new Vector<AgentController>;
-//		Vector<AID> experimentAIDs = new Vector<AID>();
-//		Object[] data = new Object[.?.];
-//		fillData(data);
-//
-//		for (each experiment) {
-//			String name = "Experiment_" + i;
-//			experimentAgents.add(controller.createNewAgent("Experiment_" + i, "experiment.Experiment", data));
-//			experimentAIDs.add(new AID(name, AID.ISLOCALNAME));
-//		}
-		
-//		for (each created agent)
-//			agent.start();
-//	}
+
 }
