@@ -1,12 +1,15 @@
 package experiment;
 
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
 import java.util.Vector;
 
-public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour should be here*/ {
+import messaging.Messaging;
+
+public class ExperimentBehaviour extends Behaviour implements Messaging {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -63,19 +66,37 @@ public class ExperimentBehaviour extends Behaviour /*!!! may be CyrclicBehaviour
 									experiment.scenario.getCommandsForNextYear());			// yearCursor (in Scenario) move HERE!!!
 		for (ACLMessage command : commands)				// send commands
 			experiment.send(command);
-		for (int i=0; i<countOfMessages; i++)			// waiting for reports 
+		for (int i=0; i<countOfMessages; i++)			// waiting for reports 	!!!!BAD CODE! 
 			myAgent.blockingReceive();
 	}
 
 	private void dieProcessing(){
-		// TODO
+		ACLMessage message = getMessageForMassMailing();
+		message.setContent(START_DIE);
+		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
 	private void moveProcessing(){
-		// TODO
+		ACLMessage message = getMessageForMassMailing();
+		message.setContent(START_MOVE);
+		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
 	private void lastPhaseProcessing(){
-		// TODO
+		ACLMessage message = getMessageForMassMailing();
+		message.setContent(START_LAST_PHASE);
+		ignoreNMessages(experiment.zonesAIDs.size());
+	}
+	
+	private ACLMessage getMessageForMassMailing(){
+		ACLMessage message = new ACLMessage();
+		for (AID zoneAID : experiment.zonesAIDs)
+			message.addReceiver(zoneAID);
+		return message;
+	}
+	
+	private void ignoreNMessages(int N){
+		for (int i=0; i<N; i++)				// waiting for reports 	!!!!BAD CODE! 
+			myAgent.blockingReceive();
 	}
 }
