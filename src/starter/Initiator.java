@@ -2,6 +2,7 @@ package starter;
 
 
 import genotype.Genotype;
+import experiment.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,8 +14,11 @@ import java.util.Vector;
 import distribution.*;
 import experiment.Scenario;
 
+import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 
 
 public class Initiator extends OneShotBehaviour {
@@ -29,16 +33,18 @@ public class Initiator extends OneShotBehaviour {
 	protected ExperimentDistribution exp = new ExperimentDistribution();
 	protected Scenario scenario;
 	
+	Vector<AID> experimentAIDs;
+	
 	public Initiator()
 	{
 		super();
 		this.source = "Initiation.hpsi";
 	}
 	
-	public Initiator(Scenario scenario)
+	public Initiator(Scenario args)
 	{
 		super();
-		this.scenario = scenario;
+		this.scenario = args;
 	}
 	
 	public Initiator(String Source)
@@ -67,8 +73,7 @@ public class Initiator extends OneShotBehaviour {
 			try
 			{
 				years = Integer.parseInt(in.readLine());
-				iterationNum = Integer.parseInt(in.readLine());                 // number of ticks  
-				int dNum = Integer.parseInt(in.readLine());				// number of distribution units
+				iterationNum = Integer.parseInt(in.readLine());			// number of distribution units
 																				// at the beginning of modeling
 /*				String res = new String(in.readLine());
 				while(res != null) //for(int i = 0; i < dNum; i++) 	// for each genotype
@@ -125,10 +130,47 @@ public class Initiator extends OneShotBehaviour {
 				e.printStackTrace();
 			} 
 
-			System.out.println(years + " " + iterationNum);
-			ContainerController controller = this.myAgent.getContainerController();
+			//System.out.println(years + " " + iterationNum);
+			startExperiments(createExperiments());
 	}
 	
+	
+	private Vector<AgentController> createExperiments(){
+		ContainerController controller = this.myAgent.getContainerController();
+		Vector<AgentController> experimentAgents = new Vector<AgentController>();
+		for (int i = 0; i < iterationNum; i++) {
+			try {
+				experimentAgents.add(
+						controller.createNewAgent(
+								getExperimentName(i), 
+								"experiment.Experiment", 
+								new Object[]{exp, scenario, years}));			// agent created
+			} catch (StaleProxyException e) {
+				e.printStackTrace();// TODO Auto-generated catch block
+			}
+			experimentAIDs.add(new AID(getExperimentName(i), AID.ISLOCALNAME));		// agent ID saved to private list
+
+		}
+		return experimentAgents;
+	}
+	
+	private void startExperiments(Vector<AgentController> experimentAgents){
+		for (AgentController agent : experimentAgents){
+			try {
+				agent.start();									// agent behaviors started
+			} catch (StaleProxyException e) {
+				e.printStackTrace();// TODO Auto-generated catch block
+			}
+		}
+	}
+	
+	AID getExperimentAID(int experimentNumber){
+		return experimentAIDs.get(experimentNumber);					// if invalid zoneNumber, then ignore it.		
+	}
+	
+	private String getExperimentName(int i){
+		return "" + myAgent.getLocalName() + "_Experiment_" + i;
+	}
 //	@Override
 //	public void action() {
 		// TODO

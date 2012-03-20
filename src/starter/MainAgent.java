@@ -1,5 +1,6 @@
 package starter;
 
+import experiment.*;
 import jade.core.Agent;
 
 public class MainAgent extends Agent{
@@ -11,7 +12,9 @@ public class MainAgent extends Agent{
 	@Override
 	protected void setup(){
 		// TODO
-		addBehaviour(new Initiator(/*???*/));			// implement Initiator and define constructor args
+		
+		Object[] args = getArguments();
+		addBehaviour(new Initiator((Scenario)args[0]));			// implement Initiator and define constructor args
 	}
 	
 
