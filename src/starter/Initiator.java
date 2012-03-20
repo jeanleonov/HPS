@@ -11,8 +11,10 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import distribution.*;
+import experiment.Scenario;
 
 import jade.core.behaviours.OneShotBehaviour;
+import jade.wrapper.ContainerController;
 
 
 public class Initiator extends OneShotBehaviour {
@@ -25,6 +27,7 @@ public class Initiator extends OneShotBehaviour {
 	private String source = new String();
 	protected int years;
 	protected ExperimentDistribution exp = new ExperimentDistribution();
+	protected Scenario scenario;
 	
 	public Initiator()
 	{
@@ -32,10 +35,23 @@ public class Initiator extends OneShotBehaviour {
 		this.source = "Initiation.hpsi";
 	}
 	
+	public Initiator(Scenario scenario)
+	{
+		super();
+		this.scenario = scenario;
+	}
+	
 	public Initiator(String Source)
 	{
 		super();
 		this.source = Source;
+	}
+	
+	public Initiator(Scenario scenario, String source)
+	{
+		super();
+		this.scenario = scenario;
+		this.source = source;
 	}
 	
 	public void action()
@@ -54,7 +70,7 @@ public class Initiator extends OneShotBehaviour {
 				iterationNum = Integer.parseInt(in.readLine());                 // number of ticks  
 				int dNum = Integer.parseInt(in.readLine());				// number of distribution units
 																				// at the beginning of modeling
-				String res = new String(in.readLine());
+/*				String res = new String(in.readLine());
 				while(res != null) //for(int i = 0; i < dNum; i++) 	// for each genotype
 				{
 					//in.readLine();
@@ -64,7 +80,7 @@ public class Initiator extends OneShotBehaviour {
 					//----- genotype distribution initialisation ---------------------------------
 					while(res != ";")
 					{
-						GenotypeAgeNumberTrio gen = new GenotypeAgeNumberTrio();
+						GenotypeDistribution gen = new GenotypeDistribution();
 						
 						res = in.readLine();
 						Genotype type = Genotype.getGenotype(res);
@@ -73,12 +89,12 @@ public class Initiator extends OneShotBehaviour {
 						res = in.readLine();
 						while(res != "\n")
 						{
-							float age = Float.parseFloat(res);
+							int age = Integer.parseInt(res);
 							
 							res = in.readLine();
 							int measure = Integer.parseInt(res);
 							
-							gen.addAgeDistribution(age, count);
+							gen.addAgeDistribution(age, measure);
 							res = in.readLine();
 						}
 						
@@ -88,7 +104,14 @@ public class Initiator extends OneShotBehaviour {
 					//----------------------------------------------
 					
 					exp.addZoneDistribution(zone);
+				}*/
+				
+				String res = new String(in.readLine());
+				while(res != null){
+					res += in.readLine();
 				}
+				
+				ExperimentDistribution exp = ExperimentDistribution.parseExperiment(res);
 			}
 			catch(NumberFormatException e)
 			{
@@ -102,16 +125,8 @@ public class Initiator extends OneShotBehaviour {
 				e.printStackTrace();
 			} 
 
-			
 			System.out.println(years + " " + iterationNum);
-	/*		for(int i = 0; i < info.size(); i++)
-			{
-				System.out.println(info.get(i).getZoneId() + " " + info.get(i).getAge() + " " + info.get(i).getCount());
-				System.out.println(info.get(i).getGenotype().getGenomeSet());
-				//info.get(i).getGenotype().getGenomeSet().//TreeSet<Genome>
-			}*/
-			//Initiator n = new Initiator(myAgent, iterationNum, info);
-			//myAgent.addBehaviour(n);
+			ContainerController controller = this.myAgent.getContainerController();
 	}
 	
 //	@Override

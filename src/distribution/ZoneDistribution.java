@@ -20,4 +20,27 @@ public class ZoneDistribution implements Serializable {
 	public Vector<GenotypeAgeNumberTrio> getGenotypeDistributions(){
 		return genotypeAgeNumberTrio;
 	}
+	
+	// by DMY
+	public static ZoneDistribution parseZone(String resource) throws NumberFormatException{
+		// Later I'm plan to throw my own exception, if it will be necessary 
+		
+		ZoneDistribution zone = new ZoneDistribution();
+		String[] t = resource.split("|");
+		
+		if(t.length % 2 != 0){
+			throw new NumberFormatException();
+		}
+		
+		for(int i = 0; i < t.length; i += 2){
+			try{
+				zone.addGenotypeDistribution(GenotypeAgeNumberTrio.parseGenotype(t[i]));
+			}
+			catch(NumberFormatException e){
+				throw e;
+			}
+		}
+		
+		return zone;
+	}
 }

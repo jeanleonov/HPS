@@ -29,4 +29,17 @@ public class GenotypeAgeNumberTrio implements Serializable {
 	public int getNumber() {
 		return number;
 	}
+	
+	// by DMY
+	public static GenotypeAgeNumberTrio parseGenotype(String resource) throws NumberFormatException{
+		// Later I'm plan to throw my own exception, if it will be necessary 
+		
+		String[] t = resource.split(" \n");
+		
+		if(t.length % 3 != 0){
+			throw new NumberFormatException();
+		}
+		
+		return new GenotypeAgeNumberTrio(Genotype.getGenotype(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
+	}
 }

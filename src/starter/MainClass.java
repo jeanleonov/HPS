@@ -39,8 +39,9 @@ public class MainClass {
 			settingsAgent.start();
 //==========================================================================================================			
 			
-			
-			AgentController mainAgent = ac.createNewAgent("MainAgent", "starter.MainAgent", new Object[0]);
+			Object[] mainArgs = new Object[1];
+			mainArgs[0] = s;
+			AgentController mainAgent = ac.createNewAgent("MainAgent", "starter.MainAgent", mainArgs);
 			mainAgent.start();
 			
 		} catch(Exception e) {
