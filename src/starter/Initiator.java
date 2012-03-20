@@ -1,14 +1,9 @@
 package starter;
 
-
-import genotype.Genotype;
-import experiment.*;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import distribution.*;
@@ -79,7 +74,7 @@ public class Initiator extends OneShotBehaviour {
 					res += in.readLine();
 				}
 				
-				ExperimentDistribution exp = ExperimentDistribution.parseExperiment(res);
+				exp = ExperimentDistribution.parseExperiment(res);
 			}
 			catch(NumberFormatException e)
 			{
