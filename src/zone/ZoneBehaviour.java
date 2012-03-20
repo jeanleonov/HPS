@@ -16,27 +16,27 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	public void action() {
 		String message = getMessageContent();
 		if (message.compareTo(SCENARIO_COMMANDS) == 0){
-			scenarioCommandProcessing();
+			//scenarioCommandProcessing(); TODO Realise scenario process
 		}
 		else if (message.compareTo(START_DIE) == 0){
 			dieProcessing();
 		}
 		else if (message.compareTo(START_MOVE) == 0){
-			moveProcessing();
+			//moveProcessing(); TODO Realise move process
 		}
 		else if (message.compareTo(START_LAST_PHASE) == 0){
 			lastPhaseProcessing();
 		}
 	}
-	
+
 	private void scenarioCommandProcessing() {
 		String message = getMessageContent();
 		// TODO 
 	}
+	
 	private void dieProcessing() {
 		sendMessageToIndividuals(START_DIE);
 		getAnswersOnDieMessage();
-		// asddsa
 	}
 
 	private void getAnswersOnDieMessage() {
@@ -44,39 +44,36 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		int individualCounter = ((Zone)myAgent).getIndividualsNumber();
 		for (int i = individualCounter; i > 0; i--){	//warning
 			message = getMessage();
-			if (message.getContent().compareTo(this.YES) == 0){
+			if (message.getContent().compareTo(YES) == 0){
 				killIndividual(message.getSender());
 			}
 		}
 	}
 
-	private void killIndividual(AID sender) {
-		//myAgent.getAMS().
-		//how to kill agent ?
-		
+	private void killIndividual(AID individual) {
+		Zone zone = (Zone)myAgent;
+		zone.males.remove(individual);
+		zone.females.remove(individual);
+		zone.immatures.remove(individual);
 	}
 
 	private void moveProcessing() {
-		sendMessageToIndividuals(START_MOVE);	
+		sendMessageToIndividuals(START_MOVE);
+		// TODO
 	}
+	
 	private void lastPhaseProcessing() {
 		// TODO Auto-generated method stub
-		
 	}
+	
 	private ACLMessage getMessage(){
 		ACLMessage message = myAgent.blockingReceive();
 		if (message != null){
 			return message;
 		}
 		return null;
-	}	
-	private Integer getMessagePerformative(){
-		ACLMessage message = myAgent.blockingReceive();
-		if (message != null){
-			return message.getPerformative();
-		}
-		return null;
 	}
+	
 	private String getMessageContent(){
 		ACLMessage message = myAgent.blockingReceive();
 		if (message != null){
@@ -86,13 +83,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}	
 	
 	private void sendMessageToIndividuals(String message) {
-		for (AID individual : ((Zone)myAgent).males){
-			sendMessage(individual, message);
-		}
-		for (AID individual : ((Zone)myAgent).females){
-			sendMessage(individual, message);
-		}
-		for (AID individual : ((Zone)myAgent).immatures){
+		for (AID individual : ((Zone)myAgent).getIndividuals()){
 			sendMessage(individual, message);
 		}
 	}

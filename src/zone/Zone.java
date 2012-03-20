@@ -40,5 +40,13 @@ public class Zone extends Agent {
 		
 		return 0;
 	}
+	
+	Vector<AID> getIndividuals(){
+		Vector<AID> individuals = new Vector<AID>(getIndividualsNumber());
+		individuals.addAll(males);
+		individuals.addAll(females);
+		individuals.addAll(immatures);
+		return individuals;
+	}
 	// TODO
 }
