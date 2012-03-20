@@ -8,6 +8,7 @@ import java.util.Vector;
 //   USE static methods for getting Genotype or Id of Genotype
 public class Genotype implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 //==============================| Class Genotype: |===
 	private Genome[] genomes;
 	private boolean[] clonalities;
@@ -88,11 +89,19 @@ public class Genotype implements Serializable {
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 			shift = 2;
 		}
+		else{
+			if ((genomes[0] = parseGenome(str.charAt(0), str.charAt(1))) == null)
+				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+		}
 		if (str.charAt(2+shift)=='('){
 			if (str.charAt(5+shift)!=')')
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 			clonalities[1] = true;
 			if ((genomes[1] = parseGenome(str.charAt(3+shift), str.charAt(4+shift))) == null)
+				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+		}
+		else{
+			if ((genomes[1] = parseGenome(str.charAt(2+shift), str.charAt(3+shift))) == null)
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 		}
 		return getGenotype(genomes, clonalities);
