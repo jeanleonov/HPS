@@ -1,10 +1,6 @@
 package zone;
 
-import individual.Individual;
-
 import java.util.Vector;
-
-import experiment.ExperimentBehaviour;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -20,11 +16,7 @@ public class Zone extends Agent {
 	
 	int resources;
 	
-	private Vector<Individual> strangers;
-
-	public Zone(){
-		
-	}
+	// private Vector<Individual> strangers;
 	
 	@Override
 	protected void setup(){
@@ -37,8 +29,8 @@ public class Zone extends Agent {
 	}
 	
 	float getAttractivness(){
-		
-		return 0;
+		float attractivness = (float) resources / (float) getIndividualsNumber(); 
+		return attractivness;
 	}
 	
 	Vector<AID> getIndividuals(){
@@ -48,5 +40,4 @@ public class Zone extends Agent {
 		individuals.addAll(immatures);
 		return individuals;
 	}
-	// TODO
 }

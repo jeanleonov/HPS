@@ -11,26 +11,34 @@ import jade.lang.acl.ACLMessage;
 public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	private static final long serialVersionUID = 1L;
+	private Zone myZone; 
+	
+	ZoneBehaviour(){
+		myZone = (Zone)myAgent;
+	}
 	
 	@Override
 	public void action() {
 		String message = getMessageContent();
 		if (message.compareTo(SCENARIO_COMMANDS) == 0){
-			//scenarioCommandProcessing(); TODO Realise scenario process
+			// scenarioCommandProcessing(); TODO Realise scenario process
 		}
 		else if (message.compareTo(START_DIE) == 0){
 			dieProcessing();
 		}
 		else if (message.compareTo(START_MOVE) == 0){
-			//moveProcessing(); TODO Realise move process
+			// moveProcessing(); TODO Realise move process
 		}
 		else if (message.compareTo(START_LAST_PHASE) == 0){
-			lastPhaseProcessing();
+			// lastPhaseProcessing(); TODO Realise last phase process
+		}
+		else if (message.compareTo(I_KILL_YOU) == 0){
+			killingSystemProcessing();
 		}
 	}
 
 	private void scenarioCommandProcessing() {
-		String message = getMessageContent();
+		//String message = getMessageContent();
 		// TODO 
 	}
 	
@@ -41,7 +49,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	private void getAnswersOnDieMessage() {
 		ACLMessage message;
-		int individualCounter = ((Zone)myAgent).getIndividualsNumber();
+		int individualCounter = myZone.getIndividualsNumber();
 		for (int i = individualCounter; i > 0; i--){	//warning
 			message = getMessage();
 			if (message.getContent().compareTo(YES) == 0){
@@ -51,10 +59,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 
 	private void killIndividual(AID individual) {
-		Zone zone = (Zone)myAgent;
-		zone.males.remove(individual);
-		zone.females.remove(individual);
-		zone.immatures.remove(individual);
+		myZone.males.remove(individual);
+		myZone.females.remove(individual);
+		myZone.immatures.remove(individual);
 	}
 
 	private void moveProcessing() {
@@ -66,6 +73,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		// TODO Auto-generated method stub
 	}
 	
+	private void killingSystemProcessing() {
+		sendMessageToIndividuals(I_KILL_YOU);
+		killMyself();
+	}
+	
+	private void killMyself() {
+		myAgent.doDelete();
+	}
+
 	private ACLMessage getMessage(){
 		ACLMessage message = myAgent.blockingReceive();
 		if (message != null){
@@ -83,7 +99,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}	
 	
 	private void sendMessageToIndividuals(String message) {
-		for (AID individual : ((Zone)myAgent).getIndividuals()){
+		for (AID individual : myZone.getIndividuals()){
 			sendMessage(individual, message);
 		}
 	}
