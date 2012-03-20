@@ -15,54 +15,58 @@ public class Experiment extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
+	private static final String ZONE_CLASS_PATH = "zone.Zone";
+	
 	Vector<AID> zonesAIDs;
 	int numberOfModelingYears;
-
-	// TODO
-	
 	Scenario scenario;
 	
 	@Override
 	protected void setup(){
-		ContainerController controller = this.getContainerController();
-		Vector<AgentController> zoneAgents = new Vector<AgentController>();
 		zonesAIDs = new Vector<AID>();
-		
-		// Danya!!! Look here!!!
-		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
 		scenario = (Scenario)getArguments()[1];
 		numberOfModelingYears = (int)((Integer)getArguments()[2]);
-		Object[] objs = new Object[2];
-		objs[1] = getAID();
-		
+		startZones(createZones());
+		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
+	}
+	
+	private Vector<AgentController> createZones(){
+		ContainerController controller = this.getContainerController();
+		Vector<AgentController> zoneAgents = new Vector<AgentController>();
+		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
-			objs[0] = zoneDistr;
-			String name = "" + getLocalName() + "_Zone_" + i;
 			try {
-				zoneAgents.add(controller.createNewAgent(name, "zone.Zone", objs));			// agent created
+				zoneAgents.add(
+						controller.createNewAgent(
+								getZoneName(i), 
+								ZONE_CLASS_PATH, 
+								new Object[]{zoneDistr}));			// agent created
 			} catch (StaleProxyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace();// TODO Auto-generated catch block
 			}
-			zonesAIDs.add(new AID(name, AID.ISLOCALNAME));		// agent ID saved to private list
+			zonesAIDs.add(new AID(getZoneName(i), AID.ISLOCALNAME));		// agent ID saved to private list
 			i++;
 		}
-		
+		return zoneAgents;
+	}
+	
+	private void startZones(Vector<AgentController> zoneAgents){
 		for (AgentController agent : zoneAgents){
 			try {
 				agent.start();									// agent behaviors started
 			} catch (StaleProxyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace();// TODO Auto-generated catch block
 			}
 		}
-			
-		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
 	}
 	
 	AID getZoneAID(int zoneNumber){
 		return zonesAIDs.get(zoneNumber);					// if invalid zoneNumber, then ignore it.		
+	}
+	
+	private String getZoneName(int i){
+		return "" + getLocalName() + "_Zone_" + i;
 	}
 	
 }

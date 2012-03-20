@@ -15,32 +15,31 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	
 	Experiment experiment;
 	private int countOfMessages;		// shit-code	* see another shit-code
-	
-	// TODO
+	int yearCursore;
 	
 	public ExperimentBehaviour(){
 		experiment = (Experiment)myAgent;
 		experiment.scenario.start();
+		yearCursore = 0;
 	}
 
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
-		try {
-			scenarioCommandsProcessing();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}			// yearCursor (in Scenario) move HERE!!!
+		// TODO scenarioCommandsProcessing();
 		dieProcessing();
-		moveProcessing();
-		lastPhaseProcessing();
+		// TODO moveProcessing();
+		// TODO (in Zone) lastPhaseProcessing();
+		yearCursore++;
 	}
 
 	@Override
 	public boolean done() {
-		if (experiment.scenario.getYearCursor() < experiment.numberOfModelingYears)
+		if (yearCursore < experiment.numberOfModelingYears)
 			return true;
+		ACLMessage message = getMessageForMassMailing();
+		message.setContent(I_KILL_YOU);
+		experiment.send(message);
+		killMySelf();
 		return false;
 	}
 	
@@ -52,7 +51,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ACLMessage[] messages = new ACLMessage[commands.size()];
 		for (ExperimentCommand command : commands){
 			countOfMessages += command.zonesNumbers.length;
-			messages[i] = new ACLMessage();
+			messages[i] = new ACLMessage(ACLMessage.REQUEST);
 			for (int j=0; j<command.zonesNumbers.length; j++)
 				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers[i]));
 			messages[i].setContentObject(command.command);
@@ -62,34 +61,37 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	}
 
 	private void scenarioCommandsProcessing() throws IOException{
-		ACLMessage[] commands = convertCommandsToACLMessages(
-									experiment.scenario.getCommandsForNextYear());			// yearCursor (in Scenario) move HERE!!!
+		ACLMessage[] commands 
+					= convertCommandsToACLMessages(experiment.scenario.getCommandsForNextYear(yearCursore));
 		for (ACLMessage command : commands)				// send commands
 			experiment.send(command);
-		for (int i=0; i<countOfMessages; i++)			// waiting for reports 	!!!!BAD CODE! 
-			myAgent.blockingReceive();
+		ignoreNMessages(countOfMessages);
 	}
 
 	private void dieProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setContent(START_DIE);
+		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
 	private void moveProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setContent(START_MOVE);
-		ignoreNMessages(experiment.zonesAIDs.size());
+		experiment.send(message);
+		// TODO listening of migration requests
+		//ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
 	private void lastPhaseProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setContent(START_LAST_PHASE);
+		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 	
 	private ACLMessage getMessageForMassMailing(){
-		ACLMessage message = new ACLMessage();
+		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
 		for (AID zoneAID : experiment.zonesAIDs)
 			message.addReceiver(zoneAID);
 		return message;
@@ -98,5 +100,9 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	private void ignoreNMessages(int N){
 		for (int i=0; i<N; i++)				// waiting for reports 	!!!!BAD CODE! 
 			myAgent.blockingReceive();
+	}
+	
+	void killMySelf(){
+		experiment.doDelete();
 	}
 }

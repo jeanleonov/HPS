@@ -56,7 +56,9 @@ public class Scenario implements Serializable{
 		}
 	}
 	
-	public Vector<ExperimentCommand> getCommandsForNextYear(){
+	// experimentYearCursor is necessary to avoid desynchronization
+	public Vector<ExperimentCommand> getCommandsForNextYear(int experimentYearCursor){
+		// TODO if (experimentYearCursor != yearCursor) throw ...; OR reorganize all.
 		Vector<ExperimentCommand> commands = new Vector<ExperimentCommand>();
 		for (Rule rule : activeRules)
 			commands.addAll(rule.getCommandsForIteration(yearCursor));
