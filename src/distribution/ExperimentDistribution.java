@@ -30,7 +30,8 @@ public class ExperimentDistribution implements Serializable {
 		String[] t = resource.split(";");
 		for(int i = 0; i < t.length; i++){
 			try{
-				experiment.addZoneDistribution(ZoneDistribution.parseZone(t[i]));
+				if((t[i] != null) && !(t[i].equals("")))
+					experiment.addZoneDistribution(ZoneDistribution.parseZone(t[i]));
 			}
 			catch(NumberFormatException e){
 				throw e;

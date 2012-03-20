@@ -21,13 +21,19 @@ public class MainClass {
 		    //rma.start();
 
 //==================== Initializing scenario ================================================================
-			BufferedReader scReader = new BufferedReader(new FileReader("scenario.hpss"));
 			
 			Scenario s = new Scenario();
 			
-			String cur = scReader.readLine();
-			while(cur != null){
-				s.addRule(cur);
+			try{
+				BufferedReader scReader = new BufferedReader(new FileReader("scenario.hpss"));
+							
+				String cur = scReader.readLine();
+				while(cur != null){
+					s.addRule(cur);
+				}
+			}
+			catch(FileNotFoundException e){
+				System.out.println("Invalid scenario file");
 			}
 					
 			

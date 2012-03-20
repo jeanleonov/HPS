@@ -36,9 +36,16 @@ public class GenotypeAgeNumberTrio implements Serializable {
 		
 		String[] t = resource.split(" \n");
 		
-		if(t.length % 3 != 0){
+		for(int i = 0; i < t.length; i++){
+			if((t[i] == null) && (t[i].equals("")))
+				for(int j = i; j < t.length - 1; j++ ){
+					t[j] = t[j + 1]; 
+				}
+		}
+		if(t.length < 3){
 			throw new NumberFormatException();
 		}
+		
 		
 		return new GenotypeAgeNumberTrio(Genotype.getGenotype(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
 	}

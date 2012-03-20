@@ -26,7 +26,7 @@ public class ZoneDistribution implements Serializable {
 		// Later I'm plan to throw my own exception, if it will be necessary 
 		
 		ZoneDistribution zone = new ZoneDistribution();
-		String[] t = resource.split("|");
+		String[] t = resource.split("\\|");
 		
 		if(t.length % 2 != 0){
 			throw new NumberFormatException();
@@ -34,7 +34,8 @@ public class ZoneDistribution implements Serializable {
 		
 		for(int i = 0; i < t.length; i += 2){
 			try{
-				zone.addGenotypeDistribution(GenotypeAgeNumberTrio.parseGenotype(t[i]));
+				if((t[i] != null) && !(t[i].equals("")))
+					zone.addGenotypeDistribution(GenotypeAgeNumberTrio.parseGenotype(t[i]));
 			}
 			catch(NumberFormatException e){
 				throw e;
