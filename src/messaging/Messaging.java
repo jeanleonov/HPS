@@ -32,4 +32,6 @@ public interface Messaging {
 	
 	
 //	  String OKKEY			= "ok";						//3 Zone -> Experiment
+	  	
+	String I_KILL_YOU		= "kill";
 }
