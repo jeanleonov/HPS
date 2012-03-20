@@ -14,7 +14,7 @@ public class MainAgent extends Agent{
 		// TODO
 		
 		Object[] args = getArguments();
-		addBehaviour(new Initiator((Scenario)args[0]));			// implement Initiator and define constructor args
+		addBehaviour(new Initiator((String)args[0]));			// implement Initiator and define constructor args
 	}
 	
 
