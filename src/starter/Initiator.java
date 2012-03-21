@@ -75,6 +75,7 @@ public class Initiator extends OneShotBehaviour {
 					res += c;
 					c = in.readLine();
 				}
+				System.out.println("..reading of res|" + "\n" + res);
 				
 				exp = ExperimentDistribution.parseExperiment(res);
 			}
