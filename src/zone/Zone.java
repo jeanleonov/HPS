@@ -1,6 +1,12 @@
 package zone;
 
+import genotype.Genotype;
+
+import java.util.HashMap;
 import java.util.Vector;
+
+import distribution.GenotypeDistribution;
+import distribution.ZoneDistribution;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -16,14 +22,21 @@ public class Zone extends Agent {
 	
 	int resources;
 	
+	
 	// private Vector<Individual> strangers;
 	
 	@Override
 	protected void setup(){
-		// TODO
+		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
+		createIndividuals(zoneDistribution);
 		addBehaviour(new ZoneBehaviour());
 	}
 	
+	private void createIndividuals(ZoneDistribution zoneDistribution) {
+		HashMap<Genotype, GenotypeDistribution> genotypeDistribution = zoneDistribution.getGenotypeDistributions();
+		//genotypeDistribution.
+	}
+
 	int getIndividualsNumber(){
 		return males.size() + females.size() + immatures.size();
 	}

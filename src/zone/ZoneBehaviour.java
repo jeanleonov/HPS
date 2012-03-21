@@ -83,19 +83,12 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 
 	private ACLMessage getMessage(){
-		ACLMessage message = myAgent.blockingReceive();
-		if (message != null){
-			return message;
-		}
-		return null;
+		return myAgent.blockingReceive();
 	}
 	
 	private String getMessageContent(){
 		ACLMessage message = myAgent.blockingReceive();
-		if (message != null){
-			return message.getContent();
-		}
-		return null;
+		return message.getContent();
 	}	
 	
 	private void sendMessageToIndividuals(String message) {
