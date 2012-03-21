@@ -34,4 +34,9 @@ public class Genome {
 		return gender == ((Genome)obj).gender
 			&& name == ((Genome)obj).name;
 	}
+	
+	@Override
+	public String toString() {
+		return "" + (gender==X?"x":"y") + name.name();
+	}
 }

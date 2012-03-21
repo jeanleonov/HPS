@@ -72,6 +72,7 @@ public class Genotype implements Serializable {
 		}
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
+		System.out.println("" + genomes[0] + genomes[1]);/*#*/
 		return genotype;
 	}
 	
