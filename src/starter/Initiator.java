@@ -69,9 +69,11 @@ public class Initiator extends OneShotBehaviour {
 			{
 				years = Integer.parseInt(in.readLine());
 				iterationNum = Integer.parseInt(in.readLine());			// number of distribution units
-				String res = new String(in.readLine());
-				while(res != null){
-					res += in.readLine();
+				String res = new String();
+				String c = new String(in.readLine());
+				while(c != null){
+					res += c;
+					c = in.readLine();
 				}
 				
 				exp = ExperimentDistribution.parseExperiment(res);
