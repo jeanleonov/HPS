@@ -39,7 +39,7 @@ public class Experiment extends Agent {
 			try {
 				zoneAgents.add(
 						controller.createNewAgent(
-								getZoneName(i), 
+								getZoneName(i),
 								ZONE_CLASS_PATH, 
 								new Object[]{zoneDistr}));			// agent created
 			} catch (StaleProxyException e) {

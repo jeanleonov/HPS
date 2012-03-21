@@ -5,16 +5,22 @@ import genotype.Genotype;
 import java.util.HashMap;
 import java.util.Vector;
 
-import distribution.GenotypeDistribution;
+import distribution.ExperimentDistribution;
+import distribution.GenotypeAgeNumberTrio;
 import distribution.ZoneDistribution;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 
 public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String INDIVIDUAL_CLASS_PATH = "individual.Individual";
+	
 	Vector<AID> males;
 	Vector<AID> females;
 	Vector<AID> immatures;
@@ -22,6 +28,7 @@ public class Zone extends Agent {
 	
 	int resources;
 	
+	private int individualCounter = 0;
 	
 	// private Vector<Individual> strangers;
 	
@@ -29,14 +36,40 @@ public class Zone extends Agent {
 	protected void setup(){
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
 		createIndividuals(zoneDistribution);
+		individualCounter = 0;
 		addBehaviour(new ZoneBehaviour());
 	}
 	
 	private void createIndividuals(ZoneDistribution zoneDistribution) {
-		HashMap<Genotype, GenotypeDistribution> genotypeDistribution = zoneDistribution.getGenotypeDistributions();
-		//genotypeDistribution.
+		Vector<GenotypeAgeNumberTrio> gants = zoneDistribution.getGenotypeDistributions();
+		for (GenotypeAgeNumberTrio gant : gants){
+			createIndividualsByGant(gant);
+		}
 	}
 
+	private void createIndividualsByGant(GenotypeAgeNumberTrio gant) {
+		for (int i = 0; i < gant.getNumber(); i++){
+			createIndividual(gant.getGenotype(), gant.getAge());
+		}
+	}
+
+	private void createIndividual(Genotype genotype, int age) {
+		try {	
+			Object[] parameters = {genotype, age, getAttractivness()};		
+			ContainerController controller = getContainerController();
+			AgentController individualAgent = controller.createNewAgent(getIndividualName(), 
+																		INDIVIDUAL_CLASS_PATH, 
+																		parameters);
+			individualAgent.start();	
+		} catch (StaleProxyException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String getIndividualName(){
+		return "" + getLocalName() + "_Individual_" + individualCounter++;
+	}
+	
 	int getIndividualsNumber(){
 		return males.size() + females.size() + immatures.size();
 	}
@@ -53,4 +86,6 @@ public class Zone extends Agent {
 		individuals.addAll(immatures);
 		return individuals;
 	}
+	
+
 }
