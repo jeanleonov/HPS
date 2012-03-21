@@ -63,11 +63,12 @@ public class Genotype implements Serializable {
 				}
 			if (mustContinue)	continue;
 			for (int j=0; j<genomes.length; j++)
-				if (genomes[i].equals(genotypes.get(j).genomes[i])){
+				if (!genomes[i].equals(genotypes.get(j).genomes[i])){
 					mustContinue = true;
 					break;
 				}
-			if (!mustContinue)	return genotypes.get(i);
+			if (mustContinue)	continue;
+			return genotypes.get(i);
 		}
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
