@@ -88,7 +88,7 @@ public class Initiator extends OneShotBehaviour {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 
 			//System.out.println(years + " " + iterationNum);
 			startExperiments(createExperiments());

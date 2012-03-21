@@ -51,16 +51,22 @@ public class Genotype implements Serializable {
 	/* It serves as a constructor
 	 *
 	 */
+	static int callNumber=0;
 	static public Genotype getGenotype(Genome[] genomes, boolean[] clonalities){
 		boolean mustContinue;
 		for (int i=0; i<genotypes.size(); i++){
 			mustContinue=false;
 			if (genomes.length != genotypes.get(i).genomes.length)	continue;
-			for (int j=0; j<clonalities.length; j++)
+			for (int j=0; j<clonalities.length; j++){
+				if (callNumber==100){
+					callNumber = callNumber;
+				}
 				if (clonalities[j] != genotypes.get(i).clonalities[j]){
 					mustContinue = true;
 					break;
 				}
+				callNumber++;
+			}
 			if (mustContinue)	continue;
 			for (int j=0; j<genomes.length; j++)
 				if (!genomes[j].equals(genotypes.get(i).genomes[j])){
@@ -72,7 +78,8 @@ public class Genotype implements Serializable {
 		}
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
-		System.out.println("" + genomes[0] + genomes[1]);/*#*/
+		System.out.println("" + (clonalities[0]?"(":"") + genomes[0] + (clonalities[0]?")":"")
+				 + (clonalities[1]?"(":"") + genomes[1] + (clonalities[1]?")":""));/*#*/
 		return genotype;
 	}
 	

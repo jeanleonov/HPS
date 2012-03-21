@@ -23,6 +23,7 @@ public class Experiment extends Agent {
 	
 	@Override
 	protected void setup(){
+		System.out.println("Experiment created");
 		zonesAIDs = new Vector<AID>();
 		scenario = (Scenario)getArguments()[1];
 		numberOfModelingYears = (int)((Integer)getArguments()[2]);
