@@ -1,6 +1,11 @@
 package zone;
 
 import java.io.IOException;
+import java.util.Vector;
+
+import statistic.GenotypeAgeDistribution;
+import statistic.GenotypeAgeNumberTrio;
+import statistic.StatisticPackage;
 
 import messaging.Messaging;
 
@@ -11,10 +16,14 @@ import jade.lang.acl.ACLMessage;
 public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	private static final long serialVersionUID = 1L;
-	private Zone myZone; 
+	
+	private Zone myZone;
+	
+	private StatisticPackage currentPackage;
 	
 	ZoneBehaviour(){
 		myZone = (Zone)myAgent;
+		currentPackage = createStatisticPackage();
 	}
 	
 	@Override
@@ -35,6 +44,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		else if (message.compareTo(I_KILL_YOU) == 0){
 			killingSystemProcessing();
 		}
+		refresfStatistic();
+		myZone.iteration++;
 	}
 
 	private void scenarioCommandProcessing() {
@@ -106,5 +117,27 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
+	}
+	
+	private void refresfStatistic() {
+		//refreshCurrentStatisticPackage();
+		
+	}
+
+	private StatisticPackage createStatisticPackage(){
+		// TODO Experiment must give zone his own id and zone id 
+		int experimentId = 0;
+		int zoneId = 0;
+		int iterationId = myZone.iteration;
+		GenotypeAgeDistribution gad = createGAD();
+		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
+		return statisticPackage;
+	}
+
+	private GenotypeAgeDistribution createGAD() {
+		Vector<GenotypeAgeNumberTrio> gants = new Vector<GenotypeAgeNumberTrio>();
+		
+		GenotypeAgeDistribution gad = new GenotypeAgeDistribution(gants);
+		return gad;
 	}
 }

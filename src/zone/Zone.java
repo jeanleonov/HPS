@@ -2,10 +2,8 @@ package zone;
 
 import genotype.Genotype;
 
-import java.util.HashMap;
 import java.util.Vector;
 
-import distribution.ExperimentDistribution;
 import distribution.GenotypeAgeNumberTrio;
 import distribution.ZoneDistribution;
 
@@ -27,8 +25,10 @@ public class Zone extends Agent {
 	Vector<AID> yarlings;
 	
 	int resources;
+	int iteration = 0;
 	
 	private int individualCounter = 0;
+	
 	
 	// private Vector<Individual> strangers;
 	
@@ -86,6 +86,4 @@ public class Zone extends Agent {
 		individuals.addAll(immatures);
 		return individuals;
 	}
-	
-
 }
