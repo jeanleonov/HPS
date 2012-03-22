@@ -37,7 +37,7 @@ public class GenotypeAgeNumberTrio implements Serializable {
 		String[] t = resource.split(" ");
 		
 		for(int i = 0; i < t.length; i++){
-			if((t[i] == null) && (t[i].equals("")))
+			if((t[i] == null) || (t[i].equals("")))
 				for(int j = i; j < t.length - 1; j++ ){
 					t[j] = t[j + 1]; 
 				}
