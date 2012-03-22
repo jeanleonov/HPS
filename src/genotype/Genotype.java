@@ -7,16 +7,17 @@ import java.util.Vector;
 // Important!  constructor of Genotype is PRIVATE
 //   USE static methods for getting Genotype or Id of Genotype
 public class Genotype implements Serializable {
-	
+
+	private static final long serialVersionUID = 1L;
 //==============================| Class Genotype: |===
 	private Genome[] genomes;
 	private boolean[] clonalities;
-	
+
 	private Genotype(Genome[] genomes, boolean[] clonalities){
 		this.genomes = genomes;
 		this.clonalities = clonalities;
 	}
-	
+
 	// only for 2 Genomes in Genotype!!!
 	public byte getGender(){
 		if(genomes[0].gender == Genome.X  &&  genomes[1].gender == Genome.X)
@@ -26,7 +27,7 @@ public class Genotype implements Serializable {
 			return Genome.Y;
 		return Genome.UNDEF;
 	}
-	
+
 	public Genome[] getGenomes() {
 		return genomes;
 	}
@@ -34,19 +35,19 @@ public class Genotype implements Serializable {
 	public boolean[] getClonalities() {
 		return clonalities;
 	}
-	
+
 	public String toString() {
 		// TODO
 		return null;
 	}
-	
-	
-	
+
+
+
 //==============================| GLOBAL: |===========
 
 	static private Vector<Genotype> genotypes = new Vector<Genotype>();
 	final static public byte UNDEF = -1;
-	
+
 	/* It serves as a constructor
 	 *
 	 */
@@ -56,23 +57,24 @@ public class Genotype implements Serializable {
 			mustContinue=false;
 			if (genomes.length != genotypes.get(i).genomes.length)	continue;
 			for (int j=0; j<clonalities.length; j++)
-				if (clonalities[j] != genotypes.get(j).clonalities[j]){
+				if (clonalities[j] != genotypes.get(i).clonalities[j]){
 					mustContinue = true;
 					break;
 				}
 			if (mustContinue)	continue;
 			for (int j=0; j<genomes.length; j++)
-				if (genomes[i].equals(genotypes.get(j).genomes[i])){
+				if (!genomes[j].equals(genotypes.get(i).genomes[j])){
 					mustContinue = true;
 					break;
 				}
-			if (!mustContinue)	return genotypes.get(i);
+			if (mustContinue)	continue;
+			return genotypes.get(i);
 		}
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
 		return genotype;
 	}
-	
+
 	/* It serves as a constructor by String as "xRyL", or "xRxR", or "(yL)xL" ...
 	 *
 	 */
@@ -88,6 +90,10 @@ public class Genotype implements Serializable {
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 			shift = 2;
 		}
+		else{
+			if ((genomes[0] = parseGenome(str.charAt(0), str.charAt(1))) == null)
+				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+		}
 		if (str.charAt(2+shift)=='('){
 			if (str.charAt(5+shift)!=')')
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
@@ -95,9 +101,13 @@ public class Genotype implements Serializable {
 			if ((genomes[1] = parseGenome(str.charAt(3+shift), str.charAt(4+shift))) == null)
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 		}
+		else{
+			if ((genomes[1] = parseGenome(str.charAt(2+shift), str.charAt(3+shift))) == null)
+				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+		}
 		return getGenotype(genomes, clonalities);
 	}
-	
+
 		// only for 2 Genomes in Genotype!!!
 		private static Genome parseGenome(char gender, char name){
 			byte genderByte;
@@ -114,7 +124,7 @@ public class Genotype implements Serializable {
 			else return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 			return new Genome(genderByte, nameByte);
 		}
-	
+
 	/* It serves as a constructor
 	 * but return ID
 	 */
@@ -140,7 +150,7 @@ public class Genotype implements Serializable {
 		genotypes.add(genotype);
 		return genotypes.size()-1;
 	}
-	
+
 	/* It serves as a constructor by String as "xRyL", or "xRxR", or "(yL)xL" ...
 	 * but return ID
 	 */
@@ -165,12 +175,12 @@ public class Genotype implements Serializable {
 		}
 		return getGenotypeId(genomes, clonalities);
 	}
-	
+
 	// get existed genotype
 	static public Genotype getGenotypeById(int id){
 		return genotypes.get(id);
 	}
-	
+
 	// get existed ID
 	static public int getIdOf(Genotype genotype){
 		return genotypes.indexOf(genotype);

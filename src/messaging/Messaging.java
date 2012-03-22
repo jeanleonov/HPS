@@ -32,4 +32,11 @@ public interface Messaging {
 	
 	
 //	  String OKKEY			= "ok";						//3 Zone -> Experiment
+	  	
+	String I_KILL_YOU		= "kill";
+	
+	// --- by AAP ---
+	String GIVE_ME_YOUR_AGE = "giveAge";				// Zone -> Individual (at the end of last phase
+														// while we generating statistic)
+	String GIVE_ME_YOUR_GENOTYPE = "giveGenotype";		// Zone -> Individual (-||-) 
 }

@@ -12,10 +12,16 @@ public class GenotypeAgeDistribution implements Serializable {
 
 	private Vector<GenotypeAgeNumberTrio> gants;
 
+	/*
 	public GenotypeAgeDistribution(Vector<GenotypeAgeNumberTrio> gants) {
 		this.gants = gants;
 	}
+	*/
 
+	public GenotypeAgeDistribution() {
+		gants = new Vector<GenotypeAgeNumberTrio>();
+	}
+	
 	public GenotypeAgeDistribution(int[] ages, int[] genotypes, int[] numbers)
 			throws NotSameParametersSizeException {
 		if (ages.length == genotypes.length
@@ -24,6 +30,22 @@ public class GenotypeAgeDistribution implements Serializable {
 			addGants(ages, genotypes, numbers);
 		} else
 			throw new NotSameParametersSizeException();
+	}
+	
+	public void addToGant(int genotype, int age){
+		if (tryToInsertInGant(genotype, age));
+		else
+			gants.add(new GenotypeAgeNumberTrio(genotype, age, 1));
+	}
+
+	private boolean tryToInsertInGant(int genotype, int age) {
+		for (GenotypeAgeNumberTrio gant : gants){
+			if (gant.genotype == genotype && gant.age == age){
+				gant.number++;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void addGants(int[] ages, int[] genotypes, int[] numbers) {

@@ -9,21 +9,21 @@ import jxl.write.biff.RowsExceededException;
 
 public class GenotypeAgeNumberTrio implements Serializable{
 
-	private int genotype; // not int ???
-	private int age;
-	private int number;
+	int genotype; // not int ???
+	int age;
+	int number;
 
-	public GenotypeAgeNumberTrio(int genotype, int age, int number) {
+	GenotypeAgeNumberTrio(int genotype, int age, int number) {
 		this.genotype = genotype;
 		this.age = age;
 		this.number = number;
 	}
 
-	public void print(String separator) {
+	void print(String separator) {
 		System.out.println(genotype + separator + age + separator + number);
 	}
 
-	public void writeToSheet(WritableSheet sheet) throws RowsExceededException,
+	void writeToSheet(WritableSheet sheet) throws RowsExceededException,
 			WriteException {
 		Number num;
 		num = new Number(StatisticDispatcher.GENOTYPE_POS,
