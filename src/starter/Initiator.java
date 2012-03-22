@@ -30,7 +30,7 @@ public class Initiator extends OneShotBehaviour {
 	
 	Vector<AID> experimentAIDs = new Vector<AID>();
 	
-	public Initiator()
+/*	public Initiator()
 	{
 		super();
 		this.source = "src/starter/Initiation.hpsi";
@@ -53,6 +53,12 @@ public class Initiator extends OneShotBehaviour {
 		super();
 		this.scenario = scenario;
 		this.source = source;
+	}*/
+	
+	@Override
+	public void onStart(){
+		scenario = ((MainAgent)myAgent).getScenario();
+		source = ((MainAgent)myAgent).getSource();
 	}
 	
 	public void action()

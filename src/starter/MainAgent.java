@@ -12,11 +12,14 @@ public class MainAgent extends Agent{
 	@Override
 	protected void setup(){
 		// TODO
-		
-		Object[] args = getArguments();
 		addBehaviour(new Initiator());	
-		//addBehaviour(new Initiator((Scenario)args[0]));			// implement Initiator and define constructor args
 	}
 	
-
+	public String getSource(){
+		return (String)getArguments()[0];
+	}
+	
+	public Scenario getScenario(){
+		return (Scenario)getArguments()[1];
+	}
 }
