@@ -19,42 +19,42 @@ import jade.wrapper.StaleProxyException;
 public class Initiator extends OneShotBehaviour {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	// TODO
 
 	private int iterationNum;
 	private String source = new String();
 	protected int years;
 	protected ExperimentDistribution exp = new ExperimentDistribution();
-	protected Scenario scenario;
-	
+	protected Scenario scenario = new Scenario();
+
 	Vector<AID> experimentAIDs;
-	
+
 	public Initiator()
 	{
 		super();
-		this.source = "Initiation.hpsi";
+		this.source = "src/starter/Initiation.hpsi";
 	}
-	
+
 	public Initiator(Scenario args)
 	{
 		super();
 		this.scenario = args;
 	}
-	
+
 	public Initiator(String Source)
 	{
 		super();
 		this.source = Source;
 	}
-	
+
 	public Initiator(Scenario scenario, String source)
 	{
 		super();
 		this.scenario = scenario;
 		this.source = source;
 	}
-	
+
 	public void action()
 	{
 			BufferedReader in = null;
@@ -64,7 +64,7 @@ public class Initiator extends OneShotBehaviour {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			try
 			{
 				years = Integer.parseInt(in.readLine());
@@ -75,8 +75,7 @@ public class Initiator extends OneShotBehaviour {
 					res += c;
 					c = in.readLine();
 				}
-				System.out.println("..reading of res|" + "\n" + res);
-				
+
 				exp = ExperimentDistribution.parseExperiment(res);
 			}
 			catch(NumberFormatException e)
@@ -89,13 +88,13 @@ public class Initiator extends OneShotBehaviour {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} 
 
 			//System.out.println(years + " " + iterationNum);
 			startExperiments(createExperiments());
 	}
-	
-	
+
+
 	private Vector<AgentController> createExperiments(){
 		ContainerController controller = this.myAgent.getContainerController();
 		Vector<AgentController> experimentAgents = new Vector<AgentController>();
@@ -114,7 +113,7 @@ public class Initiator extends OneShotBehaviour {
 		}
 		return experimentAgents;
 	}
-	
+
 	private void startExperiments(Vector<AgentController> experimentAgents){
 		for (AgentController agent : experimentAgents){
 			try {
@@ -124,11 +123,11 @@ public class Initiator extends OneShotBehaviour {
 			}
 		}
 	}
-	
+
 	AID getExperimentAID(int experimentNumber){
 		return experimentAIDs.get(experimentNumber);					// if invalid zoneNumber, then ignore it.		
 	}
-	
+
 	private String getExperimentName(int i){
 		return "" + myAgent.getLocalName() + "_Experiment_" + i;
 	}
