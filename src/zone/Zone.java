@@ -26,7 +26,7 @@ public class Zone extends Agent {
 	Vector<AID> yarlings;
 	
 	int resources;
-	int iteration = 0;
+	int iteration = -1;
 	
 	private int individualCounter = 0;
 	

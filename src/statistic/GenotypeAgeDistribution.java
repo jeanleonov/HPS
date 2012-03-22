@@ -32,8 +32,20 @@ public class GenotypeAgeDistribution implements Serializable {
 			throw new NotSameParametersSizeException();
 	}
 	
-	public void addGant(int genotype, int age, int number){
-		gants.add(new GenotypeAgeNumberTrio(genotype, age, number));
+	public void addToGant(int genotype, int age){
+		if (tryToInsertInGant(genotype, age));
+		else
+			gants.add(new GenotypeAgeNumberTrio(genotype, age, 1));
+	}
+
+	private boolean tryToInsertInGant(int genotype, int age) {
+		for (GenotypeAgeNumberTrio gant : gants){
+			if (gant.genotype == genotype && gant.age == age){
+				gant.number++;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void addGants(int[] ages, int[] genotypes, int[] numbers) {

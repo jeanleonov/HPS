@@ -9,9 +9,9 @@ import jxl.write.biff.RowsExceededException;
 
 public class GenotypeAgeNumberTrio implements Serializable{
 
-	private int genotype; // not int ???
-	private int age;
-	private int number;
+	int genotype; // not int ???
+	int age;
+	int number;
 
 	GenotypeAgeNumberTrio(int genotype, int age, int number) {
 		this.genotype = genotype;

@@ -1,5 +1,7 @@
 package zone;
 
+import genotype.Genotype;
+
 import java.io.IOException;
 import java.util.Vector;
 
@@ -12,6 +14,7 @@ import messaging.Messaging;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
@@ -23,7 +26,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	ZoneBehaviour(){
 		myZone = (Zone)myAgent;
-		currentPackage = createStatisticPackage();
+		
 	}
 	
 	@Override
@@ -31,6 +34,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		String message = getMessageContent();
 		if (message.compareTo(SCENARIO_COMMANDS) == 0){
 			// scenarioCommandProcessing(); TODO Realise scenario process
+			currentPackage = createStatisticPackage();
+			myZone.iteration++;
 		}
 		else if (message.compareTo(START_DIE) == 0){
 			dieProcessing();
@@ -40,12 +45,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		}
 		else if (message.compareTo(START_LAST_PHASE) == 0){
 			// lastPhaseProcessing(); TODO Realise last phase process
+			// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
 		}
 		else if (message.compareTo(I_KILL_YOU) == 0){
 			killingSystemProcessing();
 		}
-		refresfStatistic();
-		myZone.iteration++;
+		
+
 	}
 
 	private void scenarioCommandProcessing() {
@@ -54,7 +60,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void dieProcessing() {
-		sendMessageToIndividuals(START_DIE);
+		sendMessageToIndividuals(START_DIE, ACLMessage.INFORM);
 		getAnswersOnDieMessage();
 	}
 
@@ -76,7 +82,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 
 	private void moveProcessing() {
-		sendMessageToIndividuals(START_MOVE);
+		sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);
 		// TODO
 	}
 	
@@ -85,7 +91,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void killingSystemProcessing() {
-		sendMessageToIndividuals(I_KILL_YOU);
+		sendMessageToIndividuals(I_KILL_YOU, ACLMessage.INFORM);
 		killMyself();
 	}
 	
@@ -102,15 +108,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		return message.getContent();
 	}	
 	
-	private void sendMessageToIndividuals(String message) {
+	private void sendMessageToIndividuals(String message, int performative) {
 		for (AID individual : myZone.getIndividuals()){
-			sendMessage(individual, message);
+			sendMessage(individual, message, performative);
 		}
 	}
 	
-	private void sendMessage(AID individual, String messageContent) {
+	private void sendMessage(AID individual, String messageContent, int performative) {
 		try {
-			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+			ACLMessage message = new ACLMessage(performative);
 			message.setContentObject(messageContent);
 			message.addReceiver(individual);
 			myAgent.send(message);
@@ -118,14 +124,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			e.printStackTrace();
 		}		
 	}
-	
-	private void refresfStatistic() {
-		//refreshCurrentStatisticPackage();
-		
-	}
 
 	private StatisticPackage createStatisticPackage(){
-		// TODO Experiment must give zone his own id and zone id 
+		// TODO Experiment must give zone his own id and zone id (on setup)
 		int experimentId = 0;
 		int zoneId = 0;
 		int iterationId = myZone.iteration;
@@ -140,8 +141,27 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		for (AID individualAID : individuals){
 			int age = getIndividualAge(individualAID);
 			int genotype = getIndividualGenotype(individualAID);
-			gad.add
+			gad.addToGant(genotype, age);
 		}
 		return gad;
+	}
+
+	private int getIndividualAge(AID individualAID) {
+		sendMessage(individualAID, GIVE_ME_YOUR_AGE, ACLMessage.REQUEST);
+		String messageContent = getMessage().getContent();
+		int age = Integer.parseInt(messageContent);
+		return age;
+	}	
+	
+	private int getIndividualGenotype(AID individualAID) {	
+		int genotypeId = -1;
+		try {
+			sendMessage(individualAID, this.GIVE_ME_YOUR_GENOTYPE, ACLMessage.REQUEST);
+			Genotype messageContent  = (Genotype)getMessage().getContentObject();
+			genotypeId = Genotype.getIdOf(messageContent);
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
+		return genotypeId;
 	}
 }
