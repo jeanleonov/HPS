@@ -48,7 +48,7 @@ public class MainClass implements Pathes{
 			mainArgs[0] = PROJECT_PATH + "src/starter/Initiation.hpsi" /*LAO_TESTING#s*/;
 			mainArgs[1] = null; //mainArgs[1] = s;
 			AgentController mainAgent = ac.createNewAgent("MainAgent", "starter.MainAgent", mainArgs);
-			mainAgent.start();
+			//mainAgent.start();
 			
 		} catch(Exception e) {
 			e.printStackTrace();

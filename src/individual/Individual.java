@@ -12,6 +12,8 @@ import jade.domain.FIPAException;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.lang.acl.MessageTemplate;
+
 
 public class Individual extends Agent {
 
@@ -19,7 +21,7 @@ public class Individual extends Agent {
 	
 	private Genotype myGenotype;
 	protected int age;
-	ArrayList<ViabilityPair> settings;
+	ArrayList<ViabilityPair> uSettings;
 	
 	@Override
 	protected void setup() {
@@ -28,8 +30,12 @@ public class Individual extends Agent {
 			return;
 		myGenotype = (Genotype) args[0];
 		age = (Integer) args[1];
-
+		
 		GetSettings();
+		
+		float prob = getSetting(settings.Vocabulary.Param.Survival);
+		System.out.println(prob);
+		
 		BehaviourRegister();
 	}
 	
@@ -45,9 +51,16 @@ public class Individual extends Agent {
   		
   		try {
   			DFAgentDescription[] results = null;
+  			
   			while(results == null || results.length < 1) {
-  				results = DFService.search(this, template, sc);
+  				try {
+  					results = DFService.search(this, template, sc);
+  				}
+  				catch(FailureException e) {
+  					System.out.println("-_-");
+  				}
   			}
+  			
   			DFAgentDescription dfd = results[0];
   			AID provider = dfd.getName();
   			
@@ -59,12 +72,14 @@ public class Individual extends Agent {
 			catch (Exception ex) { ex.printStackTrace(); }
 			send(msg);
 			
-			do { msg = blockingReceive(); }
+			do {
+				msg = blockingReceive(MessageTemplate.MatchSender( provider ));
+			}
 			while(msg.getPerformative() == ACLMessage.FAILURE);
 			
 			if(msg.getPerformative() != ACLMessage.CONFIRM) throw new NotUnderstoodException("Not understood");
 			
-			settings = (ArrayList<ViabilityPair>) msg.getContentObject();
+			uSettings = (ArrayList<ViabilityPair>) msg.getContentObject();
 			
 		} catch (FIPAException e) {
 			e.printStackTrace();
@@ -74,7 +89,7 @@ public class Individual extends Agent {
 	}
 	
 	protected Float getSetting(settings.Vocabulary.Param param) {
-		for(settings.ViabilityPair pair : settings) {
+		for(settings.ViabilityPair pair : uSettings) {
 			if(pair.getParam() == param) return pair.getValue();
 		}
 		return 0f;

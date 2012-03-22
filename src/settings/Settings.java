@@ -76,7 +76,15 @@ public class Settings extends Agent implements Vocabulary {
 		@Override
 		public void action() {
 			ViabilityFill();
-			PosterityFill();
+			//PosterityFill();
+			if(true) return;
+			for(genotype.Genotype g : viabilityTable.keySet()) {
+				System.out.print(g + " - ");
+				for(ViabilityPair pair : viabilityTable.get(g)) {
+					System.out.print(pair.getValue() + ", ");
+				}
+				System.out.println();
+			}
 			
 			isDataReady = true;
 		}
@@ -87,6 +95,10 @@ public class Settings extends Agent implements Vocabulary {
 				BufferedReader reader = new BufferedReader(viabilityReader);
 				String orderLine = reader.readLine();
 				OrderFill(genomeOrder, orderLine, 3);
+				
+				for(genotype.Genotype g : genomeOrder) {
+					System.out.println(g);
+				}
 
 				String str;
 				while ((str = reader.readLine()) != null) {
@@ -181,13 +193,13 @@ public class Settings extends Agent implements Vocabulary {
 					if (content instanceof genotype.Genotype) {
 						genotype.Genotype pair = (genotype.Genotype) content;
 						ArrayList<ViabilityPair> value = viabilityTable.get(pair);
-						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(value);
+						reply.setPerformative(ACLMessage.CONFIRM);
 					} else if (content instanceof PosterityParentsPair) {
 						PosterityParentsPair pair = (PosterityParentsPair) content;
 						ArrayList<PosterityResultPair> result = posterityTable.get(pair);
-						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(result);
+						reply.setPerformative(ACLMessage.CONFIRM);
 					} else {
 						reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
 					}
