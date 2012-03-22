@@ -24,7 +24,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private StatisticPackage currentPackage;
 	
-	ZoneBehaviour(){
+	@Override
+	public void onStart(){
 		myZone = (Zone)myAgent;
 		
 	}

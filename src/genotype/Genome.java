@@ -1,6 +1,8 @@
 package genotype;
 
-public class Genome {
+import java.io.Serializable;
+
+public class Genome implements Serializable{
 
 	final static public byte	X = 1,
 								Y = 2,
