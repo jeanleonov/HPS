@@ -19,7 +19,14 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	
 	public ExperimentBehaviour(){
 		experiment = (Experiment)myAgent;
-		experiment.scenario.start();
+	//	experiment.scenario.start();
+		yearCursore = 0;
+	}
+	
+	@Override
+	public void onStart() {
+		experiment = (Experiment)myAgent;
+	//	experiment.scenario.start();
 		yearCursore = 0;
 	}
 
