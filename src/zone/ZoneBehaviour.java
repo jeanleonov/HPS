@@ -126,9 +126,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 
 	private StatisticPackage createStatisticPackage(){
-		// TODO Experiment must give zone his own id and zone id (on setup)
-		int experimentId = 0;
-		int zoneId = 0;
+		int experimentId = myZone.experimentId;
+		int zoneId = myZone.zoneId;
 		int iterationId = myZone.iteration;
 		GenotypeAgeDistribution gad = createGAD();
 		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
@@ -156,7 +155,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private int getIndividualGenotype(AID individualAID) {	
 		int genotypeId = -1;
 		try {
-			sendMessage(individualAID, this.GIVE_ME_YOUR_GENOTYPE, ACLMessage.REQUEST);
+			sendMessage(individualAID, GIVE_ME_YOUR_GENOTYPE, ACLMessage.REQUEST);
 			Genotype messageContent  = (Genotype)getMessage().getContentObject();
 			genotypeId = Genotype.getIdOf(messageContent);
 		} catch (UnreadableException e) {

@@ -20,10 +20,13 @@ public class Zone extends Agent {
 
 	private static final String INDIVIDUAL_CLASS_PATH = "individual.Individual";
 	
-	Vector<AID> males;
-	Vector<AID> females;
-	Vector<AID> immatures;
-	Vector<AID> yarlings;
+	Vector<AID> males = new Vector<AID>();
+	Vector<AID> females = new Vector<AID>();;
+	Vector<AID> immatures = new Vector<AID>();;
+	Vector<AID> yarlings = new Vector<AID>();;
+	
+	int experimentId;
+	int zoneId;
 	
 	int resources;
 	int iteration = -1;
@@ -36,6 +39,9 @@ public class Zone extends Agent {
 	@Override
 	protected void setup(){
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
+		experimentId = (Integer)getArguments()[1];
+		zoneId = (Integer)getArguments()[2];
+		
 		createIndividuals(zoneDistribution);
 		individualCounter = 0;
 		addBehaviour(new ZoneBehaviour());
