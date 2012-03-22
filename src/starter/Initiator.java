@@ -28,7 +28,7 @@ public class Initiator extends OneShotBehaviour {
 	protected ExperimentDistribution exp = new ExperimentDistribution();
 	protected Scenario scenario = new Scenario();
 	
-	Vector<AID> experimentAIDs;
+	Vector<AID> experimentAIDs = new Vector<AID>();
 	
 	public Initiator()
 	{
