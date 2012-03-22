@@ -18,14 +18,16 @@ public class Experiment extends Agent {
 	private static final String ZONE_CLASS_PATH = "zone.Zone";
 	
 	Vector<AID> zonesAIDs;
-	int numberOfModelingYears;
+	Integer numberOfModelingYears;
+	Integer experimentNumber;
 	Scenario scenario;
 	
 	@Override
 	protected void setup(){
 		zonesAIDs = new Vector<AID>();
 		// scenario = (Scenario)getArguments()[1];				// TODO to future
-		numberOfModelingYears = (int)((Integer)getArguments()[2]);
+		numberOfModelingYears = (Integer)getArguments()[2];
+		experimentNumber = (Integer)getArguments()[3];
 		startZones(createZones());
 		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
 	}
@@ -41,7 +43,7 @@ public class Experiment extends Agent {
 						controller.createNewAgent(
 								getZoneName(i),
 								ZONE_CLASS_PATH, 
-								new Object[]{zoneDistr}));			// agent created
+								new Object[]{zoneDistr, experimentNumber, i}));			// agent created
 			} catch (StaleProxyException e) {
 				e.printStackTrace();// TODO Auto-generated catch block
 			}

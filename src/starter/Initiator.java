@@ -104,7 +104,7 @@ public class Initiator extends OneShotBehaviour {
 						controller.createNewAgent(
 								getExperimentName(i), 
 								"experiment.Experiment", 
-								new Object[]{exp, scenario, years}));			// agent created
+								new Object[]{exp, scenario, years, i}));			// agent created
 			} catch (StaleProxyException e) {
 				e.printStackTrace();// TODO Auto-generated catch block
 			}
