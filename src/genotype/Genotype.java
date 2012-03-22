@@ -140,7 +140,7 @@ public class Genotype implements Serializable {
 				}
 			if (mustContinue)	continue;
 			for (int j=0; j<genomes.length; j++)
-				if (genomes[j].equals(genotypes.get(i).genomes[j])){
+				if (!genomes[j].equals(genotypes.get(i).genomes[j])){
 					mustContinue = true;
 					break;
 				}
