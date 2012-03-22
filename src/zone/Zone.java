@@ -1,5 +1,6 @@
 package zone;
 
+import genotype.Genome;
 import genotype.Genotype;
 
 import java.util.Vector;
@@ -55,17 +56,34 @@ public class Zone extends Agent {
 
 	private void createIndividual(Genotype genotype, int age) {
 		try {	
-			Object[] parameters = {genotype, age, getAttractivness()};		
+			Object[] parameters = {genotype, age, getAttractivness()};
+			String agentName = getIndividualName();
 			ContainerController controller = getContainerController();
-			AgentController individualAgent = controller.createNewAgent(getIndividualName(), 
+			AgentController individualAgent = controller.createNewAgent(agentName, 
 																		INDIVIDUAL_CLASS_PATH, 
 																		parameters);
-			individualAgent.start();	
+			individualAgent.start();
+			addIndividualToList(agentName, genotype, age);
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	private void addIndividualToList(String agentName, Genotype genotype, int age) {
+		if (age < 2) {		// TODO release check immature age from settings !!!
+			immatures.add(new AID(agentName, AID.ISLOCALNAME));
+		}
+		else {
+			if (genotype.getGender() == Genome.X){
+				males.add(new AID(agentName, AID.ISLOCALNAME));
+			}
+			else {
+				females.add(new AID(agentName, AID.ISLOCALNAME));
+			}
+		}
+		
+	}
+
 	private String getIndividualName(){
 		return "" + getLocalName() + "_Individual_" + individualCounter++;
 	}
@@ -75,7 +93,7 @@ public class Zone extends Agent {
 	}
 	
 	float getAttractivness(){
-		float attractivness = (float) resources / (float) getIndividualsNumber(); 
+		float attractivness = (float) resources / (float) getIndividualsNumber();
 		return attractivness;
 	}
 	

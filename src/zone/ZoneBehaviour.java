@@ -135,9 +135,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 
 	private GenotypeAgeDistribution createGAD() {
-		Vector<GenotypeAgeNumberTrio> gants = new Vector<GenotypeAgeNumberTrio>();
-		
-		GenotypeAgeDistribution gad = new GenotypeAgeDistribution(gants);
+		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
+		Vector<AID> individuals = myZone.getIndividuals();
+		for (AID individualAID : individuals){
+			int age = getIndividualAge(individualAID);
+			int genotype = getIndividualGenotype(individualAID);
+			gad.add
+		}
 		return gad;
 	}
 }
