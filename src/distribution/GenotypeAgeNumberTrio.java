@@ -34,7 +34,7 @@ public class GenotypeAgeNumberTrio implements Serializable {
 	public static GenotypeAgeNumberTrio parseGenotype(String resource) throws NumberFormatException{
 		// Later I'm plan to throw my own exception, if it will be necessary 
 		
-		String[] t = resource.split(" \n");
+		String[] t = resource.split(" ");
 		
 		for(int i = 0; i < t.length; i++){
 			if((t[i] == null) && (t[i].equals("")))

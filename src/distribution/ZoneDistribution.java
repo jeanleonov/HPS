@@ -28,10 +28,6 @@ public class ZoneDistribution implements Serializable {
 		ZoneDistribution zone = new ZoneDistribution();
 		String[] t = resource.split("\\|");
 		
-		if(t.length % 2 != 0){
-			throw new NumberFormatException();
-		}
-		
 		for(int i = 0; i < t.length; i += 2){
 			try{
 				if((t[i] != null) && !(t[i].equals("")))

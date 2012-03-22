@@ -26,14 +26,14 @@ public class Initiator extends OneShotBehaviour {
 	private String source = new String();
 	protected int years;
 	protected ExperimentDistribution exp = new ExperimentDistribution();
-	protected Scenario scenario;
+	protected Scenario scenario = new Scenario();
 	
 	Vector<AID> experimentAIDs;
 	
 	public Initiator()
 	{
 		super();
-		this.source = "Initiation.hpsi";
+		this.source = "src/starter/Initiation.hpsi";
 	}
 	
 	public Initiator(Scenario args)

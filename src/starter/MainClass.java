@@ -39,8 +39,8 @@ public class MainClass {
 			
 //==================== Running Settings ====================================================================			
 			Object[] readers = new Object[2];
-			readers[0] = new BufferedReader(new FileReader("../settings/Viability.csv"));
-			readers[1] = new BufferedReader(new FileReader("../settings/Posterity.csv"));
+			readers[0] = new BufferedReader(new FileReader("src/settings/Viability.csv"));
+			readers[1] = new BufferedReader(new FileReader("src/settings/Posterity.csv"));
 			AgentController settingsAgent = ac.createNewAgent("Settings", "settings.Settings", readers);
 			settingsAgent.start();
 //==========================================================================================================			
