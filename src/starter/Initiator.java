@@ -129,7 +129,7 @@ public class Initiator extends OneShotBehaviour {
 	}
 	
 	private String getExperimentName(int i){
-		return "" + myAgent.getLocalName() + "_Experiment_" + i;
+		return "Experiment_" + i;
 	}
 
 }

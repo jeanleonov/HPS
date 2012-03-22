@@ -17,9 +17,11 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	private int countOfMessages;		// shit-code	* see another shit-code
 	int yearCursore;
 	
-	public ExperimentBehaviour(){
+
+	@Override
+	public void onStart(){
 		experiment = (Experiment)myAgent;
-		experiment.scenario.start();
+	//	experiment.scenario.start();			// TODO to future
 		yearCursore = 0;
 	}
 

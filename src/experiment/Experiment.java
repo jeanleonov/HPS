@@ -24,7 +24,7 @@ public class Experiment extends Agent {
 	@Override
 	protected void setup(){
 		zonesAIDs = new Vector<AID>();
-		scenario = (Scenario)getArguments()[1];
+		// scenario = (Scenario)getArguments()[1];				// TODO to future
 		numberOfModelingYears = (int)((Integer)getArguments()[2]);
 		startZones(createZones());
 		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
