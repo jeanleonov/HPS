@@ -68,6 +68,7 @@ public class Zone extends Agent {
 			AgentController individualAgent = controller.createNewAgent(agentName, 
 																		INDIVIDUAL_CLASS_PATH, 
 																		parameters);
+			System.out.println("Individual: " + agentName);
 			individualAgent.start();
 			addIndividualToList(agentName, genotype, age);
 		} catch (StaleProxyException e) {

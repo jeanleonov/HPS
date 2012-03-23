@@ -28,7 +28,9 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public void action() {
 		// TODO scenarioCommandsProcessing();
+		System.out.println("Exp: die request..");
 		dieProcessing();
+		System.out.println("Exp: .. die response");
 		// TODO moveProcessing();
 		// TODO (in Zone) lastPhaseProcessing();
 		yearCursore++;

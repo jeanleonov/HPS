@@ -44,6 +44,7 @@ public class Experiment extends Agent {
 								getZoneName(i),
 								ZONE_CLASS_PATH, 
 								new Object[]{zoneDistr, experimentNumber, i}));			// agent created
+				System.out.println("Zone: " + getZoneName(i));
 			} catch (StaleProxyException e) {
 				e.printStackTrace();// TODO Auto-generated catch block
 			}

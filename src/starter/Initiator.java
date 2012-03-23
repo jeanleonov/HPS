@@ -57,7 +57,8 @@ public class Initiator extends OneShotBehaviour {
 	
 	@Override
 	public void onStart(){
-		scenario = ((MainAgent)myAgent).getScenario();
+	//	scenario = ((MainAgent)myAgent).getScenario();
+		System.out.println("Initiator onStart()..");
 		source = ((MainAgent)myAgent).getSource();
 	}
 	

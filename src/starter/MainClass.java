@@ -37,18 +37,18 @@ public class MainClass implements Pathes{
 					
 			
 //==================== Running Settings ====================================================================			
-			Object[] readers = new Object[2];
+/*			Object[] readers = new Object[2];
 			readers[0] = new BufferedReader(new FileReader(PROJECT_PATH + "/src/settings/Viability.csv"));
 			readers[1] = new BufferedReader(new FileReader(PROJECT_PATH + "src/settings/Posterity.csv"));
 			AgentController settingsAgent = ac.createNewAgent("Settings", "settings.Settings", readers);
-			settingsAgent.start();
+			settingsAgent.start();#*/
 //==========================================================================================================			
-			
+			System.out.println("mainAgent start..");
 			Object[] mainArgs = new Object[2];
 			mainArgs[0] = PROJECT_PATH + "src/starter/Initiation.hpsi" /*LAO_TESTING#s*/;
 			mainArgs[1] = null; //mainArgs[1] = s;
 			AgentController mainAgent = ac.createNewAgent("MainAgent", "starter.MainAgent", mainArgs);
-			//mainAgent.start();
+			mainAgent.start();
 			
 		} catch(Exception e) {
 			e.printStackTrace();

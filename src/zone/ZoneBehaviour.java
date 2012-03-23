@@ -62,17 +62,19 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void dieProcessing() {
 		sendMessageToIndividuals(START_DIE, ACLMessage.INFORM);
+		System.out.println("die request..");
 		getAnswersOnDieMessage();
+		System.out.println("..die response..");
 	}
 
 	private void getAnswersOnDieMessage() {
 		ACLMessage message;
 		int individualCounter = myZone.getIndividualsNumber();
-		for (int i = individualCounter; i > 0; i--){	//warning
+		for (int i = individualCounter; i > 0; i--){			//warning
 			message = getMessage();
-			if (message.getContent().compareTo(YES) == 0){
-				killIndividual(message.getSender());
-			}
+		//#	if (message.getContent().compareTo(YES) == 0){
+		//#		killIndividual(message.getSender());
+		//#	}
 		}
 	}
 
@@ -116,14 +118,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void sendMessage(AID individual, String messageContent, int performative) {
-		try {
-			ACLMessage message = new ACLMessage(performative);
-			message.setContentObject(messageContent);
-			message.addReceiver(individual);
-			myAgent.send(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+		ACLMessage message = new ACLMessage(performative);
+		message.setContent(messageContent);/*#*/
+		message.addReceiver(individual);
+		myAgent.send(message);		
 	}
 
 	private StatisticPackage createStatisticPackage(){

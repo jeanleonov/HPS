@@ -31,10 +31,10 @@ public class Individual extends Agent {
 		myGenotype = (Genotype) args[0];
 		age = (Integer) args[1];
 		
-		GetSettings();
+		/*GetSettings();#*/
 		
-		float prob = getSetting(settings.Vocabulary.Param.Survival);
-		System.out.println(prob);
+		float prob = 0.5f/*getSetting(settings.Vocabulary.Param.Survival)#*/;
+		//System.out.println(prob);
 		
 		BehaviourRegister();
 	}
@@ -87,13 +87,13 @@ public class Individual extends Agent {
 			e.printStackTrace();
 		}
 	}
-	
+	/*
 	protected Float getSetting(settings.Vocabulary.Param param) {
 		for(settings.ViabilityPair pair : uSettings) {
 			if(pair.getParam() == param) return pair.getValue();
 		}
 		return 0f;
-	}
+	}*/
 	
 	private void BehaviourRegister() {
 		if (myGenotype.getGender() == Genome.X)
