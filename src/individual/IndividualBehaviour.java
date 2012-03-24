@@ -46,10 +46,4 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 		}
 	}
 
-/*	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
-	}*/
-
 }
