@@ -1,11 +1,6 @@
 package settings;
 
 public interface Vocabulary {
-	public enum Genome {
-		FxRxR, MxRyR, F_xL_xR, M_xL_yR, M_yL_xR, FxL_xR_, MyL_xR_, MxL_yR_, F_xL__xR_, M_xL__yR_, M_yL__xR_, FxLxL, MxLyL
-	}
-
-	public static final int GenomeCount = 13;
 
 	public enum Param {
 		Lifetime, 					// Продолжительность жизни

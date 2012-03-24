@@ -2,15 +2,12 @@ package settings;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
-import java.io.BufferedReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,18 +16,18 @@ public class Settings extends Agent implements Vocabulary {
 	private static final long serialVersionUID = 1L;
 
 	private final static String serviceName = "Settings";
-	private Reader viabilityReader, posterityReader;
+	/*$$private Reader viabilityReader, posterityReader;*/
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	private boolean isDataReady = false;
+	/*$$private boolean isDataReady = false;*/
 
 	@Override
 	protected void setup() {
 		Object[] args = getArguments();
 		if (args.length < 2)
 			return;
-		viabilityReader = (Reader) args[0];
-		posterityReader = (Reader) args[1];
+		viabilityTable/*$viabilityReader*/ = (HashMap<genotype.Genotype, ArrayList<ViabilityPair>>) args[0];
+		posterityTable/*$posterityReader*/ = (HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>) args[1];
 
 		DFRegister();
 		BehaviourRegister();
@@ -65,11 +62,11 @@ public class Settings extends Agent implements Vocabulary {
 	}
 
 	private void BehaviourRegister() {
-		addBehaviour(new DataFill());
+		/*$$addBehaviour(new DataFill());*/
 		addBehaviour(new SettingsMessageListener());
 	}
 
-	class DataFill extends OneShotBehaviour {
+	/*$$class DataFiller extends OneShotBehaviour {
 
 		private static final long serialVersionUID = 1L;
 
@@ -155,7 +152,7 @@ public class Settings extends Agent implements Vocabulary {
 				ex.printStackTrace();
 			}
 		}
-	}
+	}*/
 
 	class SettingsMessageListener extends CyclicBehaviour {
 
@@ -172,11 +169,11 @@ public class Settings extends Agent implements Vocabulary {
 			try {
 				ACLMessage reply = msg.createReply();
 
-				if(!isDataReady)
+				/*$if(!isDataReady)
 				{
 					reply.setPerformative(ACLMessage.FAILURE);
 				}
-				else if (msg.getPerformative() == ACLMessage.QUERY_REF) {
+				else*/ if (msg.getPerformative() == ACLMessage.QUERY_REF) {
 					Object content = msg.getContentObject();
 					if (content instanceof genotype.Genotype) {
 						genotype.Genotype pair = (genotype.Genotype) content;
