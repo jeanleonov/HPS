@@ -19,17 +19,13 @@ import settings.Vocabulary;
 		@SuppressWarnings("serial")
 		protected void setup(){
 			//i must to obtain parents. When Female create me, she must send to me Male and Female Genotype
-			
-			String nickname = "Posterity";
-	    	id = new AID(nickname,AID.ISLOCALNAME);  
+		
 	    	Object[] args = getArguments();//в аргументах должны быть 2 генотипа
-	  		if (args.length < 2)
-	  			return;
+	  		if (args.length < 2)  return;
 	  		Genotype male =  (Genotype) args[0];
 	  		Genotype female = (Genotype) args[1];
 	  		PosterityParentsPair parentsPair = new PosterityParentsPair(female,male);
 			this.addBehaviour(new PosterityBehaviour(parentsPair));
-			//получим пару родителей и образуем результирующую пару и передадим ее зоне
-			
+			//get parentPair, get numbers of 			
 		}
 	}
