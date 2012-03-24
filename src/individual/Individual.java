@@ -1,7 +1,6 @@
 package individual;
 
 import java.util.ArrayList;
-
 import settings.ViabilityPair;
 import genotype.*;
 import jade.core.Agent;
@@ -12,6 +11,7 @@ import jade.domain.FIPAException;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.lang.acl.MessageTemplate;
 
 public class Individual extends Agent {
 
@@ -46,7 +46,12 @@ public class Individual extends Agent {
   		try {
   			DFAgentDescription[] results = null;
   			while(results == null || results.length < 1) {
-  				results = DFService.search(this, template, sc);
+  				try {
+  					results = DFService.search(this, template, sc);
+  				}
+  				catch(FailureException e) {
+  					System.out.println("-_-");
+  				}
   			}
   			DFAgentDescription dfd = results[0];
   			AID provider = dfd.getName();
@@ -59,10 +64,12 @@ public class Individual extends Agent {
 			catch (Exception ex) { ex.printStackTrace(); }
 			send(msg);
 			
-			do { msg = blockingReceive(); }
+			do { msg = blockingReceive(MessageTemplate.MatchSender( provider )); }
 			while(msg.getPerformative() == ACLMessage.FAILURE);
 			
-			if(msg.getPerformative() != ACLMessage.CONFIRM) throw new NotUnderstoodException("Not understood");
+			if(msg.getPerformative() != ACLMessage.CONFIRM) {
+				throw new NotUnderstoodException("Not understood");
+			}
 			
 			settings = (ArrayList<ViabilityPair>) msg.getContentObject();
 			
