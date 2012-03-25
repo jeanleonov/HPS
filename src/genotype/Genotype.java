@@ -38,7 +38,7 @@ public class Genotype implements Serializable {
 
 	public String toString() {
 		// TODO
-		return null;
+		return super.toString();
 	}
 
 
@@ -73,7 +73,6 @@ public class Genotype implements Serializable {
 		}
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
-		System.out.println("Genotype " + genotype);
 		return genotype;
 	}
 
