@@ -21,9 +21,9 @@ public class Zone extends Agent {
 	private static final String INDIVIDUAL_CLASS_PATH = "individual.Individual";
 	
 	Vector<AID> males = new Vector<AID>();
-	Vector<AID> females = new Vector<AID>();;
-	Vector<AID> immatures = new Vector<AID>();;
-	Vector<AID> yarlings = new Vector<AID>();;
+	Vector<AID> females = new Vector<AID>();
+	Vector<AID> immatures = new Vector<AID>();
+	Vector<AID> yarlings = new Vector<AID>();
 	
 	int experimentId;
 	int zoneId;

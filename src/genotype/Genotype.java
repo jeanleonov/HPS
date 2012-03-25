@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.Vector;
 
 
+public class Genotype implements Serializable {
 // Important!  constructor of Genotype is PRIVATE
 //   USE static methods for getting Genotype or Id of Genotype
-public class Genotype implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 //==============================| Class Genotype: |===
-	private Genome[] genomes;
-	private boolean[] clonalities;
+	Genome[] genomes;
+	boolean[] clonalities;
 
-	private Genotype(Genome[] genomes, boolean[] clonalities){
+	Genotype (Genome[] genomes, boolean[] clonalities) {
 		this.genomes = genomes;
 		this.clonalities = clonalities;
 	}
@@ -43,7 +43,8 @@ public class Genotype implements Serializable {
 
 
 
-//==============================| GLOBAL: |===========
+
+	//==============================| GLOBAL: |===========
 
 	static private Vector<Genotype> genotypes = new Vector<Genotype>();
 	final static public byte UNDEF = -1;
@@ -72,6 +73,7 @@ public class Genotype implements Serializable {
 		}
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
+		System.out.println("Genotype " + genotype);
 		return genotype;
 	}
 
@@ -105,11 +107,12 @@ public class Genotype implements Serializable {
 			if ((genomes[1] = parseGenome(str.charAt(2+shift), str.charAt(3+shift))) == null)
 				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
 		}
-		return getGenotype(genomes, clonalities);
+		Genotype genotype = getGenotype(genomes, clonalities);
+		return genotype;
 	}
 
 		// only for 2 Genomes in Genotype!!!
-		private static Genome parseGenome(char gender, char name){
+		static private Genome parseGenome(char gender, char name){
 			byte genderByte;
 			Genome.GenomeName nameByte;
 			if (gender == 'x' || gender == 'X')

@@ -32,27 +32,28 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	@Override
 	public void action() {
-		String message = getMessageContent();
-		if (message.compareTo(SCENARIO_COMMANDS) == 0){
+		ACLMessage message = myAgent.blockingReceive();/*#*/
+		String content = message.getContent();/*#*/
+		ACLMessage reply = message.createReply();/*#*/
+		if (content.compareTo(SCENARIO_COMMANDS) == 0){
 			// scenarioCommandProcessing(); TODO Realise scenario process
 			currentPackage = createStatisticPackage();
 			myZone.iteration++;
 		}
-		else if (message.compareTo(START_DIE) == 0){
+		else if (content.compareTo(START_DIE) == 0){
 			dieProcessing();
 		}
-		else if (message.compareTo(START_MOVE) == 0){
+		else if (content.compareTo(START_MOVE) == 0){
 			// moveProcessing(); TODO Realise move process
 		}
-		else if (message.compareTo(START_LAST_PHASE) == 0){
+		else if (content.compareTo(START_LAST_PHASE) == 0){
 			// lastPhaseProcessing(); TODO Realise last phase process
 			// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
 		}
-		else if (message.compareTo(I_KILL_YOU) == 0){
+		else if (content.compareTo(I_KILL_YOU) == 0){
 			killingSystemProcessing();
 		}
-		
-
+		myZone.send(reply);/*#*/
 	}
 
 	private void scenarioCommandProcessing() {
@@ -70,7 +71,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		int individualCounter = myZone.getIndividualsNumber();
 		for (int i = individualCounter; i > 0; i--){	//warning
 			message = getMessage();
-			if (message.getContent().compareTo(YES) == 0){
+			if (message.getContent().equals(YES)/*#*/){
 				killIndividual(message.getSender());
 			}
 		}
@@ -103,11 +104,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private ACLMessage getMessage(){
 		return myAgent.blockingReceive();
 	}
-	
+	/*
 	private String getMessageContent(){
 		ACLMessage message = myAgent.blockingReceive();
 		return message.getContent();
-	}	
+	}#*/
 	
 	private void sendMessageToIndividuals(String message, int performative) {
 		for (AID individual : myZone.getIndividuals()){
@@ -116,14 +117,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void sendMessage(AID individual, String messageContent, int performative) {
-		try {
-			ACLMessage message = new ACLMessage(performative);
-			message.setContentObject(messageContent);
-			message.addReceiver(individual);
-			myAgent.send(message);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+		ACLMessage message = new ACLMessage(performative);
+		message.setContent/*#*/(messageContent);
+		message.addReceiver(individual);
+		myAgent.send(message);		
 	}
 
 	private StatisticPackage createStatisticPackage(){

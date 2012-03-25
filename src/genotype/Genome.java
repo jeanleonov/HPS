@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class Genome implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	final static public byte	X = 1,
 								Y = 2,
 								UNDEF = -1;

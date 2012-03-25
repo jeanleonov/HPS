@@ -29,7 +29,7 @@ public class Individual extends Agent {
 		myGenotype = (Genotype) args[0];
 		age = (Integer) args[1];
 
-		GetSettings();
+	/*	GetSettings();#temporary*/
 		BehaviourRegister();
 	}
 	

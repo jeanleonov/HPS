@@ -1,5 +1,6 @@
 package starter;
 
 public interface Pathes {
-	String PROJECT_PATH = "C:\\Users\\KOSOS450\\HPS\\";
+	//*** ENTER HERE YOUR PROJECT PATH
+	String PROJECT_PATH = "d:/Anton/University/HPS/repodir/";
 }

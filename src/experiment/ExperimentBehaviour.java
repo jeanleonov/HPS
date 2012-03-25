@@ -3,10 +3,6 @@ package experiment;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
-
-import java.io.IOException;
-import java.util.Vector;
-
 import messaging.Messaging;
 
 public class ExperimentBehaviour extends Behaviour implements Messaging {
@@ -14,7 +10,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	private static final long serialVersionUID = 1L;
 	
 	Experiment experiment;
-	private int countOfMessages;		// shit-code	* see another shit-code
+	/*private int countOfMessages;#temporary*/		// shit-code	* see another shit-code
 	int yearCursore;
 	
 
@@ -27,6 +23,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 
 	@Override
 	public void action() {
+		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
 		// TODO scenarioCommandsProcessing();
 		dieProcessing();
 		// TODO moveProcessing();
@@ -37,16 +34,21 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public boolean done() {
 		if (yearCursore < experiment.numberOfModelingYears)
-			return true;
+			return false;
+		return true;
+	}
+	
+	@Override
+	public int onEnd() {
 		ACLMessage message = getMessageForMassMailing();
 		message.setContent(I_KILL_YOU);
 		experiment.send(message);
 		killMySelf();
-		return false;
+		return 0;
 	}
 	
 	// method for reading scenario commands
-	private ACLMessage[] convertCommandsToACLMessages(Vector<ExperimentCommand> commands) throws IOException{
+	/*private ACLMessage[] convertCommandsToACLMessages(Vector<ExperimentCommand> commands) throws IOException{
 		// TODO
 		countOfMessages=0;
 		int i=0;
@@ -60,15 +62,15 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 			// may be should be append...
 		}
 		return null;
-	}
+	}#temporary*/
 
-	private void scenarioCommandsProcessing() throws IOException{
+	/*private void scenarioCommandsProcessing() throws IOException{
 		ACLMessage[] commands 
 					= convertCommandsToACLMessages(experiment.scenario.getCommandsForNextYear(yearCursore));
 		for (ACLMessage command : commands)				// send commands
 			experiment.send(command);
 		ignoreNMessages(countOfMessages);
-	}
+	}#temporary*/
 
 	private void dieProcessing(){
 		ACLMessage message = getMessageForMassMailing();
@@ -77,20 +79,20 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
-	private void moveProcessing(){
+	/*private void moveProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setContent(START_MOVE);
 		experiment.send(message);
 		// TODO listening of migration requests
 		//ignoreNMessages(experiment.zonesAIDs.size());
-	}
+	}#temporary*/
 
-	private void lastPhaseProcessing(){
+	/*private void lastPhaseProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setContent(START_LAST_PHASE);
 		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
-	}
+	}#temporary*/
 	
 	private ACLMessage getMessageForMassMailing(){
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
