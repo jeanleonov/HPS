@@ -17,6 +17,20 @@ public class Genotype implements Serializable {
 		this.genomes = genomes;
 		this.clonalities = clonalities;
 	}
+	
+	public boolean equals(Object obj) {
+		/*if (obj == this)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		Genotype gm = (Genotype) obj;
+		if(gm.genomes.length != genomes.length) return false;
+		for(int i = 0; i < genomes.length; i++) {
+			if(!gm.genomes[i].equals(genomes[i])) return false;
+			if(gm.clonalities[i] != clonalities[i]) return false;
+		}*/
+		return true;
+	}
 
 	// only for 2 Genomes in Genotype!!!
 	public byte getGender(){
@@ -37,8 +51,13 @@ public class Genotype implements Serializable {
 	}
 
 	public String toString() {
-		// TODO
-		return super.toString();
+		StringBuilder buff = new StringBuilder();
+		for(int i = 0; i < genomes.length; i++) {
+			if(clonalities[i]) buff.append("(");
+			buff.append(genomes[i].toString());
+			if(clonalities[i]) buff.append(")");
+		}
+		return buff.toString();
 	}
 
 

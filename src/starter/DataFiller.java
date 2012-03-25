@@ -78,17 +78,30 @@ public class DataFiller {
 				String[] strArr = str.split(";");
 				if (strArr.length < genotypeOrder.size() + 3)
 					continue;
-				for (genotype.Genotype gm : genotypeOrder) {
-					Param param = Convertor.keyToParam(Integer.parseInt(
-							strArr[2], 10));
-					ArrayList<ViabilityPair> arr = new ArrayList<ViabilityPair>();
-					for (int i = 3; i < genotypeOrder.size(); i++)
-						arr.add(new ViabilityPair(Float.parseFloat(strArr[i]), param));
-					viabilityTable.put(gm, arr);
+				
+				for(int i = 0; i < genotypeOrder.size(); i++) {
+					Param param = Convertor.keyToParam(Integer.parseInt(strArr[2], 10));
+					
+					if(!viabilityTable.containsKey(genotypeOrder.get(i))) {
+						viabilityTable.put(genotypeOrder.get(i), new ArrayList<ViabilityPair>());
+					}
+					
+					ArrayList<ViabilityPair> arr = viabilityTable.get(genotypeOrder.get(i));
+					arr.add(new ViabilityPair(Float.parseFloat(strArr[i + 3]), param));
 				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+	
+	public void printViabilityTable() {
+		for(genotype.Genotype g : viabilityTable.keySet()) {
+			System.out.print(g + " - ");
+			for(ViabilityPair pair : viabilityTable.get(g)) {
+				System.out.print(pair.getValue() + ", ");
+			}
+			System.out.println();
 		}
 	}
 
@@ -104,28 +117,35 @@ public class DataFiller {
 				String[] strArr = str.split(";");
 				if (strArr.length < genotypeOrder.size() + 2)
 					continue;
-				for (genotype.Genotype gm : genotypeOrder) {
+				
+				for(int i = 0; i < genotypeOrder.size(); i++) {
 					genotype.Genotype gm1 = genotype.Genotype.getGenotype(strArr[0]),
 							gm2 = genotype.Genotype.getGenotype(strArr[1]);
-					for (int i = 2; i < genotypeOrder.size(); i++) {
-						float value = Float.parseFloat(strArr[i]);
-						if (value == 0)
-							continue;
-
-						PosterityParentsPair pair = new PosterityParentsPair(
-								gm1, gm2);
-						if (!posterityTable.keySet().contains(pair)) {
-							posterityTable.put(new PosterityParentsPair(
-									gm1, gm2),
-									new ArrayList<PosterityResultPair>());
-						}
-						posterityTable.get(pair).add(
-								new PosterityResultPair(gm, value));
+					
+					float value = Float.parseFloat(strArr[i + 2]);
+					if (value == 0)
+						continue;
+					
+					PosterityParentsPair pair = new PosterityParentsPair(gm1, gm2);
+					if (!posterityTable.containsKey(pair)) {
+						posterityTable.put(pair, new ArrayList<PosterityResultPair>());
 					}
+					
+					posterityTable.get(pair).add(new PosterityResultPair(genotypeOrder.get(i), value));
 				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+	
+	public void printPosterityTable() {
+		for(PosterityParentsPair parents : posterityTable.keySet()) {
+			System.out.print(parents.getMale() + "+" + parents.getFemale() + ": ");
+			for(PosterityResultPair pair : posterityTable.get(parents)) {
+				System.out.print(pair.getGenome() + "(" + pair.getProbability() + ") ,");
+			}
+			System.out.println();
 		}
 	}
 

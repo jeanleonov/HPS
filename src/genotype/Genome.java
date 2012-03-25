@@ -38,4 +38,12 @@ public class Genome implements Serializable{
 		return gender == ((Genome)obj).gender
 			&& name == ((Genome)obj).name;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append((gender == Y) ? 'y' : 'x');
+		str.append((name == GenomeName.L) ? 'L' : 'R');
+		return str.toString();
+	}
 }

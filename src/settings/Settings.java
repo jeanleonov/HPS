@@ -26,7 +26,7 @@ public class Settings extends Agent implements Vocabulary {
 			return;
 		viabilityTable = (HashMap<genotype.Genotype, ArrayList<ViabilityPair>>) args[0];
 		posterityTable = (HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>) args[1];
-
+		
 		DFRegister();
 		BehaviourRegister();
 	}
@@ -81,14 +81,14 @@ public class Settings extends Agent implements Vocabulary {
 				if (msg.getPerformative() == ACLMessage.QUERY_REF) {
 					Object content = msg.getContentObject();
 					if (content instanceof genotype.Genotype) {
-						genotype.Genotype pair = (genotype.Genotype) content;
-						ArrayList<ViabilityPair> value = viabilityTable.get(pair);
+						genotype.Genotype genotype = (genotype.Genotype) content;
+						ArrayList<ViabilityPair> value = viabilityTable.get(genotype);
+						System.out.println("###" + (viabilityTable.containsKey(genotype)));
 						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(value);
 					} else if (content instanceof PosterityParentsPair) {
 						PosterityParentsPair pair = (PosterityParentsPair) content;
-						PosterityResultPair[] result = (PosterityResultPair[]) posterityTable
-								.get(pair).toArray();
+						ArrayList<PosterityResultPair> result = posterityTable.get(pair);
 						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(result);
 					} else {
