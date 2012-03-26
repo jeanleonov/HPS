@@ -29,10 +29,8 @@ public class Individual extends Agent {
 		myGenotype = (Genotype) args[0];
 		age = (Integer) args[1];
 
-		GetSettings(); //#temporary
-		float prob = getSetting(settings.Vocabulary.Param.Survival);
-		System.out.println(prob);
-		//BehaviourRegister();
+		GetSettings();
+		BehaviourRegister();
 	}
 	
 	private void GetSettings() {

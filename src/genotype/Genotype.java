@@ -19,7 +19,7 @@ public class Genotype implements Serializable {
 	}
 	
 	public boolean equals(Object obj) {
-		/*if (obj == this)
+		if (obj == this)
 			return true;
 		if (getClass() != obj.getClass())
 			return false;
@@ -28,8 +28,14 @@ public class Genotype implements Serializable {
 		for(int i = 0; i < genomes.length; i++) {
 			if(!gm.genomes[i].equals(genomes[i])) return false;
 			if(gm.clonalities[i] != clonalities[i]) return false;
-		}*/
+		}
 		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		if(genomes.length > 0) return genomes[0].gender;
+		else return 0xFF;
 	}
 
 	// only for 2 Genomes in Genotype!!!

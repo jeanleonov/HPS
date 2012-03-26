@@ -83,7 +83,6 @@ public class Settings extends Agent implements Vocabulary {
 					if (content instanceof genotype.Genotype) {
 						genotype.Genotype genotype = (genotype.Genotype) content;
 						ArrayList<ViabilityPair> value = viabilityTable.get(genotype);
-						System.out.println("###" + (viabilityTable.containsKey(genotype)));
 						reply.setPerformative(ACLMessage.CONFIRM);
 						reply.setContentObject(value);
 					} else if (content instanceof PosterityParentsPair) {
