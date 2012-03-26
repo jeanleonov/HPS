@@ -115,7 +115,7 @@ public class SystemStarter implements Pathes{
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
-			statisticDispatcher = agentController.createNewAgent("statisticDispatcher", "statistic.statisticDispatcher", null);
+			statisticDispatcher = agentController.createNewAgent("statisticDispatcher", "statistic.StatisticDispatcher", null);
 			statisticDispatcher.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
