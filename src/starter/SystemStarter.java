@@ -1,9 +1,12 @@
 package starter;
+import jade.core.AID;
+import jade.core.Agent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 import java.io.BufferedReader;
@@ -11,40 +14,60 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Vector;
 
-public class SystemStarter implements Pathes{
+import statistic.StatisticDispatcherBehaviour;
+import statistic.StatisticPackage;
+
+public class SystemStarter extends Agent implements Pathes{
 	
 	private DataFiller dataFiller;
-	private AgentContainer agentController;
-	private AgentController settingsAgent,
-							statisticDispatcher;
-	private Vector<AgentController> experimentAgents = new Vector<AgentController>();
+	private ContainerController agentController;
+	private AgentController settingsAgent, statisticDispatcher;
+	private AID statisticAID;
+	
+	private Vector<AgentController> experimentAgents;
+	private Vector<AID> experimentAIDs;
+	
 	private String	viabilitySettingsPath,			// TODO improve it
 					posteritySettingPath,
 					experimentInfoPath;
 	
-	public SystemStarter(
+/*	public SystemStarter(
 			String viabilitySettingsPath,
 			String posteritySettingPath, 
 			String experimentInfoPath) {
 		this.viabilitySettingsPath = viabilitySettingsPath;
 		this.posteritySettingPath = posteritySettingPath;
 		this.experimentInfoPath = experimentInfoPath;
-	}
+	}*/
 
+	@Override
+	protected void setup(){
+		Object[] args = this.getArguments();
+		this.viabilitySettingsPath = (String)args[0];
+		this.posteritySettingPath = (String)args[1];
+		this.experimentInfoPath = (String)args[2];
+		
+		experimentAIDs = new Vector<AID>();
+		experimentAgents = new Vector<AgentController>();
+		agentController = this.getContainerController();
+		
+		startSystem();
+	}
+	
 	public void startSystem(){
 		readData();
-		startContainers();
+		//startContainers();
 		createAndStartSettingsAgents();
 		createAndStartStatisticDispatcherAgent();
 		createAndStartExperimentAgents();
 	}
 	
-	private void startContainers(){
+/*	private void startContainers(){
 		Runtime current = Runtime.instance();
 		Profile pf = new ProfileImpl(null, 8899, null);
 		agentController = current.createMainContainer(pf);
 		//*** STARTING OF OTHER CONTAINERS ON OTHER NODES CAN BE HERE
-	}
+	}*/
 	
 	private void readData(){
 		BufferedReader posteritySettingsReader;
@@ -72,7 +95,9 @@ public class SystemStarter implements Pathes{
 								"settings.Settings",
 								new Object[]{
 										dataFiller.getViabilityTable(),
-										dataFiller.getPosterityTable()});
+										dataFiller.getPosterityTable()}
+							);
+			
 			settingsAgent.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
@@ -95,6 +120,7 @@ public class SystemStarter implements Pathes{
 			} catch (StaleProxyException e) {
 				e.printStackTrace();
 			}
+			experimentAIDs.add(new AID(getExperimentName(i), AID.ISLOCALNAME));
 		}
 		startExperiments();
 	}
@@ -116,6 +142,8 @@ public class SystemStarter implements Pathes{
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
 			statisticDispatcher = agentController.createNewAgent("statisticDispatcher", "statistic.StatisticDispatcher", null);
+			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
+			
 			statisticDispatcher.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
