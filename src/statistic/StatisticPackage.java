@@ -1,5 +1,7 @@
 package statistic;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.Serializable;
 
 import jxl.write.Number;
@@ -30,7 +32,16 @@ public class StatisticPackage implements Serializable {
 		System.out.println("Iteration " + iteration);
 		genotypeAgeDistribution.print();
 	}
-
+	
+	public void writeToFile(BufferedWriter bw) throws WriteException, IOException {		
+		String str = String.valueOf(experimentId) +";" +
+				     String.valueOf(zoneId) + ";" +
+				     String.valueOf(iteration) + ";";
+		bw.write(str);	
+		genotypeAgeDistribution.writeToFile(bw);	
+	}
+	
+	/*
 	public void writeToSheet(WritableSheet sheet) throws RowsExceededException, WriteException {		
 		Number number;
 		number = new Number(StatisticDispatcher.EXPERIMENT_ID_POS, StatisticDispatcher.currentRow, experimentId); 
@@ -42,4 +53,5 @@ public class StatisticPackage implements Serializable {
 		
 		genotypeAgeDistribution.writeToSheet(sheet);	
 	}
+	*/
 }

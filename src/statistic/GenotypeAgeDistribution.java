@@ -1,5 +1,7 @@
 package statistic;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Vector;
 
@@ -63,11 +65,18 @@ public class GenotypeAgeDistribution implements Serializable {
 			gants.elementAt(i).print("\t");
 		}
 	}
-
+	
+	void writeToFile(BufferedWriter bw) throws IOException{
+		for (GenotypeAgeNumberTrio gant : gants){
+			gant.writeToFile(bw);
+		}
+	}
+	/*
 	public void writeToSheet(WritableSheet sheet) throws RowsExceededException,
 			WriteException {
 		for (GenotypeAgeNumberTrio gant : gants) {
 			gant.writeToSheet(sheet);
 		}
 	}
+	*/
 }

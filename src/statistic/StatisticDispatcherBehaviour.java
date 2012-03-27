@@ -18,10 +18,8 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour {
 	}
 	private Object getMessage(){
 		try {	
-			ACLMessage message = myAgent.blockingReceive();	// WARNING MAY BE CAN'T BE NULL ?
-			if (message != null){
-				return message.getContentObject();
-			} 
+			ACLMessage message = myAgent.blockingReceive();	// WARNING MAY BE CAN'T BE NULL ?{
+			return message.getContentObject();
 		}
 		catch (UnreadableException e) {
 			e.printStackTrace();

@@ -1,5 +1,7 @@
 package statistic;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.Serializable;
 
 import jxl.write.Number;
@@ -22,7 +24,12 @@ public class GenotypeAgeNumberTrio implements Serializable{
 	void print(String separator) {
 		System.out.println(genotype + separator + age + separator + number);
 	}
-
+	
+	void writeToFile(BufferedWriter bw) throws IOException{
+		String str = String.valueOf(age) + ";" + String.valueOf(number) +"\n";
+		bw.write(str);
+	}
+	/*
 	void writeToSheet(WritableSheet sheet) throws RowsExceededException,
 			WriteException {
 		Number num;
@@ -38,4 +45,6 @@ public class GenotypeAgeNumberTrio implements Serializable{
 
 		StatisticDispatcher.currentRow++;
 	}
+	*/
+	
 }

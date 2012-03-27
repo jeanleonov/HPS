@@ -64,7 +64,7 @@ public class SystemStarter extends Agent implements Pathes{
 	
 /*	private void startContainers(){
 		Runtime current = Runtime.instance();
-		Profile pf = new ProfileImpl(null, 8899, null);
+		Profile pf = new ProfileImpl("127.0.0.1", 22153, null);
 		agentController = current.createMainContainer(pf);
 		//*** STARTING OF OTHER CONTAINERS ON OTHER NODES CAN BE HERE
 	}*/
