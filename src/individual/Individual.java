@@ -55,6 +55,8 @@ public class Individual extends Agent {
   			while(results == null || results.length < 1) {
   				try {
   					results = DFService.search(this, template, sc);
+  					if (results == null || results.length < 1)/*#lao*/
+  						doWait(5000);
   				}
   				catch(FailureException e) {
   					System.out.println("-_-");
