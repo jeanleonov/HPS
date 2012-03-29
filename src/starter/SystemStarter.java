@@ -14,15 +14,15 @@ import java.util.Vector;
 public class SystemStarter extends Agent implements Pathes{
 	
 	private static final long serialVersionUID = 1L;
-	private DataFiller dataFiller;
+	DataFiller dataFiller;
 	private ContainerController agentController;
 	private AgentController settingsAgent, statisticDispatcher;
-	private AID statisticAID;
+	AID statisticAID;
 	
 	private Vector<AgentController> experimentAgents;
 	private Vector<AID> experimentAIDs;
 	
-	private String	viabilitySettingsPath,			// TODO improve it
+	private String	viabilitySettingsPath,
 					posteritySettingPath,
 					experimentInfoPath;
 	
@@ -55,7 +55,7 @@ public class SystemStarter extends Agent implements Pathes{
 		createAndStartSettingsAgents();
 		getConfirmationFromSettingsAgents();
 		createAndStartStatisticDispatcherAgent();
-		createAndStartExperimentAgents();
+	//#	createAndStartExperimentAgents(); // re_ TODO
 	}
 	
 /*	private void startContainers(){
@@ -98,43 +98,6 @@ public class SystemStarter extends Agent implements Pathes{
 			settingsAgent.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
-		}
-	}
-	
-	private void createAndStartExperimentAgents(){
-		for (int i = 0; i < dataFiller.getNumberOfExperiments(); i++) {
-			try {
-				//*** YOU CAN START THOSE AGENTS ON OTHER NODES HERE
-				experimentAgents.add(
-						agentController.createNewAgent(
-							getExperimentName(i), 
-							"experiment.Experiment", 
-							new Object[]{
-									dataFiller.getExperimentDistribution(),
-									dataFiller.getScenario(),
-									dataFiller.getNumberOfModelingYears(),
-									i,
-									statisticAID,
-									getAID()}));
-			} catch (StaleProxyException e) {
-				e.printStackTrace();
-			}
-			experimentAIDs.add(new AID(getExperimentName(i), AID.ISLOCALNAME));
-		}
-		startExperiments();
-	}
-	
-	private String getExperimentName(int i){
-		return "Experiment_" + i;
-	}
-	
-	private void startExperiments(){
-		for (AgentController agent : experimentAgents){
-			try {
-				agent.start();								// agent behaviors started
-			} catch (StaleProxyException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	
