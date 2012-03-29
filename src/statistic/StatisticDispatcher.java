@@ -44,9 +44,10 @@ public class StatisticDispatcher extends Agent{
 		packages.add(pack);
 	}
 
-	private void exportToFile() {
+	void exportToFile() {
 		try {
 			File file = createFile();
+			System.out.println("Statistic" + file.getAbsolutePath());
 			/*
 			WritableWorkbook workbook = Workbook.createWorkbook(file);
 			WritableSheet sheet = workbook.createSheet("Statistic", 0);

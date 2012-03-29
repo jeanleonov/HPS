@@ -1,29 +1,43 @@
 package statistic;
 
+import messaging.Messaging;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-public class StatisticDispatcherBehaviour extends CyclicBehaviour {
+public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Messaging {
 
+	private int totalPackages = 0;
+	private int exportingFrequency = 10;
 	@Override
 	public void action() {
-		StatisticPackage pack = getPackage();
-		((StatisticDispatcher)myAgent).addPackage(pack);
+		ACLMessage message = getMessage();
+		if (message.getContent() == STATISTIC){
+			totalPackages++;
+			addPackageFromMessage(message);
+		}
+		if (message.getContent() == EXPORT){
+			exportStatistic();
+		}
+		if ((totalPackages % 100/exportingFrequency) == 0){
+			exportStatistic();
+		}
+	}
+
+	private void addPackageFromMessage(ACLMessage message){		
+		try {
+			StatisticPackage statisticPackage = (StatisticPackage)message.getContentObject();
+			((StatisticDispatcher)myAgent).addPackage(statisticPackage);
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}	
 	}
 	
-	private StatisticPackage getPackage(){
-		Object message = getMessage();
-		return (StatisticPackage)message;
+	private void exportStatistic() {
+		((StatisticDispatcher)myAgent).exportToFile();
 	}
-	private Object getMessage(){
-		try {	
-			ACLMessage message = myAgent.blockingReceive();	// WARNING MAY BE CAN'T BE NULL ?{
-			return message.getContentObject();
-		}
-		catch (UnreadableException e) {
-			e.printStackTrace();
-		}
-		return null;
+	
+	private ACLMessage getMessage(){
+		return myAgent.blockingReceive();
 	}
 }

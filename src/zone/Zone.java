@@ -35,7 +35,6 @@ public class Zone extends Agent {
 	
 	private int individualCounter = 0;
 	
-	
 	// private Vector<Individual> strangers;
 	
 	@Override
@@ -44,6 +43,8 @@ public class Zone extends Agent {
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		statisticDispatcher = (AID)getArguments()[3];
+		
+		System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");
 		
 		createIndividuals(zoneDistribution);
 		individualCounter = 0;

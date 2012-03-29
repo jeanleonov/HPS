@@ -38,5 +38,8 @@ public interface Messaging {
 	// --- by AAP ---
 	String GIVE_ME_YOUR_AGE = "giveAge";				// Zone -> Individual (at the end of last phase
 														// while we generating statistic)
-	String GIVE_ME_YOUR_GENOTYPE = "giveGenotype";		// Zone -> Individual (-||-) 
+	String GIVE_ME_YOUR_GENOTYPE = "giveGenotype";		// Zone -> Individual (-||-)
+	
+	String STATISTIC = "statisticPackage";				// Zone -> StatisticDispatcher
+	String EXPORT = "exportCommand";					// Zone -> StatisticDispatcher
 }
