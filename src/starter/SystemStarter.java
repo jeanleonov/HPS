@@ -91,7 +91,8 @@ public class SystemStarter extends Agent implements Pathes{
 								"settings.Settings",
 								new Object[]{
 										dataFiller.getViabilityTable(),
-										dataFiller.getPosterityTable()}
+										dataFiller.getPosterityTable(),
+										getAID()}
 							);
 			
 			settingsAgent.start();
