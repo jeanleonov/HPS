@@ -16,6 +16,8 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+
+
 public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	private static final long serialVersionUID = 1L;
@@ -30,14 +32,18 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		
 	}
 	
+	/*
+	 * 	Zone creates new statisticPackage at the beginning of each year
+	 *  (after getting a  SCENARIO_COMMANDS message)
+	 */
 	@Override
 	public void action() {
 		ACLMessage message = myAgent.blockingReceive();/*#*/
 		String content = message.getContent();/*#*/
 		ACLMessage reply = message.createReply();/*#*/
 		if (content.compareTo(SCENARIO_COMMANDS) == 0){
-			// scenarioCommandProcessing(); TODO Realise scenario process
-			currentPackage = createStatisticPackage();
+			refreshStatistic();
+			// scenarioCommandProcessing(); TODO Realise scenario process	
 			myZone.iteration++;
 		}
 		else if (content.compareTo(START_DIE) == 0){
@@ -104,12 +110,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private ACLMessage getMessage(){
 		return myAgent.blockingReceive();
 	}
-	/*
-	private String getMessageContent(){
-		ACLMessage message = myAgent.blockingReceive();
-		return message.getContent();
-	}#*/
-	
+
 	private void sendMessageToIndividuals(String message, int performative) {
 		for (AID individual : myZone.getIndividuals()){
 			sendMessage(individual, message, performative);
@@ -118,11 +119,16 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void sendMessage(AID individual, String messageContent, int performative) {
 		ACLMessage message = new ACLMessage(performative);
-		message.setContent/*#*/(messageContent);
+		message.setContent(messageContent);
 		message.addReceiver(individual);
 		myAgent.send(message);		
 	}
 
+	private void refreshStatistic() {
+		currentPackage  = createStatisticPackage();
+		sendStatisticPackage();
+	}
+	
 	private StatisticPackage createStatisticPackage(){
 		int experimentId = myZone.experimentId;
 		int zoneId = myZone.zoneId;
@@ -131,7 +137,18 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
 		return statisticPackage;
 	}
-
+	
+	private void sendStatisticPackage() {		
+		try {
+			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+			message.setContentObject(currentPackage);		
+			message.addReceiver(myZone.statisticDispatcher);
+			myAgent.send(message);	
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private GenotypeAgeDistribution createGAD() {
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
 		Vector<AID> individuals = myZone.getIndividuals();

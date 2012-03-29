@@ -25,6 +25,8 @@ public class Zone extends Agent {
 	Vector<AID> immatures = new Vector<AID>();
 	Vector<AID> yarlings = new Vector<AID>();
 	
+	AID statisticDispatcher;
+	
 	int experimentId;
 	int zoneId;
 	
@@ -41,6 +43,7 @@ public class Zone extends Agent {
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
+		statisticDispatcher = (AID)getArguments()[3];
 		
 		createIndividuals(zoneDistribution);
 		individualCounter = 0;

@@ -76,7 +76,6 @@ public class StatisticDispatcher extends Agent{
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (WriteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

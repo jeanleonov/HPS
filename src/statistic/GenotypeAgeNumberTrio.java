@@ -25,8 +25,8 @@ public class GenotypeAgeNumberTrio implements Serializable{
 		System.out.println(genotype + separator + age + separator + number);
 	}
 	
-	void writeToFile(BufferedWriter bw) throws IOException{
-		String str = String.valueOf(age) + ";" + String.valueOf(number) +"\n";
+	void writeToFile(BufferedWriter bw, String header) throws IOException{
+		String str = header + String.valueOf(age) + ";" + String.valueOf(number) +"\n";
 		bw.write(str);
 	}
 	/*

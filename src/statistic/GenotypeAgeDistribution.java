@@ -66,9 +66,9 @@ public class GenotypeAgeDistribution implements Serializable {
 		}
 	}
 	
-	void writeToFile(BufferedWriter bw) throws IOException{
+	void writeToFile(BufferedWriter bw, String header) throws IOException{
 		for (GenotypeAgeNumberTrio gant : gants){
-			gant.writeToFile(bw);
+			gant.writeToFile(bw, header);
 		}
 	}
 	/*

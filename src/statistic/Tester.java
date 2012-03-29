@@ -19,7 +19,7 @@ public class Tester {
 		sd.addPackage(pack1);
 		sd.addPackage(pack2);
 		sd.addPackage(pack3);
-		sd.exportToExl();
+//		sd.exportToExl();
 	}
 
 	private static StatisticPackage createPackage1() {

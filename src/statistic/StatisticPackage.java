@@ -34,11 +34,11 @@ public class StatisticPackage implements Serializable {
 	}
 	
 	public void writeToFile(BufferedWriter bw) throws WriteException, IOException {		
-		String str = String.valueOf(experimentId) +";" +
+		String header = String.valueOf(experimentId) +";" +
 				     String.valueOf(zoneId) + ";" +
 				     String.valueOf(iteration) + ";";
-		bw.write(str);	
-		genotypeAgeDistribution.writeToFile(bw);	
+		//bw.write(str);	
+		genotypeAgeDistribution.writeToFile(bw, header);	
 	}
 	
 	/*
