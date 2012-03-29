@@ -1,17 +1,23 @@
 package individual;
 
-import java.util.ArrayList;
-import settings.ViabilityPair;
-import genotype.*;
+import genotype.Genome;
+import genotype.Genotype;
+import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.*;
-import jade.domain.FIPAAgentManagement.*;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import jade.core.AID;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.FailureException;
+import jade.domain.FIPAAgentManagement.NotUnderstoodException;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.UnreadableException;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
+
+import java.util.ArrayList;
+
+import settings.ViabilityPair;
 
 public class Individual extends Agent {
 
@@ -33,6 +39,7 @@ public class Individual extends Agent {
 		BehaviourRegister();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void GetSettings() {
 		DFAgentDescription template = new DFAgentDescription();
   		ServiceDescription templateSd = new ServiceDescription();

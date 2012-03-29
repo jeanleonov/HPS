@@ -29,6 +29,8 @@ public interface Messaging {
 	  String I_WANT_TO_EAT_YOU	= "iWantToEatYou";		//3.3.1 [MatureIndividual -> Yearling]
 	  	String DEREGISTER		= "deregister";			//3.3.1.1 Yearling -> Zone
 //	  String OKKEY				= "ok";					//3.3.2 Individual -> Zone
+	  	
+	String I_FINISHED 		= "iFinished";
 	
 	
 //	  String OKKEY			= "ok";						//3 Zone -> Experiment

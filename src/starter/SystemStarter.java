@@ -15,16 +15,16 @@ public class SystemStarter extends Agent implements Pathes{
 	
 	private static final long serialVersionUID = 1L;
 	DataFiller dataFiller;
-	private ContainerController agentController;
+	private ContainerController headContainerController;
 	private AgentController settingsAgent, statisticDispatcher;
 	AID statisticAID;
 	
-	private Vector<AgentController> experimentAgents;
-	private Vector<AID> experimentAIDs;
+	private Vector<ContainerController> containerControllers; 
 	
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
 					experimentInfoPath;
+	Integer remainingExperiments;		// TODO !!! implement synchronization
 	
 /*	public SystemStarter(
 			String viabilitySettingsPath,
@@ -35,35 +35,26 @@ public class SystemStarter extends Agent implements Pathes{
 		this.experimentInfoPath = experimentInfoPath;
 	}*/
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setup(){
 		Object[] args = this.getArguments();
 		this.viabilitySettingsPath = (String)args[0];
 		this.posteritySettingPath = (String)args[1];
 		this.experimentInfoPath = (String)args[2];
-		
-		experimentAIDs = new Vector<AID>();
-		experimentAgents = new Vector<AgentController>();
-		agentController = this.getContainerController();
-		
+		this.containerControllers = (Vector<ContainerController>)args[3];
+		headContainerController = getContainerController();
 		startSystem();
 	}
 	
 	public void startSystem(){
 		readData();
-		//startContainers();
 		createAndStartSettingsAgents();
 		getConfirmationFromSettingsAgents();
 		createAndStartStatisticDispatcherAgent();
-	//#	createAndStartExperimentAgents(); // re_ TODO
+		remainingExperiments = dataFiller.getNumberOfExperiments();
+		startExperimetnsProviders();
 	}
-	
-/*	private void startContainers(){
-		Runtime current = Runtime.instance();
-		Profile pf = new ProfileImpl("127.0.0.1", 22153, null);
-		agentController = current.createMainContainer(pf);
-		//*** STARTING OF OTHER CONTAINERS ON OTHER NODES CAN BE HERE
-	}*/
 	
 	private void readData(){
 		BufferedReader posteritySettingsReader;
@@ -84,26 +75,28 @@ public class SystemStarter extends Agent implements Pathes{
 	}
 	
 	private void createAndStartSettingsAgents(){
-		try {
-			//*** YOU CAN START THIS AGENT ON EACH NODE HERE
-			settingsAgent = agentController.createNewAgent(
-								"Settings",
-								"settings.Settings",
-								new Object[]{
-										dataFiller.getViabilityTable(),
-										dataFiller.getPosterityTable(),
-										getAID()}
-							);
-			
-			settingsAgent.start();
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
+		for (ContainerController container : containerControllers){
+		//*** SETTINGS_AGENT STARTS ON EACH NODE
+			try {
+				settingsAgent = container.createNewAgent(
+									"Settings",
+									"settings.Settings",
+									new Object[]{
+											dataFiller.getViabilityTable(),
+											dataFiller.getPosterityTable(),
+											getAID()}
+								);
+				
+				settingsAgent.start();
+			} catch (StaleProxyException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
-			statisticDispatcher = agentController.createNewAgent("statisticDispatcher", "statistic.StatisticDispatcher", null);
+			statisticDispatcher = headContainerController.createNewAgent("statisticDispatcher", "statistic.StatisticDispatcher", null);
 			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
 			
 			statisticDispatcher.start();
@@ -117,5 +110,11 @@ public class SystemStarter extends Agent implements Pathes{
 		ACLMessage confirm = blockingReceive();
 		if (confirm.getPerformative() != ACLMessage.CONFIRM)
 			/*throws new Exception("Problems with Settings agent")*/;		// TODO
+	}
+	
+	private void startExperimetnsProviders(){
+		for (ContainerController container : containerControllers)
+		//*** START ExperimentProvider FOR EACH NODE
+			addBehaviour(new ExperimentsProvider(container));
 	}
 }

@@ -9,6 +9,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 
 	private static final long serialVersionUID = 1L;
 	
+	private ACLMessage iFinished;
 	Experiment experiment;
 	/*private int countOfMessages;#temporary*/		// shit-code	* see another shit-code
 	int yearCursore;
@@ -18,6 +19,9 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	public void onStart(){
 		experiment = (Experiment)myAgent;
 	//	experiment.scenario.start();			// TODO to future
+		iFinished = new ACLMessage(ACLMessage.INFORM);
+		iFinished.addReceiver(experiment.myProvider);
+		iFinished.setContent(I_FINISHED);
 		yearCursore = 0;
 	}
 
@@ -44,6 +48,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		message.setContent(I_KILL_YOU);
 		experiment.send(message);
 		killMySelf();
+		experiment.send(iFinished);
 		return 0;
 	}
 	

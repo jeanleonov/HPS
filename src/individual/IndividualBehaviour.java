@@ -1,8 +1,7 @@
 package individual;
 
-import jade.core.behaviours.*;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.core.Agent;
 
 public class IndividualBehaviour extends CyclicBehaviour implements messaging.Messaging {
 

@@ -21,6 +21,7 @@ public class Experiment extends Agent {
 	Integer numberOfModelingYears;
 	Integer experimentNumber;
 	Scenario scenario;
+	AID myProvider;
 	
 	@Override
 	protected void setup(){
@@ -29,6 +30,7 @@ public class Experiment extends Agent {
 		numberOfModelingYears = (Integer)getArguments()[2];
 		experimentNumber = (Integer)getArguments()[3];
 		AID statisticAID = (AID)getArguments()[4];
+		myProvider = (AID)getArguments()[5];
 		startZones(createZones(statisticAID));
 		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
 	}
