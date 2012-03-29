@@ -1,10 +1,7 @@
 package starter;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.Runtime;
-import jade.wrapper.AgentContainer;
+import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
@@ -14,11 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Vector;
 
-import statistic.StatisticDispatcherBehaviour;
-import statistic.StatisticPackage;
-
 public class SystemStarter extends Agent implements Pathes{
 	
+	private static final long serialVersionUID = 1L;
 	private DataFiller dataFiller;
 	private ContainerController agentController;
 	private AgentController settingsAgent, statisticDispatcher;
@@ -58,6 +53,7 @@ public class SystemStarter extends Agent implements Pathes{
 		readData();
 		//startContainers();
 		createAndStartSettingsAgents();
+		getConfirmationFromSettingsAgents();
 		createAndStartStatisticDispatcherAgent();
 		createAndStartExperimentAgents();
 	}
@@ -116,7 +112,9 @@ public class SystemStarter extends Agent implements Pathes{
 									dataFiller.getExperimentDistribution(),
 									dataFiller.getScenario(),
 									dataFiller.getNumberOfModelingYears(),
-									i}));
+									i,
+									statisticAID,
+									getAID()}));
 			} catch (StaleProxyException e) {
 				e.printStackTrace();
 			}
@@ -148,5 +146,12 @@ public class SystemStarter extends Agent implements Pathes{
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void getConfirmationFromSettingsAgents(){
+		//*** CONFIRMATION MUST BE GOT FROM EACH SETTINGS AGENT
+		ACLMessage confirm = blockingReceive();
+		if (confirm.getPerformative() != ACLMessage.CONFIRM)
+			/*throws new Exception("Problems with Settings agent")*/;		// TODO
 	}
 }

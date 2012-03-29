@@ -28,11 +28,12 @@ public class Experiment extends Agent {
 		// scenario = (Scenario)getArguments()[1];				// TODO to future
 		numberOfModelingYears = (Integer)getArguments()[2];
 		experimentNumber = (Integer)getArguments()[3];
-		startZones(createZones());
+		AID statisticAID = (AID)getArguments()[4];
+		startZones(createZones(statisticAID));
 		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
 	}
 	
-	private Vector<AgentController> createZones(){
+	private Vector<AgentController> createZones(AID statisticAID){
 		ContainerController controller = this.getContainerController();
 		Vector<AgentController> zoneAgents = new Vector<AgentController>();
 		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
@@ -43,7 +44,7 @@ public class Experiment extends Agent {
 						controller.createNewAgent(
 								getZoneName(i),
 								ZONE_CLASS_PATH, 
-								new Object[]{zoneDistr, experimentNumber, i}));			// agent created
+								new Object[]{zoneDistr, experimentNumber, i, statisticAID}));			// agent created
 			} catch (StaleProxyException e) {
 				e.printStackTrace();// TODO Auto-generated catch block
 			}

@@ -1,6 +1,6 @@
-3
-10
+1000
+12
 
-xRxR 0 100|xRyR 2 10| (xL)xR 3 1 ;
-xRxR 7 55 |  xRxR 3 23;
-xRxR 2 1;
+xRxR 0 73| xRyR 2 10| (xL)xR 3 1 ;
+xRxR 0 55| xRyR 2 10| xRyR 2 5| xRyR 2 10| xRxR 3 15;
+xRyR 0 15;

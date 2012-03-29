@@ -1,5 +1,6 @@
 package settings;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
@@ -29,6 +30,7 @@ public class Settings extends Agent implements Vocabulary {
 		
 		DFRegister();
 		BehaviourRegister();
+		confirmationOfReadiness((AID)args[2]);
 	}
 
 	@Override
@@ -61,6 +63,12 @@ public class Settings extends Agent implements Vocabulary {
 
 	private void BehaviourRegister() {
 		addBehaviour(new SettingsMessageListener());
+	}
+		
+	private void confirmationOfReadiness(AID systemStarter){
+		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
+		confirm.addReceiver(systemStarter);
+		send(confirm);
 	}
 
 	class SettingsMessageListener extends CyclicBehaviour {
