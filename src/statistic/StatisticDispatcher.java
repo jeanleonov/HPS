@@ -47,7 +47,7 @@ public class StatisticDispatcher extends Agent{
 	void exportToFile() {
 		try {
 			File file = createFile();
-			System.out.println("Statistic" + file.getAbsolutePath());
+		//	System.out.println("Statistic " + file.getAbsolutePath());		#lao
 			/*
 			WritableWorkbook workbook = Workbook.createWorkbook(file);
 			WritableSheet sheet = workbook.createSheet("Statistic", 0);
@@ -70,10 +70,12 @@ public class StatisticDispatcher extends Agent{
 	
 	private void writeStatistic(File file) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
 			for (StatisticPackage pack : packages){
 				pack.writeToFile(bw);
 			}
+			bw.flush();
+			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (WriteException e) {

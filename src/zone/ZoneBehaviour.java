@@ -38,8 +38,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	@Override
 	public void action() {
 		ACLMessage message = myAgent.blockingReceive();/*#*/
-		System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
-							myZone.experimentId + " got " + message.getContent());
+		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
+							myZone.experimentId + " got " + message.getContent());#lao*/
 		String content = message.getContent();/*#*/
 		ACLMessage reply = message.createReply();/*#*/
 		if (content.compareTo(SCENARIO_COMMANDS) == 0){
@@ -180,11 +180,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void sendStatisticPackage() {		
 		try {
 			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-			message.setContent(STATISTIC);
+		//	message.setContent(STATISTIC);		#lao
 			message.setContentObject(currentPackage);		
 			message.addReceiver(myZone.statisticDispatcher);
 			myAgent.send(message);
-			System.out.println("Zone " + myZone.zoneId + " sent statistic");
+		//	System.out.println("Zone " + myZone.zoneId + " sent statistic");	#lao
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

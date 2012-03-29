@@ -12,11 +12,11 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Mes
 	@Override
 	public void action() {
 		ACLMessage message = getMessage();
-		if (message.getContent() == STATISTIC){
+		if (message.getPerformative() == ACLMessage.INFORM){			/*STATISTIC#lao*/
 			totalPackages++;
 			addPackageFromMessage(message);
 		}
-		if (message.getContent() == EXPORT){
+		if (message.getPerformative() == ACLMessage.REQUEST){			/*EXPORT#lao*/
 			exportStatistic();
 		}
 		if ((totalPackages % 100/exportingFrequency) == 0){

@@ -44,7 +44,7 @@ public class Zone extends Agent {
 		zoneId = (Integer)getArguments()[2];
 		statisticDispatcher = (AID)getArguments()[3];
 		
-		System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");
+	//	System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");		#lao
 		
 		createIndividuals(zoneDistribution);
 		individualCounter = 0;
