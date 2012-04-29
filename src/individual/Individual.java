@@ -108,4 +108,8 @@ public class Individual extends Agent implements Serializable{
 			addBehaviour(new FemaleBehaviour());
 		else addBehaviour(new MaleBehaviour());
 	}
+	
+	public void changeZone(AID newZone){
+		myZone = newZone;
+	}
 }

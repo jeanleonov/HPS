@@ -40,6 +40,8 @@ public class Migration {
 				
 				if(neighbours.get(i).getFirst() != null){
 					//TODO: register individual in this zone
+					// and don't forget to tell individual about it!
+					
 					//ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
 				}
 				myZone.killIndividual(individual);
