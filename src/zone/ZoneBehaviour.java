@@ -80,16 +80,17 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		for (int i = individualCounter; i > 0; i--){	//warning
 			message = getMessage();
 			if (message.getContent().equals(YES)/*#*/){
-				killIndividual(message.getSender());
+				myZone.killIndividual(message.getSender());
 			}
 		}
 	}
 
-	private void killIndividual(AID individual) {
+	// DMY: removed to Zone
+/*	private void killIndividual(AID individual) {
 		myZone.males.remove(individual);
 		myZone.females.remove(individual);
 		myZone.immatures.remove(individual);
-	}
+	}*/
 
 	private void moveProcessing() {
 		sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);

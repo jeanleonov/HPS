@@ -15,11 +15,12 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import settings.ViabilityPair;
 
-public class Individual extends Agent {
+public class Individual extends Agent implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
