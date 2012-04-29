@@ -2,6 +2,8 @@ package zone;
 
 import genotype.Genotype;
 
+import individual.Individual;
+
 import java.io.IOException;
 import java.util.Vector;
 
@@ -40,30 +42,46 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		ACLMessage message = myAgent.blockingReceive();/*#*/
 		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
 							myZone.experimentId + " got " + message.getContent());#lao*/
-		String content = message.getContent();/*#*/
-		ACLMessage reply = message.createReply();/*#*/
-		if (content.compareTo(SCENARIO_COMMANDS) == 0){
-			//refreshStatistic();
-			// scenarioCommandProcessing(); TODO Realise scenario process	
-			myZone.iteration++;
+		if(message.getPerformative() == ACLMessage.REQUEST){
+			if(message.getLanguage() == "Migration"){
+				Individual traveller;
+				try {
+					traveller = (Individual)message.getContentObject();
+					traveller.changeZone(myZone.getAID());
+					myZone.addIndividualToList(traveller.getLocalName(), traveller.getGenotype(), traveller.getAge());
+				} catch (UnreadableException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		else if (content.compareTo(START_DIE) == 0){
-			refreshStatistic(); // TODO бпелеммн !!!
-			dieProcessing();
+		else{
+			//==========================================================
+			String content = message.getContent();/*#*/
+			ACLMessage reply = message.createReply();/*#*/
+			if (content.compareTo(SCENARIO_COMMANDS) == 0){
+				//refreshStatistic();
+				// scenarioCommandProcessing(); TODO Realise scenario process	
+				myZone.iteration++;
+			}
+			else if (content.compareTo(START_DIE) == 0){
+				refreshStatistic(); // TODO бпелеммн !!!
+				dieProcessing();
+			}
+			else if (content.compareTo(START_MOVE) == 0){
+				// moveProcessing();
+				Migration m = new Migration(myZone, null);
+				m.action();
+			}
+			else if (content.compareTo(START_LAST_PHASE) == 0){
+				// lastPhaseProcessing(); TODO Realise last phase process
+				// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
+			}
+			else if (content.compareTo(I_KILL_YOU) == 0){
+				killingSystemProcessing();
+			}
+			myZone.send(reply);/*#*/
+			//==========================================================
 		}
-		else if (content.compareTo(START_MOVE) == 0){
-			// moveProcessing();
-			Migration m = new Migration(myZone, null);
-			m.action();
-		}
-		else if (content.compareTo(START_LAST_PHASE) == 0){
-			// lastPhaseProcessing(); TODO Realise last phase process
-			// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
-		}
-		else if (content.compareTo(I_KILL_YOU) == 0){
-			killingSystemProcessing();
-		}
-		myZone.send(reply);/*#*/
 	}
 
 	private void scenarioCommandProcessing() {
@@ -94,10 +112,12 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		myZone.immatures.remove(individual);
 	}*/
 
-	private void moveProcessing() {
+	// DMY: unnesessary now
+/*	private void moveProcessing() {
 		sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);
 		// TODO
-	}
+	}*/
+	
 	
 	private void lastPhaseProcessing() {
 		// TODO Auto-generated method stub

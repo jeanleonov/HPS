@@ -110,6 +110,15 @@ public class Individual extends Agent implements Serializable{
 	}
 	
 	public void changeZone(AID newZone){
+		
 		myZone = newZone;
+	}
+	
+	public Genotype getGenotype(){
+		return myGenotype;
+	}
+	
+	public int getAge(){
+		return age;
 	}
 }

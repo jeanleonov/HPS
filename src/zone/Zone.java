@@ -103,7 +103,7 @@ public class Zone extends Agent {
 				females.add(new AID(agentName, AID.ISLOCALNAME));
 			}
 		}
-		
+		individualCounter++; // DMY: IMHO, logical
 	}
 
 	private String getIndividualName(){

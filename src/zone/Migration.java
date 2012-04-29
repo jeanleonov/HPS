@@ -1,5 +1,6 @@
 package zone;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import distribution.ZoneDistribution;
@@ -42,7 +43,18 @@ public class Migration {
 					//TODO: register individual in this zone
 					// and don't forget to tell individual about it!
 					
-					//ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
+					
+					try {
+						ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
+						journey.setLanguage("Migration");
+						journey.setContentObject(individual);
+						journey.addReceiver(neighbours.get(i).getFirst());
+						myZone.send(journey);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						System.out.println("Individual migration error");
+						e.printStackTrace();
+					}
 				}
 				myZone.killIndividual(individual);
 			}
