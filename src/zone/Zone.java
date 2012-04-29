@@ -37,7 +37,7 @@ public class Zone extends Agent {
 	int zoneId;
 	
 	int resources;
-	double totalCompetitiveness;
+	double totalCompetitiveness = 0.0001;
 	int iteration = -1;
 	
 	private int individualCounter = 0;

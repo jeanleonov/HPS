@@ -28,9 +28,12 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private StatisticPackage currentPackage;
 	
+	protected Migration m = null; 
+	
 	@Override
 	public void onStart(){
 		myZone = (Zone)myAgent;
+		m = new Migration(myZone);
 	}
 	
 	/*
@@ -43,12 +46,12 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
 							myZone.experimentId + " got " + message.getContent());#lao*/
 		if(message.getPerformative() == ACLMessage.REQUEST){
-			if(message.getLanguage() == "Migration"){
-				Individual traveller;
+			if(message.getLanguage() == "immigration"){
+				Object[] traveller;
 				try {
-					traveller = (Individual)message.getContentObject();
-					traveller.changeZone(myZone.getAID());
-					myZone.addIndividualToList(traveller.getLocalName(), traveller.getGenotype(), traveller.getAge());
+					traveller = (Object[])message.getContentObject();
+					//traveller.changeZone(myZone.getAID());
+					myZone.addIndividualToList((String)traveller[0], (Genotype)traveller[1], (Integer)traveller[2]);
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
@@ -69,8 +72,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			}
 			else if (content.compareTo(START_MOVE) == 0){
 				// moveProcessing();
-				Migration m = new Migration(myZone, null);
-				m.action();
+				m.action(null);
 			}
 			else if (content.compareTo(START_LAST_PHASE) == 0){
 				// lastPhaseProcessing(); TODO Realise last phase process

@@ -109,9 +109,8 @@ public class Individual extends Agent implements Serializable{
 		else addBehaviour(new MaleBehaviour());
 	}
 	
-	public void changeZone(AID newZone){
-		
-		myZone = newZone;
+	public void changeZone(AID aid){
+		myZone = aid;
 	}
 	
 	public Genotype getGenotype(){

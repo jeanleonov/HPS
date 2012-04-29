@@ -11,14 +11,12 @@ import jade.lang.acl.ACLMessage;
 
 public class Migration {
 	private Zone myZone;
-	ZoneDistribution distribution;
 	
-	public Migration(Zone myAgent, ZoneDistribution distribution){
+	public Migration(Zone myAgent){
 		this.myZone = myAgent;
-		this.distribution = distribution;
 	}
 	
-	public void action(){
+	public void action(ZoneDistribution distribution){
 		Vector<AID> individuals = myZone.getIndividuals();
 		double attractivness = myZone.getAttractivness();
 		Vector<Pair<AID, Double>> neighbours = myZone.getNeighbours();
@@ -47,8 +45,8 @@ public class Migration {
 					try {
 						ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
 						journey.setLanguage("Migration");
-						journey.setContentObject(individual);
-						journey.addReceiver(neighbours.get(i).getFirst());
+						journey.setContentObject(neighbours.get(i).getFirst());
+						journey.addReceiver(individual);
 						myZone.send(journey);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -56,10 +54,17 @@ public class Migration {
 						e.printStackTrace();
 					}
 				}
+				else{
+					ACLMessage journey = new ACLMessage(ACLMessage.INFORM);
+					journey.setLanguage("Migration");
+					journey.setContent("Die");
+					journey.addReceiver(individual);
+					myZone.send(journey);
+				}
 				myZone.killIndividual(individual);
 			}
 		}
 		
-		myZone.createIndividuals(distribution);
+		if(distribution != null) myZone.createIndividuals(distribution);
 	}
 }
