@@ -27,6 +27,8 @@ public class Individual extends Agent implements Serializable{
 	private Genotype myGenotype;
 	protected int age;
 	
+	protected AID myZone;
+	
 	ArrayList<ViabilityPair> uSettings;
 	
 	@Override
@@ -36,6 +38,7 @@ public class Individual extends Agent implements Serializable{
 			return;
 		myGenotype = (Genotype) args[0];
 		age = (Integer) args[1];
+		myZone = (AID) args[2];
 
 		GetSettings();
 		BehaviourRegister();

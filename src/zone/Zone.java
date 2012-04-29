@@ -74,8 +74,11 @@ public class Zone extends Agent {
 	}
 
 	private void createIndividual(Genotype genotype, int age) {
-		try {	
-			Object[] parameters = {genotype, age, getAttractivness()};
+		try {
+			// DMY: individual must know it's zone. And anyway, it doesn't percieving attractivness now
+			//Object[] parameters = {genotype, age, getAttractivness()};
+			Object[] parameters = {genotype, age, this.getAID()};
+			
 			String agentName = getIndividualName();
 			ContainerController controller = getContainerController();
 			AgentController individualAgent = controller.createNewAgent(agentName, 
