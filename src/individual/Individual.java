@@ -26,12 +26,13 @@ public class Individual extends Agent implements Serializable{
 	
 	private Genotype myGenotype;
 	protected int age;
+	
 	ArrayList<ViabilityPair> uSettings;
 	
 	@Override
 	protected void setup() {
 		Object[] args = getArguments();
-		if (args.length < 2)
+		if (args.length < 3)
 			return;
 		myGenotype = (Genotype) args[0];
 		age = (Integer) args[1];

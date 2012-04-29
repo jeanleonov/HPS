@@ -52,7 +52,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			dieProcessing();
 		}
 		else if (content.compareTo(START_MOVE) == 0){
-			// moveProcessing(); TODO Realise move process
+			// moveProcessing();
+			Migration m = new Migration(myZone, null);
+			m.action();
 		}
 		else if (content.compareTo(START_LAST_PHASE) == 0){
 			// lastPhaseProcessing(); TODO Realise last phase process
