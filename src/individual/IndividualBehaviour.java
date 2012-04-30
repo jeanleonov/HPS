@@ -7,6 +7,13 @@ import jade.lang.acl.ACLMessage;
 public class IndividualBehaviour extends CyclicBehaviour implements messaging.Messaging {
 
 	private static final long serialVersionUID = 1L;
+	
+	private Migration m = null;
+	
+	@Override
+	public void onStart(){
+		m = new Migration((Individual)myAgent);
+	}
 
 	@Override
 	public void action() {
@@ -51,18 +58,7 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 				}
 				case ACLMessage.REQUEST:{
 					if(msg.getLanguage() == "Migration"){
-						((Individual)myAgent).changeZone((AID)msg.getContentObject());
-						
-						Object[] params = new Object[3];
-						params[0] = myAgent.getLocalName();
-						params[1] = ((Individual)myAgent).getGenotype();
-						params[2] = ((Individual)myAgent).getAge();
-						
-						ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
-						journey.addReceiver((AID)msg.getContentObject());
-						journey.setLanguage("immigration");
-						journey.setContentObject(params);
-						myAgent.send(journey);
+						m.action((AID)msg.getContentObject());
 					}
 					break;
 				}
