@@ -13,14 +13,19 @@ public class Rule implements Serializable {
 								FOREVER_BEFORE = -2,
 								FOREVER_AFTER = -3;
 	
-	private ActionApperance actionApperance;
-	private Action[] actions;
+	private ActionAppearance actionAppearance;
+	private Vector<Action> actions;
 	private int startYear, endYear;
 	
-	public Rule(String str){
-		// TODO Parsing
+	public Rule(ActionAppearance actionAppearance, Vector<Action> actions,
+			int startYear, int endYear) {
+		this.actionAppearance = actionAppearance;
+		this.actions = actions;
+		this.startYear = startYear;
+		this.endYear = endYear;
 	}
-	
+
+
 	public byte getState(int yearNumber){
 		if (	(yearNumber>=startYear || yearNumber==FOREVER_BEFORE)
 			&&	(yearNumber<=endYear || yearNumber==FOREVER_AFTER))
@@ -31,11 +36,13 @@ public class Rule implements Serializable {
 			return FINISHED;
 	}
 	
-	public Vector<ExperimentCommand> getCommandsForIteration(int iterationNumber){
-		Vector<ExperimentCommand> commands = new Vector<ExperimentCommand>();
-		if (actionApperance.shouldDoAction(iterationNumber-startYear))
+	public Vector<Action> getCommandsForIteration(int iterationNumber){
+		Vector<Action> commands = null;
+		if (actionAppearance.shouldDoAction(iterationNumber-startYear)){
+			commands = new Vector<Action>();
 			for (Action action : actions)
-				commands.add(action.getCommand());
+				commands.add(action);
+		}
 		return commands;
 	}
 }

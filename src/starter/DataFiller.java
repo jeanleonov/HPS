@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
+import parser.Parser;
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
 import settings.ViabilityPair;
@@ -25,20 +26,20 @@ public class DataFiller {
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	private Scenario scenario = new Scenario();
+	private Scenario scenario;
 	
 	public DataFiller(
 			Reader viabilityReader, 
 			Reader posterityReader, 
-			/*Reader scenarioReader,*/
+			Reader scenarioReader,
 			Reader experimentInfoReader){
 		this.viabilityReader = viabilityReader;
 		this.posterityReader = posterityReader;
-	//	this.scenarioReader = scenarioReader;
+		this.scenarioReader = scenarioReader;
 		this.experimentInfoReader = experimentInfoReader;
 		viabilityFill();
 		posterityFill();
-	//	scenarioFill();
+		scenarioFill();
 		experimentFill();
 	}
 	
@@ -161,11 +162,8 @@ public class DataFiller {
 	
 	private void scenarioFill(){
 		try{
-			BufferedReader scenarioReader = new BufferedReader(this.scenarioReader);
-			String cur = scenarioReader.readLine();
-			while(cur != null){
-				scenario.addRule(cur);
-			}
+			Parser parser = new Parser(scenarioReader);
+			scenario = new Scenario(parser.readRules());
 		}
 		catch(Exception e){
 			e.printStackTrace();

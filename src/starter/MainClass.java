@@ -36,6 +36,7 @@ public class MainClass implements Pathes{
 		Object[] startArgs = new Object[]{
 										PROJECT_PATH + "src/starter/Viability.csv", 
 										PROJECT_PATH + "src/starter/Posterity.csv", 
+										PROJECT_PATH + "src/starter/Scenario.scn",
 										PROJECT_PATH + "src/starter/Initiation.hpsi",
 										containers};
 		try {

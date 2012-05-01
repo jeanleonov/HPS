@@ -1,15 +1,17 @@
 package experiment;
 
 import java.io.Serializable;
+import java.util.Vector;
 
-abstract public class Action implements Serializable {
-
+public class Action implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
-	abstract void parseAction(String str);
-
-	/*
-	 * generation of commands to Zones
-	 */
-	abstract public ExperimentCommand getCommand();
+	Vector<Integer> zonesNumbers;
+	ZoneCommand command;
+	
+	public Action(Vector<Integer> zonesNumbers, ZoneCommand command){
+		this.zonesNumbers = zonesNumbers;
+		this.command = command;
+	}
 }

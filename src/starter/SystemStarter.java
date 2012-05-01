@@ -23,7 +23,8 @@ public class SystemStarter extends Agent implements Pathes{
 	
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
-					experimentInfoPath;
+					experimentInfoPath,
+					scenarioPath;
 	Integer remainingExperiments;		// TODO !!! implement synchronization
 	
 /*	public SystemStarter(
@@ -41,8 +42,9 @@ public class SystemStarter extends Agent implements Pathes{
 		Object[] args = this.getArguments();
 		this.viabilitySettingsPath = (String)args[0];
 		this.posteritySettingPath = (String)args[1];
-		this.experimentInfoPath = (String)args[2];
-		this.containerControllers = (Vector<ContainerController>)args[3];
+		this.scenarioPath = (String)args[2];
+		this.experimentInfoPath = (String)args[3];
+		this.containerControllers = (Vector<ContainerController>)args[4];
 		headContainerController = getContainerController();
 		startSystem();
 	}
@@ -59,14 +61,14 @@ public class SystemStarter extends Agent implements Pathes{
 	private void readData(){
 		BufferedReader posteritySettingsReader;
 		BufferedReader viabilitySettingsReader;
-	//	BufferedReader scenarioReader;			// TODO
+		BufferedReader scenarioReader;
 		BufferedReader experimentInfoReader;
 		try {
 			viabilitySettingsReader = new BufferedReader(new FileReader(viabilitySettingsPath));
 			posteritySettingsReader = new BufferedReader(new FileReader(posteritySettingPath));
 			experimentInfoReader = new BufferedReader(new FileReader(experimentInfoPath));
-		//	scenarioReader = new BufferedReader(new FileReader(PROJECT_PATH + /*!!!*/));			// TODO
-			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, experimentInfoReader);
+			scenarioReader = new BufferedReader(new FileReader(scenarioPath));
+			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, scenarioReader, experimentInfoReader);
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();

@@ -22,9 +22,11 @@ public class Scenario implements Serializable{
 		finishedRules = new Vector<Rule>();
 	}
 	
-	public void addRule(String str){
-		if (yearCursor == UNSTARTED){
-			Rule rule = new Rule(str);
+	public Scenario(Vector<Rule> rules){
+		unstartedRules = new Vector<Rule>();
+		activeRules = new Vector<Rule>();
+		finishedRules = new Vector<Rule>();
+		for (Rule rule : rules){
 			if (rule.getState(0) == Rule.ACTIVE)
 				activeRules.add(rule);
 			if (rule.getState(0) == Rule.UNSTARTED)
@@ -57,9 +59,9 @@ public class Scenario implements Serializable{
 	}
 	
 	// experimentYearCursor is necessary to avoid desynchronization
-	public Vector<ExperimentCommand> getCommandsForNextYear(int experimentYearCursor){
+	public Vector<Action> getCommandsForNextYear(int experimentYearCursor){
 		// TODO if (experimentYearCursor != yearCursor) throw ...; OR reorganize all.
-		Vector<ExperimentCommand> commands = new Vector<ExperimentCommand>();
+		Vector<Action> commands = new Vector<Action>();
 		for (Rule rule : activeRules)
 			commands.addAll(rule.getCommandsForIteration(yearCursor));
 		updateRuleLists();

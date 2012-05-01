@@ -6,21 +6,22 @@ public class ZoneCommand implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	final static public short 	ADD_RESOURCES = 1,
-								ADD_INDIVIDUALS = 2,
-								MULTIPLY_RESOURCES = 3,
-								MULTIPLY_INDIVIDUALS = 4;
+	public enum Type{
+		ADD_RESOURCES,
+		ADD_INDIVIDUALS,
+		MULTIPLY_RESOURCES,
+		MULTIPLY_INDIVIDUALS;
+	}
 
-	short type;
+	Type type;
 	Object commandContent;
 
-	public ZoneCommand(short type, Object commandContent) {
-		super();
+	public ZoneCommand(Type type, Object commandContent) {
 		this.type = type;
 		this.commandContent = commandContent;
 	}
 
-	public short getType() {
+	public Type getType() {
 		return type;
 	}
 
