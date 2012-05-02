@@ -66,6 +66,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 				} catch (UnreadableException e) {
 					System.out.println("getting content object error");
 					e.printStackTrace();
+				} catch (IOException e) {
+					System.out.println("Error command executing");
+					e.printStackTrace();
 				}
 			}
 		}
