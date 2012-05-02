@@ -47,7 +47,7 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 						myAgent.send(reply);
 					}
 					else
-					if(query.equals("Die")){
+					if(query.equals(DIE)){
 							myAgent.doDelete();
 					}
 					else{
@@ -57,7 +57,7 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 					break;
 				}
 				case ACLMessage.REQUEST:{
-					if(msg.getLanguage() == "Migration"){
+					if(msg.getLanguage().compareTo("Migration") == 0){
 						m.action((AID)msg.getContentObject());
 					}
 					break;

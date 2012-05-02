@@ -46,7 +46,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
 							myZone.experimentId + " got " + message.getContent());#lao*/
 		if(message.getPerformative() == ACLMessage.REQUEST){
-			if(message.getLanguage() == "immigration"){
+			String language = message.getLanguage();
+			if(language.compareTo("immigration") == 0){
 				Object[] traveller;
 				try {
 					traveller = (Object[])message.getContentObject();
@@ -55,6 +56,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}
+			}
+			else if(language.compareTo("scenario") == 0){
+				// TODO ZoneCommands executing
 			}
 		}
 		else{

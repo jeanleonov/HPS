@@ -1,7 +1,10 @@
 package zone;
 
 import java.io.IOException;
+
 import java.util.Vector;
+
+import messaging.Messaging;
 
 import distribution.ZoneDistribution;
 
@@ -9,7 +12,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 
-public class Migration {
+public class Migration implements Messaging{
 	private Zone myZone;
 	
 	public Migration(Zone myAgent){
@@ -57,7 +60,7 @@ public class Migration {
 				else{
 					ACLMessage journey = new ACLMessage(ACLMessage.INFORM);
 					journey.setLanguage("Migration");
-					journey.setContent("Die");
+					journey.setContent(DIE);
 					journey.addReceiver(individual);
 					myZone.send(journey);
 				}
