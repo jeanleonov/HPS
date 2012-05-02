@@ -1,5 +1,6 @@
 package posterity;
 
+import genotype.Genotype;
 import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
@@ -16,35 +17,32 @@ import java.util.ArrayList;
 
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
-import starter.Pair;
 
 public class PosterityBehaviour extends OneShotBehaviour{
 	private static final long serialVersionUID = 1L;
 	PosterityParentsPair parents;
-	double fertilityMale, fertilityFemale;
-	double thisGenotypeViability;
+	double maleFertility, femaleFertility;
+	
 	ArrayList<PosterityResultPair> resultsInterbreeding;
 
-	public PosterityBehaviour(PosterityParentsPair parents){
+	public PosterityBehaviour(PosterityParentsPair parents, float maleFertility, float femaleFertility){
 		this.parents = parents;
+		this.maleFertility = maleFertility;
+		this.femaleFertility = femaleFertility;
 	}
+	
 	@Override
 	public void action() {
 		// TODO Auto-generated method stub		
-		ArrayList<PosterityResultPair> resultsInterbreedingArray = getProbabilityResultPair();		
-		resultsInterbreeding = resultsInterbreedingArray;
-		//request to Settings of MaleProlificacy, FemaleProlificacy 		
-		/*Calculating number of eggs in this posterity = (probability of appearance each egg)*
-		 * (MaleProlificacy * FemaleProfilicacy) */
-		
-		getGenotypeViability();
-		//From genotype's viability calculate number of survived berries
-		
-		/*for(int i=0; i<resultsInterbreedingArray.size();i++){           //may be I will need it!!!!
-			if(resultsInterbreedingArray.get(i).getProbability() <= 0.5){ 
-				resultsInterbreeding.remove(i);						 
-			}	
-		}*/
+		ArrayList<PosterityResultPair> resultsInterbreedingArray = getResultPairs();		
+		resultsInterbreeding = resultsInterbreedingArray;//it is collection of distribution 
+												//(Genotype, probability_of_appearance_in_this_posterity*viability
+
+		for(int i=0; i<resultsInterbreedingArray.size();i++){
+			if(maleFertility * femaleFertility * resultsInterbreedingArray.get(i).getProbability() <= Math.random())
+				resultsInterbreeding.remove(i);
+		}	
+			
 		try {
 			sendSurvivedBerries();
 		} catch (IOException e) {
@@ -54,16 +52,15 @@ public class PosterityBehaviour extends OneShotBehaviour{
 		
 	}
 	
-	public boolean sendSurvivedBerries() throws IOException{//send to Zone survived berries
+	public void sendSurvivedBerries() throws IOException{//send to Zone survived berries
 		ACLMessage survivedBerries = new ACLMessage(ACLMessage.INFORM);
 		survivedBerries.addReceiver(new AID("Zone", AID.ISLOCALNAME));
 		survivedBerries.setContentObject(resultsInterbreeding);
 		myAgent.send(survivedBerries);
-		return false;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<PosterityResultPair> getProbabilityResultPair(){	
+	public ArrayList<PosterityResultPair> getResultPairs(){	
 		DFAgentDescription template = new DFAgentDescription();
   		ServiceDescription templateSd = new ServiceDescription();
   		templateSd.setType("Settings");
@@ -104,7 +101,10 @@ public class PosterityBehaviour extends OneShotBehaviour{
   		
 	}
 	
-	public Pair<Double,Double> getFertilityPair(){
+	
+	//this is method of getting viabilities of appropriate genotype
+	/*
+	public ArrayList<Float> getGenotypeViabilities(){
 		DFAgentDescription template = new DFAgentDescription();
   		ServiceDescription templateSd = new ServiceDescription();
   		templateSd.setType("Settings");
@@ -113,7 +113,7 @@ public class PosterityBehaviour extends OneShotBehaviour{
   		SearchConstraints sc = new SearchConstraints();
   		// We want to receive 1 result
   		sc.setMaxResults(new Long(1));
-  		Pair<Double,Double> fertilities;// = new Pair<Double, Double>();
+  		ArrayList<Float> genotypeViabilities=null;
   		try {
   			DFAgentDescription[] results = null;
   			while(results == null || results.length < 1) {
@@ -125,7 +125,7 @@ public class PosterityBehaviour extends OneShotBehaviour{
   			ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
 			msg.addReceiver(provider);
 			try {
-				msg.setContentObject(parents);
+				msg.setContentObject(genotypes);//form array of genotypes if this method will exist
 			}
 			catch (Exception ex) { ex.printStackTrace(); }
 			myAgent.send(msg);
@@ -134,18 +134,14 @@ public class PosterityBehaviour extends OneShotBehaviour{
 			while(msg.getPerformative() == ACLMessage.FAILURE);
 			
 			if(msg.getPerformative() != ACLMessage.CONFIRM) throw new NotUnderstoodException("Not understood");
-			resultsInterbreedingArray = (ArrayList<PosterityResultPair>) msg.getContentObject();
-			return resultsInterbreedingArray;
+			genotypeViabilities = (ArrayList<Float>) msg.getContentObject();
+			return genotypeViabilities;
 		} catch (FIPAException e) {
 			e.printStackTrace();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-  		return resultsInterbreedingArray;
-  	
+  		return genotypeViabilities;
 	}
-	
-	public double getGenotypeViability(){
-		return 0;
-	}
+	*/
 }
