@@ -3,6 +3,10 @@ package experiment;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
+
+import java.io.IOException;
+import java.util.Vector;
+
 import messaging.Messaging;
 
 public class ExperimentBehaviour extends Behaviour implements Messaging {
@@ -11,14 +15,14 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	
 	private ACLMessage iFinished;
 	Experiment experiment;
-	/*private int countOfMessages;#temporary*/		// shit-code	* see another shit-code
+	private int countOfMessages;			// shit-code	* see another shit-code
 	int yearCursore;
 	
 
 	@Override
 	public void onStart(){
 		experiment = (Experiment)myAgent;
-	//	experiment.scenario.start();			// TODO to future
+		experiment.scenario.start();
 		iFinished = new ACLMessage(ACLMessage.INFORM);
 		iFinished.addReceiver(experiment.myProvider);
 		iFinished.setContent(I_FINISHED);
@@ -28,7 +32,9 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public void action() {
 		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
-		// TODO scenarioCommandsProcessing();
+		try {
+			scenarioCommandsProcessing();
+		} catch (IOException e) {e.printStackTrace();}
 		dieProcessing();
 		// TODO moveProcessing();
 		// TODO (in Zone) lastPhaseProcessing();
@@ -53,29 +59,33 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	}
 	
 	// method for reading scenario commands
-	/*private ACLMessage[] convertCommandsToACLMessages(Vector<ExperimentCommand> commands) throws IOException{
+	private ACLMessage[] convertCommandsToACLMessages(Vector<Action> commands) throws IOException{
 		// TODO
 		countOfMessages=0;
 		int i=0;
 		ACLMessage[] messages = new ACLMessage[commands.size()];
-		for (ExperimentCommand command : commands){
-			countOfMessages += command.zonesNumbers.length;
+		for (Action command : commands){							// TODO merge it with dieOff tick 
+																	// TODO send to Zone array of ZoneCommand
+			countOfMessages += command.zonesNumbers.size();
 			messages[i] = new ACLMessage(ACLMessage.REQUEST);
-			for (int j=0; j<command.zonesNumbers.length; j++)
-				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers[i]));
+			for (int j=0; j<command.zonesNumbers.size(); j++)
+				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers.get(i)));
 			messages[i].setContentObject(command.command);
 			// may be should be append...
 		}
 		return null;
-	}#temporary*/
+	}
 
-	/*private void scenarioCommandsProcessing() throws IOException{
+	private void scenarioCommandsProcessing() throws IOException{
+		Vector<Action> actions = experiment.scenario.getCommandsForNextYear(yearCursore);
+		if (actions.size() == 0)
+			return;
 		ACLMessage[] commands 
-					= convertCommandsToACLMessages(experiment.scenario.getCommandsForNextYear(yearCursore));
+					= convertCommandsToACLMessages(actions);
 		for (ACLMessage command : commands)				// send commands
 			experiment.send(command);
 		ignoreNMessages(countOfMessages);
-	}#temporary*/
+	}
 
 	private void dieProcessing(){
 		ACLMessage message = getMessageForMassMailing();

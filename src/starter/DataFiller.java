@@ -13,6 +13,7 @@ import settings.ViabilityPair;
 import settings.Vocabulary.Convertor;
 import settings.Vocabulary.Param;
 import distribution.ExperimentDistribution;
+import experiment.Rule;
 import experiment.Scenario;
 
 public class DataFiller {
@@ -26,7 +27,7 @@ public class DataFiller {
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	private Scenario scenario;
+	private Vector<Rule> rules;
 	
 	public DataFiller(
 			Reader viabilityReader, 
@@ -64,7 +65,7 @@ public class DataFiller {
 	}
 
 	public Scenario getScenario() {
-		return scenario;
+		return new Scenario(rules);
 	}
 
 	private void viabilityFill() {
@@ -163,7 +164,7 @@ public class DataFiller {
 	private void scenarioFill(){
 		try{
 			Parser parser = new Parser(scenarioReader);
-			scenario = new Scenario(parser.readRules());
+			rules = parser.readRules();
 		}
 		catch(Exception e){
 			e.printStackTrace();
