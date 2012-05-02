@@ -13,46 +13,38 @@ import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
-import settings.ViabilityPair;
 
 public class PosterityBehaviour extends OneShotBehaviour{
-
 	private static final long serialVersionUID = 1L;
-	
-	PosterityResultPair[] resultsInterbreedingArray=null;
-	PosterityParentsPair parents;//!!!!initialize parents!!!!
-
+	PosterityParentsPair parents;
+	Float maleFertility, femaleFertility;	
 	ArrayList<PosterityResultPair> resultsInterbreeding;
-	
-	public PosterityBehaviour(PosterityParentsPair parents){
-		this.parents = parents;
+
+	public PosterityBehaviour(PosterityParentsPair parentsPair,
+			Float maleFertility, Float femaleFertility) {
+		// TODO Auto-generated constructor stub
+		this.parents = parentsPair;
+		this.maleFertility = maleFertility;
+		this.femaleFertility = femaleFertility;
 	}
+
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
-		
-		resultsInterbreedingArray = getProbabilityResultPair();
-		//перетаскиваю из массива в список из-за того, что Кирилл отказался передавать ArrayList, но мне это надо
-		//а вообще это все равно нужно делать
-		if(resultsInterbreedingArray!=null){
-			resultsInterbreeding = new ArrayList<PosterityResultPair>();
-			for(int i=0;i<resultsInterbreedingArray.length;i++){
-				resultsInterbreeding.add(i, resultsInterbreedingArray[i]);
-			}
+		// TODO Auto-generated method stub		
+		ArrayList<PosterityResultPair> resultsInterbreedingArray = getResultPairs();		
+		resultsInterbreeding = resultsInterbreedingArray;
+		/*IMPORTANT!!!
+		 * it is collection of distribution 
+		(Genotype, probability_of_appearance_in_this_posterity*viability
+		 */
+		for(int i=0; i<resultsInterbreedingArray.size();i++){
+			if(maleFertility * femaleFertility * resultsInterbreedingArray.get(i).getProbability() <= Math.random())
+				resultsInterbreeding.remove(i);
+		}	
 			
-		}
-		
-		for(int i=0; i<resultsInterbreedingArray.length;i++){//??????возможно нужно идти итератором!!!!
-			if(resultsInterbreedingArray[i].getProbability() <= 0.5){//если вероятности выжить недостаточно, то 
-				resultsInterbreeding.remove(i);						 //выбрасываем эту икринку
-			}	
-		}
-
-		//сказать Зоне сколько у меня выживших cеголеток
 		try {
 			sendSurvivedBerries();
 		} catch (IOException e) {
@@ -62,17 +54,15 @@ public class PosterityBehaviour extends OneShotBehaviour{
 		
 	}
 	
-	public boolean sendSurvivedBerries() throws IOException{//send to Zone survived berries
+	public void sendSurvivedBerries() throws IOException{//send to Zone survived berries
 		ACLMessage survivedBerries = new ACLMessage(ACLMessage.INFORM);
 		survivedBerries.addReceiver(new AID("Zone", AID.ISLOCALNAME));
-		survivedBerries.setLanguage("English");
-		survivedBerries.setOntology("Pairs of survived berries");
 		survivedBerries.setContentObject(resultsInterbreeding);
 		myAgent.send(survivedBerries);
-		return false;
 	}
 	
-	public PosterityResultPair[] getProbabilityResultPair(){	
+	@SuppressWarnings("unchecked")
+	public ArrayList<PosterityResultPair> getResultPairs(){	
 		DFAgentDescription template = new DFAgentDescription();
   		ServiceDescription templateSd = new ServiceDescription();
   		templateSd.setType("Settings");
@@ -81,7 +71,7 @@ public class PosterityBehaviour extends OneShotBehaviour{
   		SearchConstraints sc = new SearchConstraints();
   		// We want to receive 1 result
   		sc.setMaxResults(new Long(1));
-  		
+  		ArrayList<PosterityResultPair> resultsInterbreedingArray=null;
   		try {
   			DFAgentDescription[] results = null;
   			while(results == null || results.length < 1) {
@@ -102,16 +92,58 @@ public class PosterityBehaviour extends OneShotBehaviour{
 			while(msg.getPerformative() == ACLMessage.FAILURE);
 			
 			if(msg.getPerformative() != ACLMessage.CONFIRM) throw new NotUnderstoodException("Not understood");
-			
-			resultsInterbreedingArray = (PosterityResultPair[]) msg.getContentObject();
-			
+			resultsInterbreedingArray = (ArrayList<PosterityResultPair>) msg.getContentObject();
+			return resultsInterbreedingArray;
 		} catch (FIPAException e) {
 			e.printStackTrace();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
-		
   		return resultsInterbreedingArray;
+  		
 	}
-
+	
+	
+	//this is method of getting viabilities of appropriate genotype
+	/*
+	public ArrayList<Float> getGenotypeViabilities(){
+		DFAgentDescription template = new DFAgentDescription();
+  		ServiceDescription templateSd = new ServiceDescription();
+  		templateSd.setType("Settings");
+  		template.addServices(templateSd);
+  		
+  		SearchConstraints sc = new SearchConstraints();
+  		// We want to receive 1 result
+  		sc.setMaxResults(new Long(1));
+  		ArrayList<Float> genotypeViabilities=null;
+  		try {
+  			DFAgentDescription[] results = null;
+  			while(results == null || results.length < 1) {
+  				results = DFService.search(myAgent, template, sc);
+  			}
+  			DFAgentDescription dfd = results[0];
+  			AID provider = dfd.getName();
+  			
+  			ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
+			msg.addReceiver(provider);
+			try {
+				msg.setContentObject(genotypes);//form array of genotypes if this method will exist
+			}
+			catch (Exception ex) { ex.printStackTrace(); }
+			myAgent.send(msg);
+			
+			do { msg = myAgent.blockingReceive(); }
+			while(msg.getPerformative() == ACLMessage.FAILURE);
+			
+			if(msg.getPerformative() != ACLMessage.CONFIRM) throw new NotUnderstoodException("Not understood");
+			genotypeViabilities = (ArrayList<Float>) msg.getContentObject();
+			return genotypeViabilities;
+		} catch (FIPAException e) {
+			e.printStackTrace();
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
+  		return genotypeViabilities;
+	}
+	*/
 }
