@@ -1,5 +1,6 @@
 package zone;
 
+import experiment.ZoneCommand;
 import genotype.Genotype;
 
 import individual.Individual;
@@ -29,11 +30,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private StatisticPackage currentPackage;
 	
 	protected Migration m = null; 
+	protected ScenarioExecutor executor = null;
 	
 	@Override
 	public void onStart(){
 		myZone = (Zone)myAgent;
 		m = new Migration(myZone);
+		executor = new ScenarioExecutor(myZone);
 	}
 	
 	/*
@@ -57,8 +60,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 					e.printStackTrace();
 				}
 			}
-			else if(language.compareTo("scenario") == 0){
-				// TODO ZoneCommands executing
+			else if(language.compareTo(SCENARIO) == 0){
+				try {
+					executor.action((ZoneCommand)message.getContentObject());
+				} catch (UnreadableException e) {
+					System.out.println("getting content object error");
+					e.printStackTrace();
+				}
 			}
 		}
 		else{

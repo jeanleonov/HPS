@@ -10,7 +10,7 @@ public class ZoneCommand implements Serializable {
 		ADD_RESOURCES,
 		ADD_INDIVIDUALS,
 		MULTIPLY_RESOURCES,
-		MULTIPLY_INDIVIDUALS;
+		MULTIPLY_INDIVIDUALS; // DMY: unnesessary, we won't implement it
 	}
 
 	Type type;

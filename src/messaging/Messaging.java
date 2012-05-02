@@ -46,4 +46,6 @@ public interface Messaging {
 	String EXPORT = "exportCommand";					// Zone -> StatisticDispatcher
 	
 	String DIE = "Die";									// Zone -> Individual (when immigrating out of Experiment)
+	
+	String SCENARIO = "scenario";						// Expirement -> Zone
 }

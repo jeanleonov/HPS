@@ -68,6 +68,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 																	// TODO send to Zone array of ZoneCommand
 			countOfMessages += command.zonesNumbers.size();
 			messages[i] = new ACLMessage(ACLMessage.REQUEST);
+			messages[i].setLanguage(SCENARIO);
 			for (int j=0; j<command.zonesNumbers.size(); j++)
 				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers.get(i)));
 			messages[i].setContentObject(command.command);
