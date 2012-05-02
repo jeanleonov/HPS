@@ -23,9 +23,10 @@ import settings.Vocabulary;
 	    	Object[] args = getArguments();//в аргументах должны быть 2 генотипа
 	  		if (args.length < 2)  return;
 	  		Genotype male =  (Genotype) args[0];
+	  		float maleFertility = (float) args[1];
 	  		Genotype female = (Genotype) args[1];
-	  		PosterityParentsPair parentsPair = new PosterityParentsPair(female,male);
-			this.addBehaviour(new PosterityBehaviour(parentsPair));
-			//get parentPair, get numbers of 			
+	  		float femaleFertility = (float) args[3];
+	  		PosterityParentsPair parentsPair = new PosterityParentsPair(female, male);
+			this.addBehaviour(new PosterityBehaviour(parentsPair, maleFertility, femaleFertility));
 		}
 	}
