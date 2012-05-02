@@ -1,9 +1,9 @@
 package settings;
 
 public class PosterityParentsPair implements java.io.Serializable {
-
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	private genotype.Genotype male;
 	private genotype.Genotype female;
 
