@@ -34,7 +34,7 @@ public class FemaleBehaviour extends IndividualBehaviour {
 		Individual ind = (Individual)myAgent;		
 		Genotype male = null;
 		Float maleFertility= (float) 0.5;
-		Float femaleFertility = ind.getSetting(settings.Vocabulary.Param.Fertility);
+		int femaleFertility = (int)((float)(ind.getSetting(settings.Vocabulary.Param.Fertility)));
 		Posterity posterity = new Posterity(ind, male,maleFertility, femaleFertility);
 		posterity.sendSurvivedBerries();
 	}

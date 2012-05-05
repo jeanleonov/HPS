@@ -23,31 +23,29 @@ public class Posterity implements Messaging{
 	private Individual my_mother;
 	private PosterityParentsPair parents;
 	private float maleFertility;
-	private float femaleFertility;
+	private int femaleFertility;
 	
-	public Posterity(Individual myAgent, Genotype male, Float maleFertility, Float femaleFertility){
+	public Posterity(Individual myAgent, Genotype male, Float maleFertility, int femaleFertility){
 		my_mother = myAgent;
 		Genotype female = my_mother.getGenotype();
 		parents = new PosterityParentsPair(female, male);
 		this.maleFertility = (float)maleFertility;
-		this.femaleFertility = (float)femaleFertility;		
+		this.femaleFertility = femaleFertility;		
 	}
 	public void sendSurvivedBerries() {
-		// TODO Auto-generated method stub
 				ArrayList<PosterityResultPair> survivedBerriesDistribution = calculateSurvivedBerries();
 				ACLMessage survivedBerries = new ACLMessage(ACLMessage.INFORM);
 				survivedBerries.addReceiver(my_mother.getAID_Zone());
-				survivedBerries.setLanguage("Survived berries");
+				survivedBerries.setLanguage(SURVIVED);
 				try {
 					survivedBerries.setContentObject(survivedBerriesDistribution);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				my_mother.send(survivedBerries);
 	}
 	public ArrayList<PosterityResultPair> calculateSurvivedBerries(){
-		int posteritySize = (int)(maleFertility * (int)femaleFertility);
+		int posteritySize = (int)(maleFertility * femaleFertility);
 		ArrayList<PosterityResultPair> resultsInterbreeding = getResultPairs();		
 		for(int i=0; i<resultsInterbreeding.size();i++){
 			resultsInterbreeding.get(i).setProbability(resultsInterbreeding.get(i).getProbability()*posteritySize);
@@ -61,7 +59,6 @@ public class Posterity implements Messaging{
   		templateSd.setType("Settings");
   		template.addServices(templateSd); 		
   		SearchConstraints sc = new SearchConstraints();
-  		// We want to receive 1 result
   		sc.setMaxResults(new Long(1));
   		ArrayList<PosterityResultPair> resultsInterbreedingArray=null;
 

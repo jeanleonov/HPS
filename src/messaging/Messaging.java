@@ -48,4 +48,5 @@ public interface Messaging {
 	String DIE = "Die";									// Zone -> Individual (when immigrating out of Experiment)
 	
 	String SCENARIO = "scenario";						// Expirement -> Zone
+	String SURVIVED		= "survived_berries_distribution";
 }
