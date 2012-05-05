@@ -1,5 +1,4 @@
-
-
+package posterity;
 
 public class Posterity{
 	Posterity(){

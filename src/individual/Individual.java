@@ -107,6 +107,7 @@ public class Individual extends Agent implements Serializable{
 	}
 	
 	private void BehaviourRegister() {
+		addBehaviour(new IndividualBehaviour());
 		if (myGenotype.getGender() == Genome.X)
 			addBehaviour(new FemaleBehaviour());//send to FemaleBehaviour's constructor male's Genotype  and maleFertility
 		else addBehaviour(new MaleBehaviour());
