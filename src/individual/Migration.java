@@ -2,10 +2,12 @@ package individual;
 
 import java.io.IOException;
 
+import messaging.Messaging;
+
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 
-public class Migration {
+public class Migration implements Messaging{
 	Individual myAgent;
 	
 	public Migration(Individual agent){
@@ -23,7 +25,7 @@ public class Migration {
 			
 			ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
 			journey.addReceiver(newZone);
-			journey.setLanguage("immigration");
+			journey.setLanguage(IMMIGRATION);
 			
 				journey.setContentObject(params);
 	

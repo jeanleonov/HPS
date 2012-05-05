@@ -23,14 +23,15 @@ public class FemaleBehaviour extends IndividualBehaviour {
 
 	private static final long serialVersionUID = 1L;
 
-	public void onStart(){
-		
-	}
-	
-	public void action() {
+
+	@Override
+	protected void reproduce(Object msgContent) {
 		// TODO Auto-generated method stub
+		
 		/*PROCESS OF REPRODUCTION
-		 *male and maleFertility will be known after it;*/		
+		 *male and maleFertility will be known after it;*/
+		
+//=============== Form posterity ==========================================		
 		Individual ind = (Individual)myAgent;		
 		Genotype male = null;
 		Float maleFertility= (float) 0.5;

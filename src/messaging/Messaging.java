@@ -9,14 +9,18 @@ public interface Messaging {
 	  String OKKEY			= "ok";						//1 Individual -> Zone, Zone -> Experiment
 	
 	String START_MOVE 		= "move";					//2 Experiment -> Zone, Zone -> Individual
-//	  String OKKEY			= "ok";						//2 Individual -> Zone, Zone -> Experiment
+	String DIE				= "Die";					// Zone -> Individual (when immigrating out of Experiment)
+	String MIGRATION		= "Migration";				// Zone -> Individual
+	String IMMIGRATION		= "immigration";			// Individual -> Zone
+	
+	//	  String OKKEY			= "ok";						//2 Individual -> Zone, Zone -> Experiment
 	
 	String START_LAST_PHASE	= "lastPhase";				//3 Experiment -> Zone
 				
-//	FEMALE_SET											//3.1.1 Zone --FemaleSet--> Male
-	  String I_WANT_YOU		= "iWantYou";				//3.1.2 Male -> Female  (from female set)
-//    String OKKEY			= "ok";						//3.1.3 Male -> Zone
-	  String YES 			= "yes";					//3.1.4 Female -> Male,  Female -> Zone,
+	String CONTINUE_REPRODUCTION = "reproduction";      //3.1.1 Zone --FemaleSet--> Male or Zone--> Female
+	String I_WANT_YOU       	 = "iWantYou";			//3.1.2 Male -> Female  (from female set)
+//    String OKKEY	        	 = "ok";				//3.1.3 Male -> Zone
+	String YES 	            	 = "yes";				//3.1.4 Female -> Male,  Female -> Zone,
 	  													//		  Female --create--> Posterity
 	  String REGISTER		= "register";				//		  Posterity --register--> Zone
 	  String NO				= "no";						//3.1.5 Female -> Male, [Female -> Zone]
@@ -44,9 +48,7 @@ public interface Messaging {
 	
 	String STATISTIC = "statisticPackage";				// Zone -> StatisticDispatcher
 	String EXPORT = "exportCommand";					// Zone -> StatisticDispatcher
-	
-	String DIE = "Die";									// Zone -> Individual (when immigrating out of Experiment)
-	
+		
 	String SCENARIO = "scenario";						// Expirement -> Zone
 	String SURVIVED		= "survived_berries_distribution";
 }

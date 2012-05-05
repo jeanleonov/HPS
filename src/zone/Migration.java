@@ -47,7 +47,7 @@ public class Migration implements Messaging{
 					
 					try {
 						ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
-						journey.setLanguage("Migration");
+						journey.setLanguage(MIGRATION);
 						journey.setContentObject(neighbours.get(i).getFirst());
 						journey.addReceiver(individual);
 						myZone.send(journey);
@@ -59,7 +59,7 @@ public class Migration implements Messaging{
 				}
 				else{
 					ACLMessage journey = new ACLMessage(ACLMessage.INFORM);
-					journey.setLanguage("Migration");
+					journey.setLanguage(MIGRATION);
 					journey.setContent(DIE);
 					journey.addReceiver(individual);
 					myZone.send(journey);
