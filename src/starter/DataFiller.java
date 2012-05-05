@@ -24,8 +24,6 @@ public class DataFiller {
 					posterityReader, 
 					scenarioReader,
 					experimentInfoReader;
-	private int numberOfModelingYears,
-				numberOfExperiments;
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
@@ -185,8 +183,6 @@ public class DataFiller {
 		try
 		{
 			BufferedReader experimentInfoReader = new BufferedReader(this.experimentInfoReader);
-			numberOfModelingYears = Integer.parseInt(experimentInfoReader.readLine());
-			numberOfExperiments = Integer.parseInt(experimentInfoReader.readLine());
 			String res = new String();
 			String c = new String(experimentInfoReader.readLine());
 			while(c != null){
