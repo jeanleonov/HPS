@@ -1,5 +1,7 @@
 package starter;
 
+import jade.core.NotFoundException;
+
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -53,11 +55,19 @@ public class DataFiller {
 	}
 
 	public int getNumberOfModelingYears() {
-		return numberOfModelingYears;
+		try {
+			return (Integer)MainClass.getArgument("years");
+		} catch (NotFoundException e) {
+			return -1;
+		}
 	}
 
 	public int getNumberOfExperiments() {
-		return numberOfExperiments;
+		try {
+			return (Integer)MainClass.getArgument("experiments");
+		} catch (NotFoundException e) {
+			return -1;
+		}
 	}
 
 	public ExperimentDistribution getExperimentDistribution() {
