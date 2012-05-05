@@ -10,6 +10,8 @@ public class IndividualBehaviour extends CyclicBehaviour implements messaging.Me
 	
 	private Migration m = null;
 	
+	
+	
 	@Override
 	public void onStart(){
 		m = new Migration((Individual)myAgent);

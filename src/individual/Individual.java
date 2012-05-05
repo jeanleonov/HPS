@@ -43,6 +43,9 @@ public class Individual extends Agent implements Serializable{
 		GetSettings();
 		BehaviourRegister();
 	}
+	public AID getAID_Zone(){
+		return myZone;
+	}
 	
 	@SuppressWarnings("unchecked")
 	private void GetSettings() {
@@ -105,10 +108,11 @@ public class Individual extends Agent implements Serializable{
 	
 	private void BehaviourRegister() {
 		if (myGenotype.getGender() == Genome.X)
-			addBehaviour(new FemaleBehaviour());
+			addBehaviour(new FemaleBehaviour());//send to FemaleBehaviour's constructor male's Genotype  and maleFertility
 		else addBehaviour(new MaleBehaviour());
 	}
 	
+
 	public void changeZone(AID aid){
 		myZone = aid;
 	}
