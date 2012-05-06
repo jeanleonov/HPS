@@ -36,7 +36,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
 		dieProcessing();
-		// TODO moveProcessing();
+		moveProcessing();
 		// TODO (in Zone) lastPhaseProcessing();
 		yearCursore++;
 	}
@@ -95,13 +95,13 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
-	/*private void moveProcessing(){
+	private void moveProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setLanguage(START_MOVE);
 		experiment.send(message);
 		// TODO listening of migration requests
 		ignoreNMessages(experiment.zonesAIDs.size());
-	}#temporary*/
+	}
 
 	/*private void lastPhaseProcessing(){
 		ACLMessage message = getMessageForMassMailing();

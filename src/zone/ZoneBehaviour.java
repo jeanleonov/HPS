@@ -12,7 +12,6 @@ import messaging.Messaging;
 import statistic.GenotypeAgeDistribution;
 import statistic.StatisticPackage;
 import experiment.ZoneCommand;
-import genotype.Genotype;
 
 
 
@@ -24,14 +23,14 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private StatisticPackage currentPackage;
 	
-	protected Migration m = null; 
-	protected ScenarioExecutor executor = null;
+	protected Migration migrationExecutor = null; 
+	protected ScenarioExecutor scenarioExecutor = null;
 	
 	@Override
 	public void onStart(){
 		myZone = (Zone)myAgent;
-		m = new Migration(myZone);
-		executor = new ScenarioExecutor(myZone);
+		migrationExecutor = new Migration(myZone);
+		scenarioExecutor = new ScenarioExecutor(myZone);
 	}
 	
 	/*
@@ -51,7 +50,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 				dieProcessing();
 			}
 			else if(language.compareTo(START_MOVE) == 0){
-				moveProcessing(message);
+				moveProcessing();
 			}
 			else if(language.compareTo(SCENARIO) == 0){
 				scenarioCommandProcessing(message);
@@ -69,7 +68,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	private void scenarioCommandProcessing(ACLMessage message) {
 		try {
-			executor.action((ZoneCommand)message.getContentObject());
+			scenarioExecutor.action((ZoneCommand)message.getContentObject());
 		} catch (UnreadableException e) {
 			System.out.println("getting content object error");
 			e.printStackTrace();
@@ -104,9 +103,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	// DMY: unnesessary now
 	// LAO: WHY unnecessary? DMY, Implement IT, please
-	private void moveProcessing(ACLMessage message) {
+	private void moveProcessing() {
 		//#LAO sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);
 		// TODO
+		/*#LAO
 		Object[] traveller;
 		try {
 			traveller = (Object[])message.getContentObject();
@@ -116,7 +116,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			myZone.iteration++;
 		} catch (UnreadableException e) {
 			e.printStackTrace();
-		}
+		}*/
+		migrationExecutor.action(null);
 	}
 	
 	
