@@ -8,6 +8,8 @@ import jade.wrapper.StaleProxyException;
 
 import java.util.Vector;
 
+import zone.Pair;
+
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
 
@@ -42,11 +44,26 @@ public class Experiment extends Agent {
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
 			try {
+				
+				// DMY: stub: really neighbours must have been received from initial information
+				Vector<Pair<AID, Double>> neighbours = new Vector<Pair<AID, Double>>();
+				for(int j = 0; j < i; j++){
+					// 1 is also stub
+					neighbours.add(new Pair<AID, Double>(new AID(getZoneName(j), AID.ISLOCALNAME), 1.0));
+				}
+				
 				zoneAgents.add(
 						controller.createNewAgent(
 								getZoneName(i),
 								ZONE_CLASS_PATH, 
-								new Object[]{zoneDistr, experimentNumber, i, statisticAID}));			// agent created
+								new Object[]{
+											 zoneDistr,
+									  experimentNumber,
+									  				 i, 
+									  	  statisticAID, 
+									         neighbours
+									         }
+								));											// agent created
 			} catch (StaleProxyException e) {
 				e.printStackTrace();// TODO Auto-generated catch block
 			}

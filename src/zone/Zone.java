@@ -52,11 +52,15 @@ public class Zone extends Agent {
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		statisticDispatcher = (AID)getArguments()[3];
+		neighbourZones = (Vector<Pair<AID, Double>>)getArguments()[4];
 		
 	//	System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");		#lao
 		
 		individualCounter = 0;/*#LAO*/
 		createIndividuals(zoneDistribution);
+		
+		// DMY: 1 is stub!!!
+		neighbourZones.add(new Pair<AID, Double>(null, (double)1));
 		addBehaviour(new ZoneBehaviour());
 	}
 	
