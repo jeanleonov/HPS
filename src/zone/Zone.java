@@ -55,8 +55,8 @@ public class Zone extends Agent {
 		
 	//	System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");		#lao
 		
+		individualCounter = 0;/*#LAO*/
 		createIndividuals(zoneDistribution);
-		individualCounter = 0;
 		addBehaviour(new ZoneBehaviour());
 	}
 	
@@ -103,7 +103,8 @@ public class Zone extends Agent {
 				females.add(new AID(agentName, AID.ISLOCALNAME));
 			}
 		}
-		individualCounter++; // DMY: IMHO, logical
+		//# individualCounter++; 	// DMY: IMHO, logical 
+									// LAO: nefiga=) see createIndividual and getIndividualName()
 	}
 
 	private String getIndividualName(){

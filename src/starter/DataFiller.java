@@ -1,7 +1,5 @@
 package starter;
 
-import jade.core.NotFoundException;
-
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -50,22 +48,6 @@ public class DataFiller {
 
 	public HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> getPosterityTable() {
 		return posterityTable;
-	}
-
-	public int getNumberOfModelingYears() {
-		try {
-			return (Integer)MainClass.getArgument("years");
-		} catch (NotFoundException e) {
-			return -1;
-		}
-	}
-
-	public int getNumberOfExperiments() {
-		try {
-			return (Integer)MainClass.getArgument("experiments");
-		} catch (NotFoundException e) {
-			return -1;
-		}
 	}
 
 	public ExperimentDistribution getExperimentDistribution() {

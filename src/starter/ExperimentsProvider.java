@@ -13,6 +13,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	private ContainerController controller;
 	private SystemStarter starter;
+	private int curExperiment;
 	
 	ExperimentsProvider(ContainerController controller){
 		this.controller = controller;
@@ -24,13 +25,15 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 		starter = (SystemStarter)myAgent;
 		if (controller == null)/*#may be temporary*/
 			System.out.println("FIIIIIRRREEEEEEe");
+		curExperiment = 0;
 	}
 
 	@Override
 	public void action() {
-		starter.remainingExperiments--;
 		sendToContainerNewExperiment();
 		waitToResponse();
+		starter.remainingExperiments--;
+		curExperiment++;
 	}
 
 	@Override
@@ -47,8 +50,8 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 								new Object[]{
 									starter.dataFiller.getExperimentDistribution(),
 									starter.dataFiller.getScenario(),
-									starter.dataFiller.getNumberOfModelingYears(),
-									starter.remainingExperiments,
+									starter.numberOfModelingYears,
+									curExperiment,
 									starter.statisticAID,
 									starter.getAID()});
 			agent.start();

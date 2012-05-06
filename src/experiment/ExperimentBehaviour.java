@@ -51,7 +51,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public int onEnd() {
 		ACLMessage message = getMessageForMassMailing();
-		message.setContent(I_KILL_YOU);
+		message.setLanguage(I_KILL_YOU);
 		experiment.send(message);
 		killMySelf();
 		experiment.send(iFinished);
@@ -74,7 +74,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 			messages[i].setContentObject(command.command);
 			// may be should be append...
 		}
-		return null;
+		return messages;
 	}
 
 	private void scenarioCommandsProcessing() throws IOException{
@@ -90,22 +90,22 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 
 	private void dieProcessing(){
 		ACLMessage message = getMessageForMassMailing();
-		message.setContent(START_DIE);
+		message.setLanguage(START_DIE);
 		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
 	/*private void moveProcessing(){
 		ACLMessage message = getMessageForMassMailing();
-		message.setContent(START_MOVE);
+		message.setLanguage(START_MOVE);
 		experiment.send(message);
 		// TODO listening of migration requests
-		//ignoreNMessages(experiment.zonesAIDs.size());
+		ignoreNMessages(experiment.zonesAIDs.size());
 	}#temporary*/
 
 	/*private void lastPhaseProcessing(){
 		ACLMessage message = getMessageForMassMailing();
-		message.setContent(START_LAST_PHASE);
+		message.setLanguage(START_LAST_PHASE);
 		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}#temporary*/

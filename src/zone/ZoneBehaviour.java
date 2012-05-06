@@ -1,23 +1,18 @@
 package zone;
 
-import experiment.ZoneCommand;
-import genotype.Genotype;
-
-import individual.Individual;
-
-import java.io.IOException;
-import java.util.Vector;
-
-import statistic.GenotypeAgeDistribution;
-import statistic.GenotypeAgeNumberTrio;
-import statistic.StatisticPackage;
-
-import messaging.Messaging;
-
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
+import java.io.IOException;
+import java.util.Vector;
+
+import messaging.Messaging;
+import statistic.GenotypeAgeDistribution;
+import statistic.StatisticPackage;
+import experiment.ZoneCommand;
+import genotype.Genotype;
 
 
 
@@ -50,60 +45,38 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 							myZone.experimentId + " got " + message.getContent());#lao*/
 		if(message.getPerformative() == ACLMessage.REQUEST){
 			String language = message.getLanguage();
-			if(language.compareTo("immigration") == 0){
-				Object[] traveller;
-				try {
-					traveller = (Object[])message.getContentObject();
-					//traveller.changeZone(myZone.getAID());
-					myZone.addIndividualToList((String)traveller[0], (Genotype)traveller[1], (Integer)traveller[2]);
-				} catch (UnreadableException e) {
-					e.printStackTrace();
-				}
-			}
-			else if(language.compareTo(SCENARIO) == 0){
-				try {
-					executor.action((ZoneCommand)message.getContentObject());
-				} catch (UnreadableException e) {
-					System.out.println("getting content object error");
-					e.printStackTrace();
-				} catch (IOException e) {
-					System.out.println("Error command executing");
-					e.printStackTrace();
-				}
-			}
-		}
-		else{
-			//==========================================================
-			String content = message.getContent();/*#*/
-			ACLMessage reply = message.createReply();/*#*/
-			if (content.compareTo(SCENARIO_COMMANDS) == 0){
-				//refreshStatistic();
-				// scenarioCommandProcessing(); TODO Realise scenario process	
-				myZone.iteration++;
-			}
-			else if (content.compareTo(START_DIE) == 0){
+			ACLMessage reply = message.createReply();
+			if (language.compareTo(START_DIE) == 0){
 				refreshStatistic(); // TODO бпелеммн !!!
 				dieProcessing();
 			}
-			else if (content.compareTo(START_MOVE) == 0){
-				// moveProcessing();
-				m.action(null);
+			else if(language.compareTo(START_MOVE) == 0){
+				moveProcessing(message);
 			}
-			else if (content.compareTo(START_LAST_PHASE) == 0){
-				// lastPhaseProcessing(); TODO Realise last phase process
+			else if(language.compareTo(SCENARIO) == 0){
+				scenarioCommandProcessing(message);
+			}
+			else if (language.compareTo(START_LAST_PHASE) == 0){
+				lastPhaseProcessing();
 				// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
 			}
-			else if (content.compareTo(I_KILL_YOU) == 0){
+			else if (language.compareTo(I_KILL_YOU) == 0){
 				killingSystemProcessing();
 			}
 			myZone.send(reply);/*#*/
-			//==========================================================
 		}
 	}
 
-	private void scenarioCommandProcessing() {
-		//String message = getMessageContent();
-		// TODO 
+	private void scenarioCommandProcessing(ACLMessage message) {
+		try {
+			executor.action((ZoneCommand)message.getContentObject());
+		} catch (UnreadableException e) {
+			System.out.println("getting content object error");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("Error command executing");
+			e.printStackTrace();
+		}
 	}
 	
 	private void dieProcessing() {
@@ -130,14 +103,25 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}*/
 
 	// DMY: unnesessary now
-/*	private void moveProcessing() {
-		sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);
+	// LAO: WHY unnecessary? DMY, Implement IT, please
+	private void moveProcessing(ACLMessage message) {
+		//#LAO sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);
 		// TODO
-	}*/
+		Object[] traveller;
+		try {
+			traveller = (Object[])message.getContentObject();
+			//traveller.changeZone(myZone.getAID());
+			myZone.addIndividualToList((String)traveller[0], (Genotype)traveller[1], (Integer)traveller[2]);
+			// refreshStatistic();
+			myZone.iteration++;
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	private void lastPhaseProcessing() {
-		// TODO Auto-generated method stub
+		// TODO implement last phase process
 	}
 	
 	private void killingSystemProcessing() {
@@ -159,9 +143,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		}
 	}
 	
-	private void sendMessage(AID individual, String messageContent, int performative) {
+	private void sendMessage(AID individual, String messageLanguage, int performative) {
 		ACLMessage message = new ACLMessage(performative);
-		message.setContent(messageContent);
+		message.setLanguage(messageLanguage);
 		message.addReceiver(individual);
 		myAgent.send(message);		
 	}

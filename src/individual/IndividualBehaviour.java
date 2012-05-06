@@ -35,7 +35,7 @@ public abstract class IndividualBehaviour extends CyclicBehaviour implements mes
 					}
 					else{
 						ACLMessage reply = msg.createReply();
-						String query = msg.getContent();
+						String query = msg.getLanguage();
 						Individual indiv = (Individual)myAgent;
 						if(query.equals(START_DIE)) {
 							// TODO

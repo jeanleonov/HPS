@@ -14,6 +14,7 @@ public class MainClass {
 	
 	private static Hashtable<String, ArgPair> arguments = new Hashtable<String, ArgPair>();
 	private static CmdLineParser parser = new CmdLineParser();
+	static Runtime runtime;
 	
 	private static class ArgPair {
 		public CmdLineParser.Option option;
@@ -82,9 +83,9 @@ public class MainClass {
 	ContainerController mainContainer;
 	
 	void initContainerControllers(){
-		Runtime current = Runtime.instance();
+		runtime = Runtime.instance();
 		Profile pf = new ProfileImpl(null, 8899, null);
-		mainContainer = current.createMainContainer(pf);
+		mainContainer = runtime.createMainContainer(pf);
 		
 		containers = new Vector<ContainerController>();
 		//*** YOU SHOULD NOT TO ADD MAIN CONTAINER TO THIS VECTOR (if you run it on cluster)

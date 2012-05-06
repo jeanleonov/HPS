@@ -1,6 +1,7 @@
 package starter;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.NotFoundException;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
@@ -14,6 +15,7 @@ import java.util.Vector;
 public class SystemStarter extends Agent implements Pathes{
 	
 	private static final long serialVersionUID = 1L;
+
 	DataFiller dataFiller;
 	private ContainerController headContainerController;
 	private AgentController settingsAgent, statisticDispatcher;
@@ -26,6 +28,7 @@ public class SystemStarter extends Agent implements Pathes{
 					experimentInfoPath,
 					scenarioPath;
 	Integer remainingExperiments;		// TODO !!! implement synchronization
+	int numberOfModelingYears;
 	
 /*	public SystemStarter(
 			String viabilitySettingsPath,
@@ -54,7 +57,10 @@ public class SystemStarter extends Agent implements Pathes{
 		createAndStartSettingsAgents();
 		getConfirmationFromSettingsAgents();
 		createAndStartStatisticDispatcherAgent();
-		remainingExperiments = dataFiller.getNumberOfExperiments();
+		try {
+			remainingExperiments = (Integer)MainClass.getArgument("experiments");
+			numberOfModelingYears = (Integer)MainClass.getArgument("years");
+		} catch (NotFoundException e) {e.printStackTrace();}
 		startExperimetnsProviders();
 	}
 	

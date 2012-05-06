@@ -48,7 +48,7 @@ public class Scenario implements Serializable{
 				iterator.remove();
 			}
 		}
-		for (Iterator<Rule> iterator=activeRules.iterator(); iterator.hasNext(); iterator.next()){
+		for (Iterator<Rule> iterator=activeRules.iterator(); iterator.hasNext(); /*#iterator.next()*/){
 			Rule rule = iterator.next();
 			byte ruleState = rule.getState(yearCursor);
 			if (ruleState == Rule.FINISHED){
