@@ -45,13 +45,14 @@ public abstract class IndividualBehaviour extends CyclicBehaviour implements mes
 							if(randVal <= prob) {
 								reply.setPerformative(ACLMessage.REFUSE);
 								reply.setContent(NO);
+								myAgent.send(reply);
 							}
 							else {
 								reply.setPerformative(ACLMessage.AGREE);
 								reply.setContent(YES);
+								myAgent.send(reply);
 								myAgent.doDelete();
 							}
-							myAgent.send(reply);
 						}
 						else
 						if(query.equals(DIE)){
