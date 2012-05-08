@@ -25,7 +25,7 @@ public class Migration implements Messaging{
 			
 			ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
 			journey.addReceiver(newZone);
-			journey.setLanguage(IMMIGRATION);
+			journey.setLanguage(MIGRATION);
 			
 				journey.setContentObject(params);
 	

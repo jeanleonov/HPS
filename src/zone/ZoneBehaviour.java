@@ -63,7 +63,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			else if (language.compareTo(I_KILL_YOU) == 0){
 				killingSystemProcessing();
 			}
-			else if (language.compareTo(IMMIGRATION) == 0){
+			else if (language.compareTo(MIGRATION) == 0){
 				try{
 					Object individualParams[] = (Object[])message.getContentObject();
 					myZone.addIndividualToList((String)individualParams[0], (Genotype)individualParams[1], (Integer)individualParams[2]);
