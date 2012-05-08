@@ -55,8 +55,14 @@ public abstract class IndividualBehaviour extends CyclicBehaviour implements mes
 							}
 						}
 						else
-						if(query.equals(DIE)){
+						if(query.equals(MIGRATION)){
+							if(msg.getContent().compareTo(DIE) == 0){
 								myAgent.doDelete();
+							}
+							else{
+								reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+								myAgent.send(reply);
+							}
 						}
 						else{
 							reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
@@ -66,7 +72,7 @@ public abstract class IndividualBehaviour extends CyclicBehaviour implements mes
 					break;
 				}
 				case ACLMessage.REQUEST:{
-					if(msg.getLanguage().compareTo("Migration") == 0){
+					if(msg.getLanguage().compareTo(MIGRATION) == 0){
 						m.action((AID)msg.getContentObject());
 					}
 					break;

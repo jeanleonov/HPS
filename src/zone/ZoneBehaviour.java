@@ -12,6 +12,7 @@ import messaging.Messaging;
 import statistic.GenotypeAgeDistribution;
 import statistic.StatisticPackage;
 import experiment.ZoneCommand;
+import genotype.Genotype;
 
 
 
@@ -62,6 +63,16 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			else if (language.compareTo(I_KILL_YOU) == 0){
 				killingSystemProcessing();
 			}
+			else if (language.compareTo(IMMIGRATION) == 0){
+				try{
+					Object individualParams[] = (Object[])message.getContentObject();
+					myZone.addIndividualToList((String)individualParams[0], (Genotype)individualParams[1], (Integer)individualParams[2]);
+				}
+				catch(UnreadableException e){
+					System.out.println("Unknown parameters for immigrating individuals");
+					e.printStackTrace();
+				}
+			}
 			myZone.send(reply);/*#*/
 		}
 	}
@@ -88,8 +99,14 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		int individualCounter = myZone.getIndividualsNumber();
 		for (int i = individualCounter; i > 0; i--){	//warning
 			message = getMessage();
-			if (message.getContent().equals(YES)/*#*/){
-				myZone.killIndividual(message.getSender());
+			try{
+				if (message.getContent().equals(YES)/*#*/){
+					myZone.killIndividual(message.getSender());
+				}
+			}
+			catch(NullPointerException e){
+				System.out.println(message.getLanguage() + " " + message.getSender());
+				e.printStackTrace();
 			}
 		}
 	}
