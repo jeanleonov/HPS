@@ -88,8 +88,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		int individualCounter = myZone.getIndividualsNumber();
 		for (int i = individualCounter; i > 0; i--){	//warning
 			message = getMessage();
-			if (message.getContent().equals(YES)/*#*/){
-				myZone.killIndividual(message.getSender());
+			try{
+				if (message.getContent().equals(YES)/*#*/){
+					myZone.killIndividual(message.getSender());
+				}
+			}catch(Exception e){
+				System.out.println("=== " + message.getLanguage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -139,17 +144,25 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 
 	private void sendMessageToIndividuals(String message, int performative) {
-		for (AID individual : myZone.getIndividuals()){
+		/*#LAO: you can take it with one Message object. >>Anton, remove it.
+		 for (AID individual : myZone.getIndividuals()){
 			sendMessage(individual, message, performative);
 		}
+		*/
+		ACLMessage aclMessage = new ACLMessage(performative);
+		for (AID individual : myZone.getIndividuals())
+			aclMessage.addReceiver(individual);
+		aclMessage.setLanguage(message);
+		myAgent.send(aclMessage);
 	}
 	
+	/*#LAO: >>Anton, remove it.
 	private void sendMessage(AID individual, String messageLanguage, int performative) {
 		ACLMessage message = new ACLMessage(performative);
 		message.setLanguage(messageLanguage);
 		message.addReceiver(individual);
 		myAgent.send(message);		
-	}
+	}*/
 
 	private void refreshStatistic() {
 		currentPackage  = createStatisticPackage();

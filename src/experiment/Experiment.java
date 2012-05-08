@@ -44,43 +44,39 @@ public class Experiment extends Agent {
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
 			try {
-				
 				// DMY: stub: really neighbours must have been received from initial information
 				Vector<Pair<AID, Double>> neighbours = new Vector<Pair<AID, Double>>();
-				for(int j = 0; j < i; j++){
-					// 1 is also stub
+				for(int j = 0; j < i; j++)		// TODO 1 is also stub
 					neighbours.add(new Pair<AID, Double>(new AID(getZoneName(j), AID.ISLOCALNAME), 1.0));
-				}
-				
 				zoneAgents.add(
 						controller.createNewAgent(
 								getZoneName(i),
 								ZONE_CLASS_PATH, 
-								new Object[]{
-											 zoneDistr,
-									  experimentNumber,
-									  				 i, 
-									  	  statisticAID, 
-									         neighbours
-									         }
-								));											// agent created
+								new Object[]{zoneDistr, experimentNumber, i, statisticAID, neighbours}
+								));
+				zonesAIDs.add(new AID(getZoneName(i), AID.ISLOCALNAME));		// agent ID saved to private list
+				i++;
 			} catch (StaleProxyException e) {
 				e.printStackTrace();// TODO Auto-generated catch block
 			}
-			zonesAIDs.add(new AID(getZoneName(i), AID.ISLOCALNAME));		// agent ID saved to private list
-			i++;
 		}
 		return zoneAgents;
 	}
 	
 	private void startZones(Vector<AgentController> zoneAgents){
-		for (AgentController agent : zoneAgents){
-			try {
-				agent.start();									// agent behaviors started
-			} catch (StaleProxyException e) {
-				e.printStackTrace();// TODO Auto-generated catch block
-			}
-		}
+		for (AgentController agent : zoneAgents)
+			while (true)
+				try {
+					agent.start();									// agent behaviors started
+					break;
+				} catch (StaleProxyException e) {
+					System.gc();
+					System.err.println(e.toString() + " Experiment->startZones");
+				} catch (OutOfMemoryError e){
+					System.gc();
+					System.err.println(e.toString() + " Experiment->startZones");
+					doWait(10000);
+				}
 	}
 	
 	AID getZoneAID(int zoneNumber){

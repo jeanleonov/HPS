@@ -78,21 +78,27 @@ public class Zone extends Agent {
 	}
 
 	private void createIndividual(Genotype genotype, int age) {
-		try {
-			// DMY: individual must know it's zone. And anyway, it doesn't percieving attractivness now
-			//Object[] parameters = {genotype, age, getAttractivness()};
-			Object[] parameters = {genotype, age, this.getAID()};
-			
-			String agentName = getIndividualName();
-			ContainerController controller = getContainerController();
-			AgentController individualAgent = controller.createNewAgent(agentName, 
-																		INDIVIDUAL_CLASS_PATH, 
-																		parameters);
-			individualAgent.start();
-			addIndividualToList(agentName, genotype, age);
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
-		}
+		// DMY: individual must know it's zone. And anyway, it doesn't percieving attractivness now
+		//Object[] parameters = {genotype, age, getAttractivness()};
+		Object[] parameters = {genotype, age, this.getAID()};
+		String agentName = getIndividualName();
+		ContainerController controller = getContainerController();
+		while (true)
+			try {
+				AgentController individualAgent = controller.createNewAgent(agentName, 
+																			INDIVIDUAL_CLASS_PATH, 
+																			parameters);
+				individualAgent.start();
+				addIndividualToList(agentName, genotype, age);
+				return;
+			} catch (StaleProxyException e) {
+				System.gc();
+				System.err.println(e.toString() + " Zone->createIndividual");
+			} catch (OutOfMemoryError e){
+				System.gc();
+				System.err.println(e.toString() + " Zone->createIndividual");
+				doWait(10000);
+			}
 	}
 	
 	public void addIndividualToList(String agentName, Genotype genotype, int age) {

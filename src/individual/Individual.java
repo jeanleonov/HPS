@@ -65,8 +65,7 @@ public class Individual extends Agent implements Serializable{
   					results = DFService.search(this, template, sc);
   				}
   				catch(FailureException e) {
-  					if (results == null || results.length < 1)
-  						doWait(1000);
+  					doWait(1000);
   					e.printStackTrace();
   				}
   			}
