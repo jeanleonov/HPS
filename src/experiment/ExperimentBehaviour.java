@@ -32,10 +32,10 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public void action() {
 		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
+		dieProcessing();
 		try {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
-		dieProcessing();
 		moveProcessing();
 		// TODO (in Zone) lastPhaseProcessing();
 		yearCursore++;
