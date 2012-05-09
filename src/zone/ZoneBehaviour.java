@@ -119,22 +119,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		myZone.immatures.remove(individual);
 	}*/
 
-	// DMY: unnesessary now
-	// LAO: WHY unnecessary? DMY, Implement IT, please
 	private void moveProcessing() {
-		//#LAO sendMessageToIndividuals(START_MOVE, ACLMessage.INFORM);
-		// TODO
-		/*#LAO
-		Object[] traveller;
-		try {
-			traveller = (Object[])message.getContentObject();
-			//traveller.changeZone(myZone.getAID());
-			myZone.addIndividualToList((String)traveller[0], (Genotype)traveller[1], (Integer)traveller[2]);
-			// refreshStatistic();
-			myZone.iteration++;
-		} catch (UnreadableException e) {
-			e.printStackTrace();
-		}*/
 		migrationExecutor.action(null);
 	}
 	

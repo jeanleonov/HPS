@@ -18,7 +18,9 @@ public class Migration implements Messaging{
 		try {
 			
 			((Individual)myAgent).changeZone(newZone);
-			Object[] params = new Object[3];
+			
+			// Saving parameters of individual, wich are nesessary for registration in the new zone
+			Object[] params = new Object[3]; 
 			params[0] = myAgent.getLocalName();
 			params[1] = ((Individual)myAgent).getGenotype();
 			params[2] = ((Individual)myAgent).getAge();
@@ -26,8 +28,7 @@ public class Migration implements Messaging{
 			ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
 			journey.addReceiver(newZone);
 			journey.setLanguage(MIGRATION);
-			
-				journey.setContentObject(params);
+			journey.setContentObject(params);
 	
 			myAgent.send(journey);
 			
