@@ -31,11 +31,12 @@ public class StatisticDispatcher extends Agent{
 
 	private final String FILE_LOCATION = "statistic.xls";
 	*/
-	private final String FILE_LOCATION = "statistic.csv";
+	private String fileLocation = "statistic.csv";
 	private Vector<StatisticPackage> packages;
 
 	@Override
 	protected void setup(){
+		fileLocation = (String)getArguments()[0];
 		packages = new Vector<StatisticPackage>();
 		addBehaviour(new StatisticDispatcherBehaviour());
 	}
@@ -121,7 +122,7 @@ public class StatisticDispatcher extends Agent{
 */
 	
 	private File createFile() throws IOException {
-		File file = new File(FILE_LOCATION);
+		File file = new File(fileLocation);
 		if (!file.exists()) {
 			file.createNewFile();
 		}

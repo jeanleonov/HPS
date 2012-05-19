@@ -57,7 +57,8 @@ public class MainClass {
 				new ArgPair(parser.addStringOption('s', "scenario"), "src/starter/Scenario.scn"));
 		arguments.put("initiation",
 				new ArgPair(parser.addStringOption('i', "initiation"), "src/starter/Initiation.hpsi"));
-		
+		arguments.put("statistic",
+				new ArgPair(parser.addStringOption('S', "statistic"), "statistic.csv"));
 		try {
             parser.parse(args);
         }
@@ -104,6 +105,7 @@ public class MainClass {
 					proj_path + (String)getArgument("posterity"),
 					proj_path + (String)getArgument("scenario"),
 					proj_path + (String)getArgument("initiation"),
+					proj_path + (String)getArgument("statistic"),
 					containers
 			};
 			
