@@ -7,6 +7,10 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -24,7 +28,7 @@ public class MainClass {
 	
 	public static void main(String[] args) {
 		parseArgs(args);
-
+		
 		MainClass main = new MainClass();
 		main.initContainerControllers();
 		main.start();
@@ -86,7 +90,14 @@ public class MainClass {
 	void initContainerControllers(){
 		runtime = Runtime.instance();
 		Profile pf = new ProfileImpl(null, 8899, null);
-		mainContainer = runtime.createMainContainer(pf);
+		
+		OSInfoOverride osio = new OSInfoOverride();
+		try {
+			mainContainer = runtime.createMainContainer(pf);
+		}
+		finally {
+			osio.dispose();
+		}		
 		
 		containers = new Vector<ContainerController>();
 		//*** YOU SHOULD NOT TO ADD MAIN CONTAINER TO THIS VECTOR (if you run it on cluster)
