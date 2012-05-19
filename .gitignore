@@ -7,4 +7,6 @@ src/starter/Pathes.java
 src/starter/Initiation.hpsi
 statistic.csv
 GalynaPatch.patch
+statisticFile.csv
 *.csv
+anti.ind
