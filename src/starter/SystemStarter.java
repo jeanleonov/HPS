@@ -26,7 +26,8 @@ public class SystemStarter extends Agent implements Pathes{
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
 					experimentInfoPath,
-					scenarioPath;
+					scenarioPath,
+					statisticPath;
 	Integer remainingExperiments;		// TODO !!! implement synchronization
 	int numberOfModelingYears;
 	
@@ -47,7 +48,8 @@ public class SystemStarter extends Agent implements Pathes{
 		this.posteritySettingPath = (String)args[1];
 		this.scenarioPath = (String)args[2];
 		this.experimentInfoPath = (String)args[3];
-		this.containerControllers = (Vector<ContainerController>)args[4];
+		this.statisticPath = (String)args[4];
+		this.containerControllers = (Vector<ContainerController>)args[5];
 		headContainerController = getContainerController();
 		startSystem();
 	}
@@ -104,7 +106,10 @@ public class SystemStarter extends Agent implements Pathes{
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
-			statisticDispatcher = headContainerController.createNewAgent("statisticDispatcher", "statistic.StatisticDispatcher", null);
+			statisticDispatcher	= headContainerController.createNewAgent(
+										"statisticDispatcher", 
+										"statistic.StatisticDispatcher", 
+										new Object[]{statisticPath});
 			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
 			
 			statisticDispatcher.start();
