@@ -15,6 +15,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
+import java.io.NotActiveException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -28,6 +29,8 @@ public class Individual extends Agent implements Serializable{
 	protected int age;
 	
 	protected AID myZone;
+	
+	private final static int maxDFRequests = 20;
 	
 	ArrayList<ViabilityPair> uSettings;
 	
@@ -60,14 +63,21 @@ public class Individual extends Agent implements Serializable{
   		
   		try {
   			DFAgentDescription[] results = null;
-  			while(results == null || results.length < 1) {
+  			int DFRequestsCounter = 0;
+  			while(results == null || results.length < 1) {  					
   				try {
   					results = DFService.search(this, template, sc);
   				}
   				catch(FailureException e) {
+  					DFRequestsCounter++;
+  	  				if(DFRequestsCounter > maxDFRequests) {
+  	  					e.printStackTrace();
+  	  					throw new NotActiveException("Cannot get DF service, " + maxDFRequests + " attempts");
+  	  				}
+  					
+  					//System.err.println("DF search exception #" + DFRequestsCounter);
   					if (results == null || results.length < 1)
   						doWait(1000);
-  					e.printStackTrace();
   				}
   			}
   			DFAgentDescription dfd = results[0];
@@ -81,7 +91,12 @@ public class Individual extends Agent implements Serializable{
 			catch (Exception ex) { ex.printStackTrace(); }
 			send(msg);
 			
-			do { 
+			int DFMsgResponses = 0;
+			do {
+				DFMsgResponses++;
+  				if(DFMsgResponses > maxDFRequests)
+  					throw new NotActiveException("Unexpected behaviour of DF, " + maxDFRequests + " attempts");
+  				
 				msg = blockingReceive(MessageTemplate.MatchSender( provider ));
 			}
 			while(msg.getPerformative() == ACLMessage.FAILURE);
@@ -95,6 +110,8 @@ public class Individual extends Agent implements Serializable{
 		} catch (FIPAException e) {
 			e.printStackTrace();
 		} catch (UnreadableException e) {
+			e.printStackTrace();
+		} catch(NotActiveException e) {
 			e.printStackTrace();
 		}
 	}
