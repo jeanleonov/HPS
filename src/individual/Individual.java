@@ -89,23 +89,24 @@ public class Individual extends Agent implements Serializable{
 				msg.setContentObject(myGenotype);
 			}
 			catch (Exception ex) { ex.printStackTrace(); }
-			send(msg);
 			
+			ACLMessage response = null;
 			int DFMsgResponses = 0;
 			do {
 				DFMsgResponses++;
   				if(DFMsgResponses > maxDFRequests)
   					throw new NotActiveException("Unexpected behaviour of DF, " + maxDFRequests + " attempts");
   				
-				msg = blockingReceive(MessageTemplate.MatchSender( provider ));
+  				send(msg);
+  				response = blockingReceive(MessageTemplate.MatchSender( provider ));
 			}
-			while(msg.getPerformative() == ACLMessage.FAILURE);
+			while(response.getPerformative() == ACLMessage.FAILURE);
 			
-			if(msg.getPerformative() != ACLMessage.CONFIRM) {
+			if(response.getPerformative() != ACLMessage.CONFIRM) {
 				throw new NotUnderstoodException("Not understood");
 			}
 			
-			uSettings = (ArrayList<ViabilityPair>) msg.getContentObject();
+			uSettings = (ArrayList<ViabilityPair>) response.getContentObject();
 			
 		} catch (FIPAException e) {
 			e.printStackTrace();
