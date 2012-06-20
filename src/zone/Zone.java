@@ -58,6 +58,7 @@ public class Zone extends Agent {
 		
 		individualCounter = 0;/*#LAO*/
 		createIndividuals(zoneDistribution);
+		resources = zoneDistribution.getResourse();
 		
 		// DMY: 1 is stub!!!
 		neighbourZones.add(new Pair<AID, Double>(null, (double)1));
