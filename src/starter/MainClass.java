@@ -39,7 +39,7 @@ public class MainClass {
 		"Usage: [--help] [{-y, --years} integer] [{-e, --experiments} integer]\n" +
 			"       [{-f, --project_path} string] [{-v, --viability} string]\n" +
 			"       [{-p, --posterity} string] [{-s, --scenario} string]\n" +
-			"       [{-i, --initiation} string]");
+			"       [{-i, --initiation} string] [{-S, --statistic} string]");
     }
 	
 	private static void parseArgs(String[] args) {
