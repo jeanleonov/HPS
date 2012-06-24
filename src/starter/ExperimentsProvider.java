@@ -24,7 +24,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 		super.onStart();
 		starter = (SystemStarter)myAgent;
 		if (controller == null)/*#may be temporary*/
-			System.out.println("FIIIIIRRREEEEEEe");
+			System.out.println("FIIIIIRRREEEEEEe: no ContainerController");
 		curExperiment = 0;
 	}
 

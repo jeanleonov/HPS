@@ -30,15 +30,6 @@ public class SystemStarter extends Agent implements Pathes{
 					statisticPath;
 	Integer remainingExperiments;		// TODO !!! implement synchronization
 	int numberOfModelingYears;
-	
-/*	public SystemStarter(
-			String viabilitySettingsPath,
-			String posteritySettingPath, 
-			String experimentInfoPath) {
-		this.viabilitySettingsPath = viabilitySettingsPath;
-		this.posteritySettingPath = posteritySettingPath;
-		this.experimentInfoPath = experimentInfoPath;
-	}*/
 
 	@SuppressWarnings("unchecked")
 	@Override

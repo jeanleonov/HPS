@@ -7,6 +7,7 @@ public class ZoneDistribution implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	private int resource = 0;
 	Vector<GenotypeAgeNumberTrio> genotypeAgeNumberTrio;
 	
 	public ZoneDistribution() {
@@ -21,6 +22,10 @@ public class ZoneDistribution implements Serializable {
 		return genotypeAgeNumberTrio;
 	}
 	
+	public int getResourse(){
+		return resource;
+	}
+	
 	// by DMY
 	public static ZoneDistribution parseZone(String resource) throws NumberFormatException{
 		// Later I'm plan to throw my own exception, if it will be necessary 
@@ -28,7 +33,9 @@ public class ZoneDistribution implements Serializable {
 		ZoneDistribution zone = new ZoneDistribution();
 		String[] t = resource.split("\\|");
 		
-		for(int i = 0; i < t.length; i += 2){
+		zone.resource = Integer.parseInt(t[0]);
+		
+		for(int i = 1; i < t.length; i += 2){
 			try{
 				if((t[i] != null) && !(t[i].equals("")))
 					zone.addGenotypeDistribution(GenotypeAgeNumberTrio.parseGenotype(t[i]));

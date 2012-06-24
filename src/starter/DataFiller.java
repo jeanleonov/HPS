@@ -32,6 +32,7 @@ public class DataFiller {
 			Reader posterityReader, 
 			Reader scenarioReader,
 			Reader experimentInfoReader){
+		
 		this.viabilityReader = viabilityReader;
 		this.posterityReader = posterityReader;
 		this.scenarioReader = scenarioReader;
@@ -40,6 +41,7 @@ public class DataFiller {
 		posterityFill();
 		scenarioFill();
 		experimentFill();
+		
 	}
 	
 	public HashMap<genotype.Genotype, ArrayList<ViabilityPair>> getViabilityTable() {
