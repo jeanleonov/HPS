@@ -11,15 +11,16 @@ public class Tester {
 		StatisticPackage pack2 = createPackage2();
 		StatisticPackage pack3 = createPackage3();
 
-		/*
-		 * pack1.print(); pack2.print(); pack3.print();
-		 */
-
+//		pack1.print(); 
+//		pack2.print(); 
+//		pack3.print();
+		
 		StatisticDispatcher sd = new StatisticDispatcher();
 		sd.addPackage(pack1);
 		sd.addPackage(pack2);
 		sd.addPackage(pack3);
-//		sd.exportToExl();
+		System.out.println("All is ok");
+		sd.exportToFile();
 	}
 
 	private static StatisticPackage createPackage1() {

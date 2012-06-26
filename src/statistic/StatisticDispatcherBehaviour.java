@@ -8,7 +8,8 @@ import jade.lang.acl.UnreadableException;
 public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Messaging {
 
 	private int totalPackages = 0;
-	private int exportingFrequency = 10;
+	private int packageBuffer = 10;
+	
 	@Override
 	public void action() {
 		ACLMessage message = getMessage();
@@ -19,7 +20,7 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Mes
 		if (message.getPerformative() == ACLMessage.REQUEST){			/*EXPORT#lao*/
 			exportStatistic();
 		}
-		if ((totalPackages % 100/exportingFrequency) == 0){
+		if ((totalPackages % packageBuffer) == 0){
 			exportStatistic();
 		}
 	}
@@ -30,7 +31,7 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Mes
 			((StatisticDispatcher)myAgent).addPackage(statisticPackage);
 		} catch (UnreadableException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 	
 	private void exportStatistic() {

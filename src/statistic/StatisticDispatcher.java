@@ -19,25 +19,12 @@ import jxl.write.biff.RowsExceededException;
 
 public class StatisticDispatcher extends Agent{
 
-	/*
-	static int currentRow = 0;
-
-	public static final int EXPERIMENT_ID_POS = 1;
-	public static final int ZONE_ID_POS = 2;
-	public static final int ITERATION_POS = 3;
-	public static final int AGE_POS = 4;
-	public static final int GENOTYPE_POS = 5;
-	public static final int NUMBER_POS = 6;
-
-	private final String FILE_LOCATION = "statistic.xls";
-	*/
 	private String fileLocation = "statistic.csv";
-	private Vector<StatisticPackage> packages;
+	private Vector<StatisticPackage> packages = new Vector<StatisticPackage>() ;
 
 	@Override
 	protected void setup(){
 		fileLocation = (String)getArguments()[0];
-		packages = new Vector<StatisticPackage>();
 		addBehaviour(new StatisticDispatcherBehaviour());
 	}
 
@@ -47,6 +34,7 @@ public class StatisticDispatcher extends Agent{
 
 	void exportToFile() {
 		try {
+			// TODO
 			File file = createFile();
 		//	System.out.println("Statistic " + file.getAbsolutePath());		#lao
 			/*
@@ -62,10 +50,6 @@ public class StatisticDispatcher extends Agent{
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-		/*
-		} catch (WriteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();	*/
 		}
 	}
 	
@@ -85,42 +69,6 @@ public class StatisticDispatcher extends Agent{
 		
 	}
 
-	/*
-	private void writeStatistic(WritableSheet sheet)
-			throws RowsExceededException, WriteException {
-		for (StatisticPackage pack : packages) {
-			pack.writeToSheet(sheet);
-		}
-	}
-	*/
-/*
-	private void writeTemplate(WritableSheet sheet)
-			throws RowsExceededException, WriteException {
-		Label label;
-
-		label = new Label(StatisticDispatcher.EXPERIMENT_ID_POS,
-				StatisticDispatcher.currentRow, "Experiment Id");
-		sheet.addCell(label);
-		label = new Label(StatisticDispatcher.ZONE_ID_POS,
-				StatisticDispatcher.currentRow, "Zone Id");
-		sheet.addCell(label);
-		label = new Label(StatisticDispatcher.ITERATION_POS,
-				StatisticDispatcher.currentRow, "Iteration");
-		sheet.addCell(label);
-		label = new Label(StatisticDispatcher.AGE_POS,
-				StatisticDispatcher.currentRow, "Age");
-		sheet.addCell(label);
-		label = new Label(StatisticDispatcher.GENOTYPE_POS,
-				StatisticDispatcher.currentRow, "Genotype");
-		sheet.addCell(label);
-		label = new Label(StatisticDispatcher.NUMBER_POS,
-				StatisticDispatcher.currentRow, "Number");
-		sheet.addCell(label);
-
-		StatisticDispatcher.currentRow++;
-	}
-*/
-	
 	private File createFile() throws IOException {
 		File file = new File(fileLocation);
 		if (!file.exists()) {

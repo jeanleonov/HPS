@@ -28,23 +28,5 @@ public class GenotypeAgeNumberTrio implements Serializable{
 	void writeToFile(BufferedWriter bw, String header) throws IOException{
 		String str = header + String.valueOf(age) + ";" + String.valueOf(number) +"\n";
 		bw.write(str);
-	}
-	/*
-	void writeToSheet(WritableSheet sheet) throws RowsExceededException,
-			WriteException {
-		Number num;
-		num = new Number(StatisticDispatcher.GENOTYPE_POS,
-				StatisticDispatcher.currentRow, genotype);
-		sheet.addCell(num);
-		num = new Number(StatisticDispatcher.AGE_POS,
-				StatisticDispatcher.currentRow, age);
-		sheet.addCell(num);
-		num = new Number(StatisticDispatcher.NUMBER_POS,
-				StatisticDispatcher.currentRow, number);
-		sheet.addCell(num);
-
-		StatisticDispatcher.currentRow++;
-	}
-	*/
-	
+	}	
 }

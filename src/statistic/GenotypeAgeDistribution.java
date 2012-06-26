@@ -14,12 +14,6 @@ public class GenotypeAgeDistribution implements Serializable {
 
 	private Vector<GenotypeAgeNumberTrio> gants;
 
-	/*
-	public GenotypeAgeDistribution(Vector<GenotypeAgeNumberTrio> gants) {
-		this.gants = gants;
-	}
-	*/
-
 	public GenotypeAgeDistribution() {
 		gants = new Vector<GenotypeAgeNumberTrio>();
 	}
@@ -71,12 +65,4 @@ public class GenotypeAgeDistribution implements Serializable {
 			gant.writeToFile(bw, header);
 		}
 	}
-	/*
-	public void writeToSheet(WritableSheet sheet) throws RowsExceededException,
-			WriteException {
-		for (GenotypeAgeNumberTrio gant : gants) {
-			gant.writeToSheet(sheet);
-		}
-	}
-	*/
 }

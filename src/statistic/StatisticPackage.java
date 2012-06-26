@@ -40,18 +40,4 @@ public class StatisticPackage implements Serializable {
 		//bw.write(str);	
 		genotypeAgeDistribution.writeToFile(bw, header);	
 	}
-	
-	/*
-	public void writeToSheet(WritableSheet sheet) throws RowsExceededException, WriteException {		
-		Number number;
-		number = new Number(StatisticDispatcher.EXPERIMENT_ID_POS, StatisticDispatcher.currentRow, experimentId); 
-		sheet.addCell(number);	
-		number = new Number(StatisticDispatcher.ZONE_ID_POS, StatisticDispatcher.currentRow, zoneId);
-		sheet.addCell(number);
-		number = new Number(StatisticDispatcher.ITERATION_POS, StatisticDispatcher.currentRow, iteration);
-		sheet.addCell(number);
-		
-		genotypeAgeDistribution.writeToSheet(sheet);	
-	}
-	*/
 }
