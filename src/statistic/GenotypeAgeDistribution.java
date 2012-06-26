@@ -5,11 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Vector;
 
-
-import jxl.write.WritableSheet;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
-
 public class GenotypeAgeDistribution implements Serializable {
 
 	private Vector<GenotypeAgeNumberTrio> gants;
@@ -51,6 +46,7 @@ public class GenotypeAgeDistribution implements Serializable {
 		}
 	}
 
+	// Test version
 	public void print() {
 		System.out.println("Genotype Age Distribution");
 		System.out.println("Ages\tGen-s\tNumbers");

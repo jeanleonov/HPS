@@ -3,6 +3,8 @@ package zone;
 import genotype.Genome;
 import genotype.Genotype;
 
+import individual.Individual;
+
 import java.util.Vector;
 
 import zone.Pair;
@@ -15,7 +17,6 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
 
 public class Zone extends Agent {
 
@@ -26,10 +27,10 @@ public class Zone extends Agent {
 	// DMY: for regulating competitiveness factor in attractivness counting
 	private static final double feedingCoeficient = 1;
 	
-	Vector<AID> males = new Vector<AID>();
-	Vector<AID> females = new Vector<AID>();
-	Vector<AID> immatures = new Vector<AID>();
-	Vector<AID> yearlings = new Vector<AID>();
+	Vector<Individual> males = new Vector<Individual>();
+	Vector<Individual> females = new Vector<Individual>();
+	Vector<Individual> immatures = new Vector<Individual>();
+	Vector<Individual> yearlings = new Vector<Individual>();
 	
 	AID statisticDispatcher;
 	
@@ -52,7 +53,7 @@ public class Zone extends Agent {
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		statisticDispatcher = (AID)getArguments()[3];
-		neighbourZones = (Vector<Pair<AID, Double>>)getArguments()[4];
+	//	neighbourZones = (Vector<Pair<AID, Double>>)getArguments()[4];
 		
 	//	System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");		#lao
 		
@@ -76,6 +77,7 @@ public class Zone extends Agent {
 		for (int i = 0; i < gant.getNumber(); i++){
 			createIndividual(gant.getGenotype(), gant.getAge());
 		}
+		
 	}
 
 	private void createIndividual(Genotype genotype, int age) {
@@ -110,7 +112,7 @@ public class Zone extends Agent {
 	}
 	
 	public void addIndividualToList(String agentName, Genotype genotype, int age) {
-		if (age < 2) {		// TODO release check immature age from settings !!!
+		if individualTooYoung(age) {		
 			immatures.add(new AID(agentName, AID.ISLOCALNAME));
 		}
 		else {
@@ -124,11 +126,17 @@ public class Zone extends Agent {
 		//# individualCounter++; 	// DMY: IMHO, logical 
 									// LAO: nefiga=) see createIndividual and getIndividualName()
 	}
-
+	
+	private boolean individualTooYoung(int age){
+		// TODO release check immature age from settings !!!
+		return false;
+	}
+	
+/*	TODO : DELETE, not use more
 	private String getIndividualName(){
 		return "" + getLocalName() + "_Individual_" + individualCounter++;
 	}
-	
+*/	
 	int getIndividualsNumber(){
 		return males.size() + females.size() + immatures.size();
 	}
@@ -145,8 +153,8 @@ public class Zone extends Agent {
 		return attractivness;
 	}
 	
-	Vector<AID> getIndividuals(){
-		Vector<AID> individuals = new Vector<AID>(getIndividualsNumber());
+	Vector<Individual> getIndividuals(){
+		Vector<Individual> individuals = new Vector<Individual>(getIndividualsNumber());
 		individuals.addAll(males);
 		individuals.addAll(females);
 		individuals.addAll(immatures);
