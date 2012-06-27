@@ -146,13 +146,20 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void reproductionProcessing() {
 		// TODO amplexus repeat
-		for (Male male : myZone.males){
-			Female[] femaleList = male.getFemaleListForUpdating();
-			randomFilling(femaleList);
-			male.chooseFemale();
-		}
-		for (Female female : myZone.females)
-			myZone.createIndividuals(female.getPosterity());
+		int readyMales, cicles=0;
+		do{
+			readyMales=0;
+			for (Male male : myZone.males){
+				if (male.isReadyToReproduction()){
+					Female[] femaleList = male.getFemaleListForUpdating();
+					randomFilling(femaleList);
+					male.chooseFemale();
+					readyMales++;
+				}
+			}
+			for (Female female : myZone.females)
+				myZone.createIndividuals(female.getPosterity());
+		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<10);
 	}
 	
 	private void competitionProcessing(){

@@ -16,7 +16,8 @@ import distribution.ZoneDistribution;
 public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 5;
+	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10;
+	private static final int DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3;
 	
 	// DMY: for regulating competitiveness factor in attractivness counting
 	private static final double feedingCoeficient = 1;
@@ -34,7 +35,7 @@ public class Zone extends Agent {
 	int resources;
 	double totalCompetitiveness = 0.0001;
 	int iteration = -1;
-	int maxSizeOfListOfFemales;
+	int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
 	
 	// private Vector<Individual> strangers;
 	
@@ -49,6 +50,10 @@ public class Zone extends Agent {
 			maxSizeOfListOfFemales = (Integer)getArguments()[4];
 		else
 			maxSizeOfListOfFemales = DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
+		if (getArguments().length>5)
+			minNumberOfMalesForContinue = (Integer)getArguments()[5];
+		else
+			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
 		createIndividuals(zoneDistribution);
 		resources = zoneDistribution.getResourse();
 		addBehaviour(new ZoneBehaviour());
