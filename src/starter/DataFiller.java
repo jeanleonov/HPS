@@ -20,27 +20,32 @@ public class DataFiller {
 	
 	private Reader	viabilityReader,
 					posterityReader, 
+					movePossibilitiesReader,
 					scenarioReader,
 					experimentInfoReader;
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
+	private HashMap<Integer, ArrayList<Float>> movePosibilitiesTable = new HashMap<Integer, ArrayList<Float>>();
 	private Vector<Rule> rules;
 	
 	public DataFiller(
 			Reader viabilityReader, 
-			Reader posterityReader, 
+			Reader posterityReader,
+			Reader movePossibilitiesReader,
 			Reader scenarioReader,
 			Reader experimentInfoReader){
 		
 		this.viabilityReader = viabilityReader;
 		this.posterityReader = posterityReader;
+		this.movePossibilitiesReader = movePossibilitiesReader;
 		this.scenarioReader = scenarioReader;
 		this.experimentInfoReader = experimentInfoReader;
 		viabilityFill();
 		posterityFill();
 		scenarioFill();
 		experimentFill();
+		movePossibilitiesFill();
 		
 	}
 	
@@ -50,6 +55,10 @@ public class DataFiller {
 
 	public HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> getPosterityTable() {
 		return posterityTable;
+	}
+
+	public HashMap<Integer, ArrayList<Float>> getMovePosibilitiesTable() {
+		return movePosibilitiesTable;
 	}
 
 	public ExperimentDistribution getExperimentDistribution() {
@@ -133,11 +142,22 @@ public class DataFiller {
 		}
 	}
 	
+	private void movePossibilitiesFill(){
+		// TODO!!!!!!!!!!!!!!
+		// Temporery (1.0 is anywhere):
+		for (int i=0; i<getExperimentDistribution().getZoneDistributions().size(); i++){
+			ArrayList<Float> possibilities = new ArrayList<Float>();
+			for (int j=0; j<getExperimentDistribution().getZoneDistributions().size(); j++)
+				possibilities.add(1f);
+			movePosibilitiesTable.put(i, possibilities);			
+		}
+	}
+	
 	public void printPosterityTable() {
 		for(PosterityParentsPair parents : posterityTable.keySet()) {
 			System.out.print(parents.getMale() + "+" + parents.getFemale() + ": ");
 			for(PosterityResultPair pair : posterityTable.get(parents)) {
-				System.out.print(pair.getGenome() + "(" + pair.getProbability() + ") ,");
+				System.out.print(pair.getGenotype() + "(" + pair.getProbability() + ") ,");
 			}
 			System.out.println();
 		}

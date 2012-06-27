@@ -25,6 +25,7 @@ public class SystemStarter extends Agent implements Pathes{
 	
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
+					movePossibilitiesPath,
 					experimentInfoPath,
 					scenarioPath,
 					statisticPath;
@@ -37,10 +38,11 @@ public class SystemStarter extends Agent implements Pathes{
 		Object[] args = this.getArguments();
 		this.viabilitySettingsPath = (String)args[0];
 		this.posteritySettingPath = (String)args[1];
-		this.scenarioPath = (String)args[2];
-		this.experimentInfoPath = (String)args[3];
-		this.statisticPath = (String)args[4];
-		this.containerControllers = (Vector<ContainerController>)args[5];
+		this.movePossibilitiesPath = (String)args[2];
+		this.scenarioPath = (String)args[3];
+		this.experimentInfoPath = (String)args[4];
+		this.statisticPath = (String)args[5];
+		this.containerControllers = (Vector<ContainerController>)args[6];
 		headContainerController = getContainerController();
 		startSystem();
 	}
@@ -60,14 +62,16 @@ public class SystemStarter extends Agent implements Pathes{
 	private void readData(){
 		BufferedReader posteritySettingsReader;
 		BufferedReader viabilitySettingsReader;
+		BufferedReader movePossibilitiesReader;
 		BufferedReader scenarioReader;
 		BufferedReader experimentInfoReader;
 		try {
 			viabilitySettingsReader = new BufferedReader(new FileReader(viabilitySettingsPath));
 			posteritySettingsReader = new BufferedReader(new FileReader(posteritySettingPath));
+			movePossibilitiesReader = new BufferedReader(new FileReader(movePossibilitiesPath));
 			experimentInfoReader = new BufferedReader(new FileReader(experimentInfoPath));
 			scenarioReader = new BufferedReader(new FileReader(scenarioPath));
-			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, scenarioReader, experimentInfoReader);
+			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader);
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -85,6 +89,7 @@ public class SystemStarter extends Agent implements Pathes{
 									new Object[]{
 											dataFiller.getViabilityTable(),
 											dataFiller.getPosterityTable(),
+											dataFiller.getMovePosibilitiesTable(),
 											getAID()}
 								);
 				
