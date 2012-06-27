@@ -37,7 +37,7 @@ public class MainClass {
 	private static void printUsage() {
         System.out.println(
 		"Usage: [--help] [{-y, --years} integer] [{-e, --experiments} integer]\n" +
-			"       [{-f, --project_path} string] [{-v, --viability} string]\n" +
+			"       [{-f, --project_path} string] [{-v, --viability} string] [{-m, --map} string]\n" +
 			"       [{-p, --posterity} string] [{-s, --scenario} string]\n" +
 			"       [{-i, --initiation} string] [{-S, --statistic} string]");
     }
@@ -57,6 +57,8 @@ public class MainClass {
 				new ArgPair(parser.addStringOption('v', "viability"), "src/starter/Viability.csv"));
 		arguments.put("posterity",
 				new ArgPair(parser.addStringOption('p', "posterity"), "src/starter/Posterity.csv"));
+		arguments.put("movePossibilities",
+				new ArgPair(parser.addStringOption('m', "map"), "src/starter/Map.csv"));			// movePossibilities
 		arguments.put("scenario",
 				new ArgPair(parser.addStringOption('s', "scenario"), "src/starter/Scenario.scn"));
 		arguments.put("initiation",
@@ -114,6 +116,7 @@ public class MainClass {
 			Object[] startArgs = new Object[] {
 					proj_path + (String)getArgument("viability"),
 					proj_path + (String)getArgument("posterity"),
+					proj_path + (String)getArgument("movePossibilities"),
 					proj_path + (String)getArgument("scenario"),
 					proj_path + (String)getArgument("initiation"),
 					proj_path + (String)getArgument("statistic"),

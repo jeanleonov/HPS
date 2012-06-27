@@ -8,8 +8,7 @@ import jade.wrapper.StaleProxyException;
 
 import java.util.Vector;
 
-import zone.Pair;
-
+import settings.Settings;
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
 
@@ -34,7 +33,8 @@ public class Experiment extends Agent {
 		AID statisticAID = (AID)getArguments()[4];
 		myProvider = (AID)getArguments()[5];
 		startZones(createZones(statisticAID));
-		addBehaviour(new ExperimentBehaviour());				// implement ExperimentBehaviour and define constructor args
+		Settings.updateZoneTable(zonesAIDs);
+		addBehaviour(new ExperimentBehaviour());
 	}
 	
 	private Vector<AgentController> createZones(AID statisticAID){
@@ -44,29 +44,18 @@ public class Experiment extends Agent {
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
 			try {
-				
-				// DMY: stub: really neighbours must have been received from initial information
-				Vector<Pair<AID, Double>> neighbours = new Vector<Pair<AID, Double>>();
-				for(int j = 0; j < i; j++){
-					// 1 is also stub
-					neighbours.add(new Pair<AID, Double>(new AID(getZoneName(j), AID.ISLOCALNAME), 1.0));
-				}
-				
 				zoneAgents.add(
 						controller.createNewAgent(
 								getZoneName(i),
 								ZONE_CLASS_PATH, 
 								new Object[]{
 											 zoneDistr,
-									  experimentNumber,
-									  				 i, 
-									  	  statisticAID, 
-									         neighbours
-									         }
+											 experimentNumber,
+									  		 i, 
+									  		 statisticAID
+									        }
 								));											// agent created
-			} catch (StaleProxyException e) {
-				e.printStackTrace();// TODO Auto-generated catch block
-			}
+			}catch (StaleProxyException e)		{e.printStackTrace();}
 			zonesAIDs.add(new AID(getZoneName(i), AID.ISLOCALNAME));		// agent ID saved to private list
 			i++;
 		}
@@ -77,9 +66,7 @@ public class Experiment extends Agent {
 		for (AgentController agent : zoneAgents){
 			try {
 				agent.start();									// agent behaviors started
-			} catch (StaleProxyException e) {
-				e.printStackTrace();// TODO Auto-generated catch block
-			}
+			} catch (StaleProxyException e)		{e.printStackTrace();}
 		}
 	}
 	
