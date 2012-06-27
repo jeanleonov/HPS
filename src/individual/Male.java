@@ -20,20 +20,25 @@ public class Male extends Individual {
 	}
 
 	public void chooseFemale() {
-		if(femalesList.length==0 || femalesList[0]==null)
+		if(femalesList.length==0 || femalesList[0]==null || Math.random()>=curReproduction)
 			return;
 		int femaleNumber;
 		double attractivnessesSum=0, point = Math.random(), curSum=femalesList[0].getAttractivness();
 		for (femaleNumber=0; femaleNumber<femalesList.length && femalesList[femaleNumber]!=null; femaleNumber++)
 			attractivnessesSum += femalesList[femaleNumber].getAttractivness();
 		point *= attractivnessesSum;
-		for(femaleNumber=0; point > curSum; curSum+=femalesList[femaleNumber].getAttractivness(), femaleNumber++);
+		for(femaleNumber=0; curSum<point /*#re TODO*/ && femaleNumber<femalesList.length-1; curSum+=femalesList[femaleNumber].getAttractivness(), femaleNumber++);
 		femalesList[femaleNumber].addLover(this);
-		readyToReproduction = false;
+		readyToReproduction = (Math.random()<curAmplexusRepeat)?true:false;
 	}
 	
 	double getAttractivness(){
 		// TODO !!!!!!!!!!!!!!!!!!!!!
-		return Math.random();
+		return super.curSurvival;
+	}
+
+	@Override
+	public boolean isFemale() {
+		return false;
 	}
 }

@@ -148,7 +148,7 @@ public class DataFiller {
 		for (int i=0; i<getExperimentDistribution().getZoneDistributions().size(); i++){
 			ArrayList<Float> possibilities = new ArrayList<Float>();
 			for (int j=0; j<getExperimentDistribution().getZoneDistributions().size(); j++)
-				possibilities.add(1f);
+				possibilities.add((i==j)?0f:1f);
 			movePosibilitiesTable.put(i, possibilities);			
 		}
 	}

@@ -49,4 +49,8 @@ public class GenotypeAgeNumberTrio implements Serializable {
 		
 		return new GenotypeAgeNumberTrio(Genotype.getGenotype(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
 	}
+	
+	public String toString(){
+		return genotype.toString() + " " + age + " " + number;
+	}
 }

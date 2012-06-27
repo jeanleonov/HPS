@@ -35,7 +35,7 @@ public class ZoneDistribution implements Serializable {
 		
 		zone.resource = Integer.parseInt(t[0]);
 		
-		for(int i = 1; i < t.length; i += 2){
+		for(int i = 1; i < t.length; i++){
 			try{
 				if((t[i] != null) && !(t[i].equals("")))
 					zone.addGenotypeDistribution(GenotypeAgeNumberTrio.parseGenotype(t[i]));
@@ -46,5 +46,12 @@ public class ZoneDistribution implements Serializable {
 		}
 		
 		return zone;
+	}
+	
+	public String toString(){
+		StringBuffer str = new StringBuffer();
+		for (GenotypeAgeNumberTrio trio : genotypeAgeNumberTrio)
+			str.append(trio.toString() + "; ");
+		return str.toString();
 	}
 }

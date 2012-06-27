@@ -47,9 +47,9 @@ public class MainClass {
 				new ArgPair(parser.addBooleanOption("help"), Boolean.FALSE));
 		
 		arguments.put("years",
-				new ArgPair(parser.addIntegerOption('y', "years"), new Integer(100)));
+				new ArgPair(parser.addIntegerOption('y', "years"), new Integer(15)));
 		arguments.put("experiments",
-				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(15)));
+				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(10)));
 		
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));

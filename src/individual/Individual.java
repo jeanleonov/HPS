@@ -1,6 +1,5 @@
 package individual;
 
-import genotype.Genome;
 import genotype.Genotype;
 
 import java.io.Serializable;
@@ -11,7 +10,7 @@ import settings.ViabilityPair;
 import settings.Vocabulary;
 import zone.Zone;
 
-public class Individual implements Serializable{
+public abstract class Individual implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -38,14 +37,19 @@ public class Individual implements Serializable{
 		updater.updateSettings();
 	}
 	
+	public void setZone(Zone newZone){
+		myZone = newZone;
+	}
+	
 	public void updateSettings(){
+		age++;
 		readyToReproduction=true;
 		updater.updateSettings();
 	}
 	
 	public boolean isDead(){
 		double randVal = Math.random();
-		if(randVal <= curSurvival)
+		if(randVal <= curSurvival * curCompetitiveness)			//# temporery
 			return false;
 		return true;
 	}
@@ -58,18 +62,17 @@ public class Individual implements Serializable{
 		ArrayList<Float> neighbours = Settings.getMovePosibilitiesFrom(myZone.getZoneNumber());
 		double	weightSum = 0, 
 				totalWeight = 0, 
-				point = Math.random() * weightSum;
+				point = Math.random();
 		int zoneNumber=0;
 		for(Float movePosibility : neighbours)
 			weightSum += movePosibility;
+		point *=  weightSum;
 		while((point > totalWeight + neighbours.get(zoneNumber)) && zoneNumber < neighbours.size())
 			totalWeight += neighbours.get(zoneNumber++);
 		return zoneNumber;
 	}
 
-	public boolean isFemale(){
-		return myGenotype.getGender() == Genome.X;
-	}
+	public abstract boolean isFemale();
 	
 	public boolean isMature(){
 		return age >= getSetting(Vocabulary.Param.Spawning);
@@ -77,10 +80,6 @@ public class Individual implements Serializable{
 	
 	public boolean isReadyToReproduction(){
 		return readyToReproduction;
-	}
-
-	public void changeZone(Zone newZone){
-		myZone = newZone;
 	}
 	
 	public Genotype getGenotype(){
@@ -111,7 +110,7 @@ public class Individual implements Serializable{
 		}
 		
 		private void updateSettingsForYearling(){
-			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst);
+			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst)*0.1f;			//# 0.1 is TEMPORERY!!!!!
 			curCompetitiveness = getSetting(Vocabulary.Param.CompetitivenessFactorFirst);
 		}
 		
@@ -119,17 +118,17 @@ public class Individual implements Serializable{
 			if (age > getSetting(Vocabulary.Param.Lifetime))
 				curSurvival = curCompetitiveness = 0f;
 			else{
-				float survivalAgeCorrection = pow(getSetting(Vocabulary.Param.SurvivalFactor), age),
-					  competitivenessAgeCorrection = pow(getSetting(Vocabulary.Param.CompetitivenessFactor), age);
+				float survivalAgeCorrection = pow(1+getSetting(Vocabulary.Param.SurvivalFactor), age),
+					  competitivenessAgeCorrection = pow(1+getSetting(Vocabulary.Param.CompetitivenessFactor), age);
 				curSurvival = getSetting(Vocabulary.Param.Survival)*survivalAgeCorrection;
 				curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness)*competitivenessAgeCorrection;
 			}
 		}
 		
 		private void updateSettingsForMature(){
-			float reprodAgeCorrection = pow(getSetting(Vocabulary.Param.ReproductionFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
-				  fertilityAgeCorrection = pow(getSetting(Vocabulary.Param.FertilityFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
-				  repeatAgeCorrection = pow(getSetting(Vocabulary.Param.AmplexusRepeatFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1));
+			float reprodAgeCorrection = pow(1+getSetting(Vocabulary.Param.ReproductionFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
+				  fertilityAgeCorrection = pow(1+getSetting(Vocabulary.Param.FertilityFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
+				  repeatAgeCorrection = pow(1+getSetting(Vocabulary.Param.AmplexusRepeatFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1));
 			curReproduction = getSetting(Vocabulary.Param.Reproduction)*reprodAgeCorrection;
 			curFertility = getSetting(Vocabulary.Param.Fertility)*fertilityAgeCorrection;
 			curAmplexusRepeat = getSetting(Vocabulary.Param.AmplexusRepeat)*repeatAgeCorrection;
@@ -146,5 +145,9 @@ public class Individual implements Serializable{
 			for (res=1f; p>0; res*=a, p--);
 			return res;
 		}
+	}
+	
+	public String toString(){
+		return myGenotype.toString() + " " + age;
 	}
 }

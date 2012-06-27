@@ -1,5 +1,6 @@
 package zone;
 
+import genotype.Genome;
 import genotype.Genotype;
 import individual.Female;
 import individual.Individual;
@@ -15,7 +16,7 @@ import distribution.ZoneDistribution;
 public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10;
+	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 5;
 	
 	// DMY: for regulating competitiveness factor in attractivness counting
 	private static final double feedingCoeficient = 1;
@@ -40,6 +41,7 @@ public class Zone extends Agent {
 	@Override
 	protected void setup(){
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
+		/*#*/System.out.println("=== " + zoneDistribution);
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		statisticDispatcher = (AID)getArguments()[3];
@@ -47,7 +49,6 @@ public class Zone extends Agent {
 			maxSizeOfListOfFemales = (Integer)getArguments()[4];
 		else
 			maxSizeOfListOfFemales = DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
-	//	System.out.println("Zone " + zoneId + " in Experiment " + experimentId + " ready");		#lao
 		createIndividuals(zoneDistribution);
 		resources = zoneDistribution.getResourse();
 		addBehaviour(new ZoneBehaviour());
@@ -67,7 +68,20 @@ public class Zone extends Agent {
 	}
 
 	private void createIndividual(Genotype genotype, int age) {
-		addIndividualToList(new Individual (genotype, age, this));
+		if (genotype.getGender() == Genome.X)
+			addIndividualToList(new Female(genotype, age, this));
+		else
+			addIndividualToList(new Male(genotype, age, this));
+	}
+
+	void createIndividual(String str) {
+		String[] strs = str.split(" ");
+		Genotype genotype = Genotype.getGenotype(strs[0]);
+		int age = Integer.parseInt(strs[1]);
+		if (genotype.getGender() == Genome.X)
+			addIndividualToList(new Female(genotype, age, this));
+		else
+			addIndividualToList(new Male(genotype, age, this));
 	}
 	
 	public void addIndividualToList(Individual individual) {
@@ -88,9 +102,9 @@ public class Zone extends Agent {
 	public double getAttractivness(){
 		// DMY: It's desirable to return value between 0 and 1		
 		// DMY: my version, totalCompetitiveness is taken from individuals while feeding
-		double attractivness = (double)resources / (feedingCoeficient * totalCompetitiveness); 
-		if(attractivness > 1)
-			attractivness = 1;
+		double attractivness = 0.5; // LAO(temporery)(double)resources / (feedingCoeficient * totalCompetitiveness); 
+		// LAO(temporery): if(attractivness > 1)
+		// LAO(temporery)	attractivness = 1;
 		return attractivness;
 	}
 	
@@ -117,14 +131,16 @@ public class Zone extends Agent {
 		return maxSizeOfListOfFemales;
 	}
 	
-	void updateLists(){
+	void updateListsAndIndividualSettings(){
 		Vector<Individual> individuals = getIndividuals();
 		males.clear();
 		females.clear();
 		immatures.clear();
 		yearlings.clear();
-		for (Individual indiv : individuals)
+		for (Individual indiv : individuals){
 			addIndividualToList(indiv);
-	}	
+			indiv.updateSettings();
+		}
+	}
 	
 }
