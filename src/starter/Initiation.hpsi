@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-xRxR 0 5| xRyR 2 10| (xL)xR 3 1 ;
-xRxR 0 5| xRyR 2 10| xRyR 2 5| xRyR 2 10| xRxR 3 15;
-xRyR 0 15;
-=======
 300|xRxR 0 73| xRyR 2 1560| (xL)xR 3 1 ;
 400|xRxR 0 55| xRyR 2 1890| xRyR 2 5| xRyR 2 1000| xRxR 3 155;
 30|xRyR 0 15;
->>>>>>> 45ebc438a075a8d2d6863d41e88e23cde8b48a69
