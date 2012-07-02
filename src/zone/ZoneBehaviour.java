@@ -74,7 +74,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			else if (language.compareTo(MIGRATION) == 0){
 				myZone.createIndividual(message.getContent());
 			}
-			myZone.send(reply);/*#*/
+			myZone.send(reply);
 		}
 	}
 
@@ -134,10 +134,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void lastPhaseProcessing() {
 		reproductionProcessing();
 		competitionProcessing();
-		/*#*/System.out.println("--- " + myZone.yearlings.size() + " " + 
-										 myZone.immatures.size() + " " + 
-										 myZone.females.size() + " " + 
-										 myZone.males.size());
+		/*#*/System.out.println("   In Zone" + myZone.zoneId + ": " + myZone.yearlings.size() + " Yearlings; " + 
+										 myZone.immatures.size() + " Immatures; " + 
+										 myZone.females.size() + " Females; " + 
+										 myZone.males.size() + " Males;");
 	}
 	
 	private void killingSystemProcessing() {
@@ -145,7 +145,6 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void reproductionProcessing() {
-		// TODO amplexus repeat
 		int readyMales, cicles=0;
 		do{
 			readyMales=0;

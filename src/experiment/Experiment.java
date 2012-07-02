@@ -21,6 +21,7 @@ public class Experiment extends Agent {
 	Vector<AID> zonesAIDs;
 	Integer numberOfModelingYears;
 	Integer experimentNumber;
+	Integer multiplier;
 	Scenario scenario;
 	AID myProvider;
 	
@@ -29,9 +30,10 @@ public class Experiment extends Agent {
 		zonesAIDs = new Vector<AID>();
 		scenario = (Scenario)getArguments()[1];
 		numberOfModelingYears = (Integer)getArguments()[2];
-		experimentNumber = (Integer)getArguments()[3];
-		AID statisticAID = (AID)getArguments()[4];
-		myProvider = (AID)getArguments()[5];
+		multiplier = (Integer)getArguments()[3];
+		experimentNumber = (Integer)getArguments()[4];
+		AID statisticAID = (AID)getArguments()[5];
+		myProvider = (AID)getArguments()[6];
 		startZones(createZones(statisticAID));
 		Settings.updateZoneTable(zonesAIDs);
 		addBehaviour(new ExperimentBehaviour());
@@ -51,7 +53,8 @@ public class Experiment extends Agent {
 								new Object[]{
 											 zoneDistr,
 											 experimentNumber,
-									  		 i, 
+									  		 i,
+									  		 multiplier, 
 									  		 statisticAID
 									        }
 								));											// agent created

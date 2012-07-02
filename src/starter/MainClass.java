@@ -36,7 +36,7 @@ public class MainClass {
 	
 	private static void printUsage() {
         System.out.println(
-		"Usage: [--help] [{-y, --years} integer] [{-e, --experiments} integer]\n" +
+		"Usage: [--help] [{-y, --years} integer] [{-e, --experiments} integer] [{-M, --multiplier} integer]\n" +
 			"       [{-f, --project_path} string] [{-v, --viability} string] [{-m, --map} string]\n" +
 			"       [{-p, --posterity} string] [{-s, --scenario} string]\n" +
 			"       [{-i, --initiation} string] [{-S, --statistic} string]");
@@ -47,9 +47,11 @@ public class MainClass {
 				new ArgPair(parser.addBooleanOption("help"), Boolean.FALSE));
 		
 		arguments.put("years",
-				new ArgPair(parser.addIntegerOption('y', "years"), new Integer(15)));
+				new ArgPair(parser.addIntegerOption('y', "years"), new Integer(100)));
 		arguments.put("experiments",
 				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(10)));
+		arguments.put("multiplier",
+				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
 		
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));
@@ -120,6 +122,7 @@ public class MainClass {
 					proj_path + (String)getArgument("scenario"),
 					proj_path + (String)getArgument("initiation"),
 					proj_path + (String)getArgument("statistic"),
+					(Integer)getArgument("multiplier"),
 					containers
 			};
 			

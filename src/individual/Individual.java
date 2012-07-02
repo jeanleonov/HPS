@@ -49,7 +49,7 @@ public abstract class Individual implements Serializable{
 	
 	public boolean isDead(){
 		double randVal = Math.random();
-		if(randVal <= curSurvival * curCompetitiveness)			//# temporery
+		if(randVal <= curSurvival * curCompetitiveness * myZone.getFreeSpace())			//# temporery	re- TODO
 			return false;
 		return true;
 	}
@@ -110,7 +110,7 @@ public abstract class Individual implements Serializable{
 		}
 		
 		private void updateSettingsForYearling(){
-			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst)*0.1f;			//# 0.1 is TEMPORERY!!!!!
+			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst);
 			curCompetitiveness = getSetting(Vocabulary.Param.CompetitivenessFactorFirst);
 		}
 		

@@ -16,8 +16,8 @@ import distribution.ZoneDistribution;
 public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10;
-	private static final int DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3;
+	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10;			// improve it (move it to MainClass)
+	private static final int DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3;		// improve it (move it to MainClass)
 	
 	// DMY: for regulating competitiveness factor in attractivness counting
 	private static final double feedingCoeficient = 1;
@@ -35,23 +35,28 @@ public class Zone extends Agent {
 	int resources;
 	double totalCompetitiveness = 0.0001;
 	int iteration = -1;
-	int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
+	int maxSizeOfListOfFemales, minNumberOfMalesForContinue, individualMultiplier;
 	
 	// private Vector<Individual> strangers;
 	
 	@Override
 	protected void setup(){
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
-		/*#*/System.out.println("=== " + zoneDistribution);
+		/*#System.out.println("=== " + zoneDistribution);*/
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
-		statisticDispatcher = (AID)getArguments()[3];
-		if (getArguments().length>4)
-			maxSizeOfListOfFemales = (Integer)getArguments()[4];
+		individualMultiplier = (Integer)getArguments()[3];
+		statisticDispatcher = (AID)getArguments()[4];
+		if (getArguments().length>5)
+			maxSizeOfListOfFemales = (Integer)getArguments()[5];
 		else
 			maxSizeOfListOfFemales = DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
-		if (getArguments().length>5)
-			minNumberOfMalesForContinue = (Integer)getArguments()[5];
+		if (getArguments().length>6)
+			minNumberOfMalesForContinue = (Integer)getArguments()[6];
+		else
+			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
+		if (getArguments().length>7)
+			minNumberOfMalesForContinue = (Integer)getArguments()[7];
 		else
 			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
 		createIndividuals(zoneDistribution);
@@ -90,6 +95,8 @@ public class Zone extends Agent {
 	}
 	
 	public void addIndividualToList(Individual individual) {
+		if (individual.getAge()==0)
+			yearlings.add(individual);
 		if (!individual.isMature())
 			immatures.add(individual);
 		else {
@@ -146,6 +153,11 @@ public class Zone extends Agent {
 			addIndividualToList(indiv);
 			indiv.updateSettings();
 		}
+	}
+	
+	public double getFreeSpace(){		//# temporery (5000/N) re- TODO
+		double res = individualMultiplier*100d/(yearlings.size()+10*males.size()+10*females.size());
+		return (res>1)?1:res;
 	}
 	
 }

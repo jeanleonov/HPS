@@ -31,6 +31,7 @@ public class SystemStarter extends Agent implements Pathes{
 					statisticPath;
 	Integer remainingExperiments;		// TODO !!! implement synchronization
 	int numberOfModelingYears;
+	int multiplier;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -42,7 +43,8 @@ public class SystemStarter extends Agent implements Pathes{
 		this.scenarioPath = (String)args[3];
 		this.experimentInfoPath = (String)args[4];
 		this.statisticPath = (String)args[5];
-		this.containerControllers = (Vector<ContainerController>)args[6];
+		this.multiplier = (Integer)args[6];
+		this.containerControllers = (Vector<ContainerController>)args[7];
 		headContainerController = getContainerController();
 		startSystem();
 	}
