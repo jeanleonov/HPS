@@ -1,6 +1,7 @@
 package starter;
 
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
@@ -11,29 +12,20 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private ContainerController controller;
 	private SystemStarter starter;
-	private int curExperiment;
-	
-	ExperimentsProvider(ContainerController controller){
-		this.controller = controller;
-	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
 		starter = (SystemStarter)myAgent;
-		if (controller == null)/*#may be temporary*/
-			System.out.println("FIIIIIRRREEEEEEe: no ContainerController");
-		curExperiment = 0;
+		startExperiments();
 	}
 
 	@Override
 	public void action() {
-		sendToContainerNewExperiment();
-		waitToResponse();
-		starter.remainingExperiments--;
-		curExperiment++;
+		ACLMessage response = starter.blockingReceive(MessageTemplate.MatchLanguage(I_FINISHED));
+		int nodeNumber = Integer.parseInt(response.getContent());
+		sendToContainerNewExperiment(nodeNumber);
 	}
 
 	@Override
@@ -41,10 +33,15 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 		return starter.remainingExperiments <= 0;
 	}
 	
-	private void sendToContainerNewExperiment(){
+	private void startExperiments(){
+		for (int nodeNumber=0; nodeNumber<starter.containerControllers.size(); nodeNumber++)
+			sendToContainerNewExperiment(nodeNumber);
+	}
+	
+	private void sendToContainerNewExperiment(int nodeNumber){
 		try {
 			AgentController agent
-				= controller.createNewAgent(
+				= starter.containerControllers.get(nodeNumber).createNewAgent(
 								getExperimentName(starter.remainingExperiments), 
 								"experiment.Experiment", 
 								new Object[]{
@@ -52,17 +49,16 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 									starter.dataFiller.getScenario(),
 									starter.numberOfModelingYears,
 									starter.multiplier,
-									curExperiment,
+									starter.curExperiment,
 									starter.statisticAID,
-									starter.getAID()});
+									starter.getAID(),
+									nodeNumber});
 			agent.start();
+			starter.remainingExperiments--;
+			starter.curExperiment++;
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void waitToResponse(){
-		starter.blockingReceive(MessageTemplate.MatchContent(I_FINISHED));
 	}
 	
 	private String getExperimentName(int i){

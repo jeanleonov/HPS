@@ -24,6 +24,7 @@ public class Experiment extends Agent {
 	Integer multiplier;
 	Scenario scenario;
 	AID myProvider;
+	Integer myNodeNumber;
 	
 	@Override
 	protected void setup(){
@@ -34,6 +35,7 @@ public class Experiment extends Agent {
 		experimentNumber = (Integer)getArguments()[4];
 		AID statisticAID = (AID)getArguments()[5];
 		myProvider = (AID)getArguments()[6];
+		myNodeNumber = (Integer)getArguments()[7];
 		startZones(createZones(statisticAID));
 		Settings.updateZoneTable(zonesAIDs);
 		addBehaviour(new ExperimentBehaviour());

@@ -21,7 +21,7 @@ public class SystemStarter extends Agent implements Pathes{
 	private AgentController settingsAgent, statisticDispatcher;
 	AID statisticAID;
 	
-	private Vector<ContainerController> containerControllers; 
+	Vector<ContainerController> containerControllers; 
 	
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
@@ -30,6 +30,7 @@ public class SystemStarter extends Agent implements Pathes{
 					scenarioPath,
 					statisticPath;
 	Integer remainingExperiments;		// TODO !!! implement synchronization
+	int curExperiment;
 	int numberOfModelingYears;
 	int multiplier;
 
@@ -46,6 +47,7 @@ public class SystemStarter extends Agent implements Pathes{
 		this.multiplier = (Integer)args[6];
 		this.containerControllers = (Vector<ContainerController>)args[7];
 		headContainerController = getContainerController();
+		curExperiment = 0;
 		startSystem();
 	}
 	
@@ -58,7 +60,7 @@ public class SystemStarter extends Agent implements Pathes{
 			remainingExperiments = (Integer)MainClass.getArgument("experiments");
 			numberOfModelingYears = (Integer)MainClass.getArgument("years");
 		} catch (NotFoundException e) {e.printStackTrace();}
-		startExperimetnsProviders();
+		startExperimetnProvider();
 	}
 	
 	private void readData(){
@@ -123,9 +125,7 @@ public class SystemStarter extends Agent implements Pathes{
 			/*throws new Exception("Problems with Settings agent")*/;		// TODO
 	}
 	
-	private void startExperimetnsProviders(){
-		for (ContainerController container : containerControllers)
-		//*** START ExperimentProvider FOR EACH NODE
-			addBehaviour(new ExperimentsProvider(container));
+	private void startExperimetnProvider(){
+		addBehaviour(new ExperimentsProvider());
 	}
 }
