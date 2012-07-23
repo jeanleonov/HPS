@@ -56,6 +56,7 @@ public class SystemStarter extends Agent implements Pathes{
 		createAndStartSettingsAgents();
 		getConfirmationFromSettingsAgents();
 		createAndStartStatisticDispatcherAgent();
+		getConfirmationFromStatisticDispatcherAgent();
 		try {
 			remainingExperiments = (Integer)MainClass.getArgument("experiments");
 			numberOfModelingYears = (Integer)MainClass.getArgument("years");
@@ -109,7 +110,9 @@ public class SystemStarter extends Agent implements Pathes{
 			statisticDispatcher	= headContainerController.createNewAgent(
 										"statisticDispatcher", 
 										"statistic.StatisticDispatcher", 
-										new Object[]{statisticPath});
+										new Object[]{statisticPath,
+													 getAID()}
+								  );
 			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
 			
 			statisticDispatcher.start();
@@ -119,10 +122,17 @@ public class SystemStarter extends Agent implements Pathes{
 	}
 	
 	private void getConfirmationFromSettingsAgents(){
-		//*** CONFIRMATION MUST BE GOT FROM EACH SETTINGS AGENT
+		for (int i = 0; i < containerControllers.size(); i++){
+			ACLMessage confirm = blockingReceive();
+			if (confirm.getPerformative() != ACLMessage.CONFIRM)
+				/*throws new Exception("Problems with Settings agent")*/;		// TODO
+		}
+	}
+	
+	private void getConfirmationFromStatisticDispatcherAgent(){
 		ACLMessage confirm = blockingReceive();
 		if (confirm.getPerformative() != ACLMessage.CONFIRM)
-			/*throws new Exception("Problems with Settings agent")*/;		// TODO
+			/*throws new Exception("Problems with StatisticDispather agent")*/;		// TODO
 	}
 	
 	private void startExperimetnProvider(){

@@ -16,6 +16,8 @@ import java.util.Vector;
 
 public class MainClass {
 	
+	private final int tcpPort = 8899; // AAP
+		
 	private static Hashtable<String, ArgPair> arguments = new Hashtable<String, ArgPair>();
 	private static CmdLineParser parser = new CmdLineParser();
 	static Runtime runtime;
@@ -93,7 +95,7 @@ public class MainClass {
 	
 	void initContainerControllers(){
 		runtime = Runtime.instance();
-		Profile pf = new ProfileImpl(null, 8899, null);
+		Profile pf = new ProfileImpl(null, tcpPort, null);
 		
 		OSInfoOverride osio = new OSInfoOverride();
 		try {

@@ -45,6 +45,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	@Override
 	public int onEnd() {
+		
 		long executingTime = System.currentTimeMillis()-timeOfStart,
 			 hour = executingTime/1000/60/60,
 			 min = executingTime/1000/60 - hour*60,
@@ -54,6 +55,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 						  "Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec);
 		return super.onEnd();
 	}
+	
 	
 	private void startExperiments(){
 		for (int nodeNumber=0; nodeNumber<starter.containerControllers.size(); nodeNumber++)

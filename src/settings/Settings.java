@@ -32,7 +32,7 @@ public class Settings extends Agent implements Vocabulary {
 		confirmationOfReadiness((AID)args[3]);
 	}
 	
-	private void confirmationOfReadiness(AID systemStarter){
+	private void confirmationOfReadiness(AID systemStarter){ 	// PAA: maybe confirmation(AID) is better name ?
 		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
 		confirm.addReceiver(systemStarter);
 		send(confirm);

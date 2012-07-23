@@ -1,6 +1,8 @@
 package statistic;
 
+import jade.core.AID;
 import jade.core.Agent;
+import jade.lang.acl.ACLMessage;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,24 +10,26 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
-import zone.ZoneBehaviour;
-
-import jxl.*;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 
 public class StatisticDispatcher extends Agent{
 
-	private String fileLocation = "statistic.csv";
+	private static final long serialVersionUID = 1L;
+	
+	private String fileLocation = "statistic.csv";	// TODO: default value must be at another place
 	private Vector<StatisticPackage> packages = new Vector<StatisticPackage>() ;
 
 	@Override
 	protected void setup(){
 		fileLocation = (String)getArguments()[0];
 		addBehaviour(new StatisticDispatcherBehaviour());
+		confirmation((AID)getArguments()[1]);
+	}
+
+	private void confirmation(AID systemStarter) {
+		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
+		confirm.addReceiver(systemStarter);
+		send(confirm);
 	}
 
 	void addPackage(StatisticPackage pack) {
