@@ -6,21 +6,22 @@ import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
 public class MainClass {
 	
-	private final int tcpPort = 8899; // AAP
+	private static final int tcpPort = 8899; // AAP
 		
 	private static Hashtable<String, ArgPair> arguments = new Hashtable<String, ArgPair>();
 	private static CmdLineParser parser = new CmdLineParser();
 	static Runtime runtime;
+	static Vector<ContainerController> containers;
+	static ContainerController mainContainer;		
+	static AgentController starter;
 	
 	private static class ArgPair {
 		public CmdLineParser.Option option;
@@ -28,6 +29,7 @@ public class MainClass {
 		public ArgPair(CmdLineParser.Option opt, Object def) { this.option = opt; this.defaultValue = def; }
 	}
 	
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 		parseArgs(args);
 		
@@ -58,17 +60,17 @@ public class MainClass {
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));
 		arguments.put("viability",
-				new ArgPair(parser.addStringOption('v', "viability"), "src/starter/Viability.csv"));
+				new ArgPair(parser.addStringOption('v', "viability"), "/Viability.csv"));
 		arguments.put("posterity",
-				new ArgPair(parser.addStringOption('p', "posterity"), "src/starter/Posterity.csv"));
+				new ArgPair(parser.addStringOption('p', "posterity"), "/Posterity.csv"));
 		arguments.put("movePossibilities",
-				new ArgPair(parser.addStringOption('m', "map"), "src/starter/Map.csv"));			// movePossibilities
+				new ArgPair(parser.addStringOption('m', "map"), "/Map.csv"));			// movePossibilities
 		arguments.put("scenario",
-				new ArgPair(parser.addStringOption('s', "scenario"), "src/starter/Scenario.scn"));
+				new ArgPair(parser.addStringOption('s', "scenario"), "/Scenario.scn"));
 		arguments.put("initiation",
-				new ArgPair(parser.addStringOption('i', "initiation"), "src/starter/Initiation.hpsi"));
+				new ArgPair(parser.addStringOption('i', "initiation"), "/Initiation.hpsi"));
 		arguments.put("statistic",
-				new ArgPair(parser.addStringOption('S', "statistic"), "statistic.csv"));
+				new ArgPair(parser.addStringOption('S', "statistic"), "/statistic.csv"));
 		try {
             parser.parse(args);
         }
@@ -90,10 +92,7 @@ public class MainClass {
 		return parser.getOptionValue(pair.option, pair.defaultValue);
 	}
 	
-	Vector<ContainerController> containers;
-	ContainerController mainContainer;
-	
-	void initContainerControllers(){
+	static void initContainerControllers(){
 		runtime = Runtime.instance();
 		Profile pf = new ProfileImpl(null, tcpPort, null);
 		
@@ -111,9 +110,7 @@ public class MainClass {
 		containers.add(mainContainer);
 	}
 	
-	void start(){		
-		AgentController starter;
-
+	static void start(){
 		try {
 			String proj_path = (String)getArgument("project_path");
 			
@@ -139,6 +136,8 @@ public class MainClass {
 		} 
 	}
 	
-	
+	static void shutDown(){
+		runtime.shutDown();
+	}
 
 }

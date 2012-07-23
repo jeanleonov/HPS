@@ -4,7 +4,6 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import messaging.Messaging;
 
@@ -45,14 +44,14 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	@Override
 	public int onEnd() {
-		
 		long executingTime = System.currentTimeMillis()-timeOfStart,
 			 hour = executingTime/1000/60/60,
 			 min = executingTime/1000/60 - hour*60,
 			 sec = executingTime/1000 - min*60 - hour*3600,
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000; 
 		System.out.printf("--------------------------------\n"+
-						  "Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec);
+						  "Executing time:	[%2s:%2s:%2s.%3s]\n",hour,min,sec,msec);
+		starter.doDelete();
 		return super.onEnd();
 	}
 	

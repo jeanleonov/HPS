@@ -18,7 +18,8 @@ public class SystemStarter extends Agent implements Pathes{
 
 	DataFiller dataFiller;
 	private ContainerController headContainerController;
-	private AgentController settingsAgent, statisticDispatcher;
+	private AgentController statisticDispatcher;
+	private Vector<AgentController> settingsAgents;
 	AID statisticAID;
 	
 	Vector<ContainerController> containerControllers; 
@@ -46,9 +47,16 @@ public class SystemStarter extends Agent implements Pathes{
 		this.statisticPath = (String)args[5];
 		this.multiplier = (Integer)args[6];
 		this.containerControllers = (Vector<ContainerController>)args[7];
+		settingsAgents = new Vector<AgentController>();
 		headContainerController = getContainerController();
 		curExperiment = 0;
 		startSystem();
+	}
+	
+	@Override
+	public void doDelete(){
+		MainClass.shutDown();
+		super.doDelete();
 	}
 	
 	public void startSystem(){
@@ -88,7 +96,8 @@ public class SystemStarter extends Agent implements Pathes{
 		for (ContainerController container : containerControllers){
 		//*** SETTINGS_AGENT STARTS ON EACH NODE
 			try {
-				settingsAgent = container.createNewAgent(
+				AgentController settingsAgent =
+								container.createNewAgent(
 									"Settings",
 									"settings.Settings",
 									new Object[]{
@@ -97,7 +106,7 @@ public class SystemStarter extends Agent implements Pathes{
 											dataFiller.getMovePosibilitiesTable(),
 											getAID()}
 								);
-				
+				settingsAgents.add(settingsAgent);
 				settingsAgent.start();
 			} catch (StaleProxyException e) {
 				e.printStackTrace();
