@@ -4,13 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Serializable;
 
-import jxl.write.Number;
-import jxl.write.WritableSheet;
-import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
-
 public class GenotypeAgeNumberTrio implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	int genotype; // not int ???
 	int age;
 	int number;

@@ -41,16 +41,9 @@ public class StatisticDispatcher extends Agent{
 			// TODO
 			File file = createFile();
 		//	System.out.println("Statistic " + file.getAbsolutePath());		#lao
-			/*
-			WritableWorkbook workbook = Workbook.createWorkbook(file);
-			WritableSheet sheet = workbook.createSheet("Statistic", 0);
-			*/
-//			writeTemplate(sheet);
-//			writeStatistic(sheet);
 			writeStatistic(file);
-//			workbook.write();
-//			workbook.close();
-			
+		//	System.out.println("SIZZZE " + packages.size());
+		//	packages.clear();	
 			
 		} catch (IOException e) {
 			e.printStackTrace();

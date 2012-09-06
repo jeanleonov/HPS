@@ -4,14 +4,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Serializable;
 
-import jxl.write.Number;
-import jxl.write.WritableSheet;
 import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
-
 
 public class StatisticPackage implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	private int experimentId;
 	private int zoneId;
 	private int iteration; // year
