@@ -42,9 +42,7 @@ public class StatisticDispatcher extends Agent{
 			File file = createFile();
 		//	System.out.println("Statistic " + file.getAbsolutePath());		#lao
 			writeStatistic(file);
-		//	System.out.println("SIZZZE " + packages.size());
-		//	packages.clear();	
-			
+			packages.clear();				
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
