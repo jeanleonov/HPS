@@ -4,6 +4,7 @@ import genotype.Genome;
 import genotype.Genotype;
 import individual.Female;
 import individual.Individual;
+import individual.IndividualsManager;
 import individual.Male;
 import jade.core.AID;
 import jade.core.Agent;
@@ -26,6 +27,7 @@ public class Zone extends Agent {
 	Vector<Female> females = new Vector<Female>();
 	Vector<Individual> immatures = new Vector<Individual>();
 	Vector<Individual> yearlings = new Vector<Individual>();
+	IndividualsManager individualsManager = IndividualsManager.getManager();
 	
 	AID statisticDispatcher;
 	
@@ -79,9 +81,9 @@ public class Zone extends Agent {
 
 	private void createIndividual(Genotype genotype, int age) {
 		if (genotype.getGender() == Genome.X)
-			addIndividualToList(new Female(genotype, age, this));
+			addIndividualToList(individualsManager.getFemale(genotype, age, this));
 		else
-			addIndividualToList(new Male(genotype, age, this));
+			addIndividualToList(individualsManager.getMale(genotype, age, this));
 	}
 
 	void createIndividual(String str) {
@@ -89,9 +91,9 @@ public class Zone extends Agent {
 		Genotype genotype = Genotype.getGenotype(strs[0]);
 		int age = Integer.parseInt(strs[1]);
 		if (genotype.getGender() == Genome.X)
-			addIndividualToList(new Female(genotype, age, this));
+			addIndividualToList(individualsManager.getFemale(genotype, age, this));
 		else
-			addIndividualToList(new Male(genotype, age, this));
+			addIndividualToList(individualsManager.getMale(genotype, age, this));
 	}
 	
 	public void addIndividualToList(Individual individual) {
@@ -133,6 +135,7 @@ public class Zone extends Agent {
 		females.remove(individual);
 		immatures.remove(individual);
 		yearlings.remove(individual);
+		individual.die();
 	}
 
 	public int getZoneNumber() {

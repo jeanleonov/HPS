@@ -134,7 +134,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void lastPhaseProcessing() {
 		reproductionProcessing();
 		competitionProcessing();
-		/*#*/System.out.println("   In Zone" + myZone.zoneId + ": " + myZone.yearlings.size() + " Yearlings; " + 
+		int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
+		/*#*/System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
 										 myZone.immatures.size() + " Immatures; " + 
 										 myZone.females.size() + " Females; " + 
 										 myZone.males.size() + " Males;");

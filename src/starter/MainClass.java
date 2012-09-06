@@ -1,12 +1,12 @@
 package starter;
 
+import individual.ObjectPull;
 import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
-import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
 import java.util.Hashtable;
@@ -56,6 +56,8 @@ public class MainClass {
 				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(10)));
 		arguments.put("multiplier",
 				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
+		arguments.put("individuals_pull",
+				new ArgPair(parser.addBooleanOption('o',"individuals_pull"), Boolean.FALSE));
 		
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));
@@ -125,6 +127,8 @@ public class MainClass {
 					containers
 			};
 			
+			if ((Boolean)getArgument("individuals_pull"))
+				new ObjectPull();
 			starter = mainContainer.createNewAgent("SystemStarter", "starter.SystemStarter", startArgs);
 			starter.start();
 		}

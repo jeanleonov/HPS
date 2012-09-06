@@ -16,9 +16,18 @@ public class Female extends Individual {
 	
 	ArrayList<Male> lovers;
 	
-	public Female(Genotype myGenotype, int age, Zone myZone) {
+	Female(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
 		lovers = new ArrayList<Male>();
+	}
+	
+	Female reset(Genotype myGenotype, int age, Zone myZone){
+		this.myGenotype = myGenotype;
+		this.age = age;
+		this.myZone = myZone;
+		viabilitySettings = Settings.getViabilitySettings(getGenotype());
+		updater.updateSettings();
+		return this;
 	}
 
 	public ZoneDistribution getPosterity() {
@@ -59,6 +68,10 @@ public class Female extends Individual {
 	@Override
 	public boolean isFemale() {
 		return true;
+	}
+	
+	public void die(){
+		IndividualsManager.getManager().killFemale(this);
 	}
 }
 		

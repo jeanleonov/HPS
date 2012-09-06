@@ -1,6 +1,7 @@
 package individual;
 
 import genotype.Genotype;
+import settings.Settings;
 import zone.Zone;
 
 public class Male extends Individual {
@@ -9,9 +10,18 @@ public class Male extends Individual {
 	
 	private Female[] femalesList;
 
-	public Male(Genotype myGenotype, int age, Zone myZone) {
+	Male(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
 		femalesList = new Female[myZone.getMaxSizeOfListOfFemales()];
+	}
+	
+	Male reset(Genotype myGenotype, int age, Zone myZone){
+		this.myGenotype = myGenotype;
+		this.age = age;
+		this.myZone = myZone;
+		viabilitySettings = Settings.getViabilitySettings(getGenotype());
+		updater.updateSettings();
+		return this;
 	}
 	
 	// it's for Zone
@@ -40,5 +50,9 @@ public class Male extends Individual {
 	@Override
 	public boolean isFemale() {
 		return false;
+	}
+	
+	public void die(){
+		IndividualsManager.getManager().killMale(this);
 	}
 }

@@ -4,15 +4,15 @@ public class ViabilityPair implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Float value;
+	private float value;
 	private Vocabulary.Param param;
 
-	public ViabilityPair(Float value, Vocabulary.Param param) {
+	public ViabilityPair(float value, Vocabulary.Param param) {
 		this.value = value;
 		this.param = param;
 	}
 
-	public void setValue(Float value) {
+	public void setValue(float value) {
 		this.value = value;
 	}
 
@@ -20,7 +20,7 @@ public class ViabilityPair implements java.io.Serializable {
 		this.param = param;
 	}
 
-	public Float getValue() {
+	public float getValue() {
 		return value;
 	}
 
@@ -36,9 +36,5 @@ public class ViabilityPair implements java.io.Serializable {
 
 		ViabilityPair pair = (ViabilityPair) obj;
 		return pair.value == value && pair.param == param;
-	}
-
-	public int hashCode() {
-		return value.hashCode() * 1000 + param.hashCode();
 	}
 }

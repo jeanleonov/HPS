@@ -13,7 +13,7 @@ import zone.Zone;
 public abstract class Individual implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
-	
+		
 	protected Genotype myGenotype;
 	protected int age;
 	protected Zone myZone;
@@ -26,7 +26,7 @@ public abstract class Individual implements Serializable{
 	protected boolean readyToReproduction=true;
 	protected ArrayList<ViabilityPair> viabilitySettings;
 	
-	private SettingsUpdater updater;
+	SettingsUpdater updater;
 	
 	public Individual(Genotype myGenotype, int age, Zone myZone) {
 		this.myGenotype = myGenotype;
@@ -100,7 +100,7 @@ public abstract class Individual implements Serializable{
 		return 0f;
 	}
 	
-	private class SettingsUpdater{
+	class SettingsUpdater{
 
 		public void updateSettings(){
 			if (age == 0)	updateSettingsForYearling();
@@ -140,8 +140,8 @@ public abstract class Individual implements Serializable{
 			curAmplexusRepeat = 0f;
 		}
 		
-		private Float pow(Float a, int p){
-			Float res;
+		private float pow(float a, int p){
+			float res;
 			for (res=1f; p>0; res*=a, p--);
 			return res;
 		}
@@ -150,4 +150,6 @@ public abstract class Individual implements Serializable{
 	public String toString(){
 		return myGenotype.toString() + " " + age;
 	}
+	
+	abstract public void die();
 }
