@@ -21,21 +21,25 @@ public class MultiProcObjectPull extends IndividualsManager {
 
 	@Override
 	public Male getMale(Genotype genotype, int age, Zone zone) {
-		return objectPulls[(++curSubStorage>=objectPulls.length)?(curSubStorage=0):curSubStorage].getMale(genotype, age, zone);
+		int temp = curSubStorage++;
+		return objectPulls[(temp>=objectPulls.length)?(curSubStorage=0):temp].getMale(genotype, age, zone);
 	}
 
 	@Override
 	public Female getFemale(Genotype genotype, int age, Zone zone) {
-		return objectPulls[(++curSubStorage>=objectPulls.length)?(curSubStorage=0):curSubStorage].getFemale(genotype, age, zone);
+		int temp = curSubStorage++;
+		return objectPulls[(temp>=objectPulls.length)?(curSubStorage=0):temp].getFemale(genotype, age, zone);
 	}
 
 	@Override
 	public void killMale(Male male) {
-		objectPulls[(++curSubStorage>=objectPulls.length)?(curSubStorage=0):curSubStorage].killMale(male);
+		int temp = curSubStorage++;
+		objectPulls[(temp>=objectPulls.length)?(curSubStorage=0):temp].killMale(male);
 	}
 
 	@Override
 	public void killFemale(Female female) {
-		objectPulls[(++curSubStorage>=objectPulls.length)?(curSubStorage=0):curSubStorage].killFemale(female);
+		int temp = curSubStorage++;
+		objectPulls[(temp>=objectPulls.length)?(curSubStorage=0):temp].killFemale(female);
 	}
 }
