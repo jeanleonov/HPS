@@ -7,14 +7,14 @@ public abstract class IndividualsManager {
 	
 	static private IndividualsManager manager=null;
 	
-	protected IndividualsManager(){
-		manager = this;
-	}
-	
 	static public IndividualsManager getManager(){
 		if (manager == null)
 			manager = new DefaultManager();
 		return manager;
+	}
+	
+	static public void setManager(IndividualsManager newManager){
+		manager = newManager;
 	}
 
 	abstract public Male getMale(Genotype genotype, int age, Zone zone);

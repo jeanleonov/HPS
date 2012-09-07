@@ -1,5 +1,6 @@
 package starter;
 
+import individual.MultiProcObjectPull;
 import individual.ObjectPull;
 import jade.core.NotFoundException;
 import jade.core.Profile;
@@ -58,6 +59,8 @@ public class MainClass {
 				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
 		arguments.put("individuals_pull",
 				new ArgPair(parser.addBooleanOption('o',"individuals_pull"), Boolean.FALSE));
+		arguments.put("number_of_cores",
+				new ArgPair(parser.addIntegerOption('c',"number_of_cores"), new Integer(1)));
 		
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));
@@ -127,8 +130,13 @@ public class MainClass {
 					containers
 			};
 			
-			if ((Boolean)getArgument("individuals_pull"))
-				new ObjectPull();
+			int numberOfCores = (Integer)getArgument("number_of_cores");
+			if ((Boolean)getArgument("individuals_pull")){
+				if (numberOfCores==1)
+					new ObjectPull();
+				else
+					new MultiProcObjectPull(numberOfCores);
+			}
 			starter = mainContainer.createNewAgent("SystemStarter", "starter.SystemStarter", startArgs);
 			starter.start();
 		}

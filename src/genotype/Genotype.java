@@ -13,7 +13,7 @@ public class Genotype implements Serializable {
 	Genome[] genomes;
 	boolean[] clonalities;
 
-	Genotype (Genome[] genomes, boolean[] clonalities) {
+	private Genotype (Genome[] genomes, boolean[] clonalities) {
 		this.genomes = genomes;
 		this.clonalities = clonalities;
 	}
