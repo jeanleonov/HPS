@@ -1,5 +1,7 @@
 package starter;
 
+import java.io.IOException;
+
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -51,11 +53,17 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000; 
 		System.out.printf("--------------------------------\n"+
 						  "Executing time:	[%2s:%2s:%2s.%3s]\n",hour,min,sec,msec);
+		stopStatisticDispatcher();
 		starter.doDelete();
 		return super.onEnd();
 	}
-	
-	
+		
+	private void stopStatisticDispatcher() {		
+		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);	
+		message.addReceiver(starter.statisticAID);
+		myAgent.send(message);
+	}
+
 	private void startExperiments(){
 		for (int nodeNumber=0; nodeNumber<starter.containerControllers.size(); nodeNumber++)
 			sendToContainerNewExperiment(nodeNumber);
