@@ -42,4 +42,5 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Mes
 	private ACLMessage getMessage(){
 		return myAgent.blockingReceive();
 	}
+	
 }
