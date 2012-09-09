@@ -2,15 +2,24 @@ package starter;
 
 import individual.MultiProcObjectPull;
 import individual.ObjectPull;
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.basic.Action;
+import jade.core.Agent;
 import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.ShutdownPlatform;
+import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.Vector;
 
 public class MainClass {
@@ -58,9 +67,13 @@ public class MainClass {
 		arguments.put("multiplier",
 				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
 		arguments.put("individuals_pull",
-				new ArgPair(parser.addBooleanOption('o',"individuals_pull"), Boolean.FALSE));
+				new ArgPair(parser.addBooleanOption('o', "individuals_pull"), Boolean.FALSE));
 		arguments.put("number_of_cores",
-				new ArgPair(parser.addIntegerOption('c',"number_of_cores"), new Integer(1)));
+				new ArgPair(parser.addIntegerOption('c', "number_of_cores"), new Integer(1)));
+		arguments.put("sniffer",
+				new ArgPair(parser.addBooleanOption("sniffer"), Boolean.FALSE));
+		arguments.put("introspector",
+				new ArgPair(parser.addBooleanOption("introspector"), Boolean.FALSE));
 		
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));
@@ -127,7 +140,9 @@ public class MainClass {
 					proj_path + (String)getArgument("initiation"),
 					proj_path + (String)getArgument("statistic"),
 					(Integer)getArgument("multiplier"),
-					containers
+					containers,
+					(Boolean)getArgument("sniffer"),
+					(Boolean)getArgument("introspector")
 			};
 			
 			int numberOfCores = (Integer)getArgument("number_of_cores");
@@ -148,8 +163,8 @@ public class MainClass {
 		} 
 	}
 	
-	static void shutDown(){
+	static void shutDown() {
 		runtime.shutDown();
+		System.exit(0);
 	}
-
 }
