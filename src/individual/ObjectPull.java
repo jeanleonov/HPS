@@ -3,7 +3,7 @@ package individual;
 import genotype.Genotype;
 import zone.Zone;
 
-public class ObjectPull extends IndividualsManager{
+public class ObjectPull implements IIndividualsManager{
 
 	private Male[] maleStorage;
 	private Female[] femaleStorage;
@@ -11,14 +11,6 @@ public class ObjectPull extends IndividualsManager{
 				numberOfFemales;
 	
 	public ObjectPull(){
-		maleStorage = new Male[1];
-		femaleStorage = new Female[1];
-		numberOfMales=0;
-		numberOfFemales=0;
-		IndividualsManager.setManager(this);
-	}
-	
-	ObjectPull(boolean isForMultiProcObjectPull){			// without singleton (use it just if you know what you do)
 		maleStorage = new Male[1];
 		femaleStorage = new Female[1];
 		numberOfMales=0;

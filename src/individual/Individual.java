@@ -150,6 +150,4 @@ public abstract class Individual implements Serializable{
 	public String toString(){
 		return myGenotype.toString() + " " + age;
 	}
-	
-	abstract public void die();
 }

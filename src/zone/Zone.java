@@ -3,8 +3,9 @@ package zone;
 import genotype.Genome;
 import genotype.Genotype;
 import individual.Female;
+import individual.IIndividualsManager;
 import individual.Individual;
-import individual.IndividualsManager;
+import individual.IndividualsManagerDispatcher;
 import individual.Male;
 import jade.core.AID;
 import jade.core.Agent;
@@ -27,7 +28,7 @@ public class Zone extends Agent {
 	Vector<Female> females = new Vector<Female>();
 	Vector<Individual> immatures = new Vector<Individual>();
 	Vector<Individual> yearlings = new Vector<Individual>();
-	IndividualsManager individualsManager = IndividualsManager.getManager();
+	IIndividualsManager individualsManager;
 	
 	AID statisticDispatcher;
 	
@@ -47,6 +48,7 @@ public class Zone extends Agent {
 		/*#System.out.println("=== " + zoneDistribution);*/
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
+		individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneId);
 		individualMultiplier = (Integer)getArguments()[3];
 		statisticDispatcher = (AID)getArguments()[4];
 		if (getArguments().length>5)
@@ -135,7 +137,10 @@ public class Zone extends Agent {
 		females.remove(individual);
 		immatures.remove(individual);
 		yearlings.remove(individual);
-		individual.die();
+		if (individual.isFemale())
+			individualsManager.killFemale((Female)individual);
+		else
+			individualsManager.killMale((Male)individual);
 	}
 
 	public int getZoneNumber() {

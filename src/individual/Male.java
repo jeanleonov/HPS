@@ -51,8 +51,4 @@ public class Male extends Individual {
 	public boolean isFemale() {
 		return false;
 	}
-	
-	public void die(){
-		IndividualsManager.getManager().killMale(this);
-	}
 }

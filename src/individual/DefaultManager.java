@@ -3,7 +3,7 @@ package individual;
 import genotype.Genotype;
 import zone.Zone;
 
-public class DefaultManager extends IndividualsManager {
+public class DefaultManager implements IIndividualsManager {
 
 	@Override
 	public Male getMale(Genotype genotype, int age, Zone zone) {

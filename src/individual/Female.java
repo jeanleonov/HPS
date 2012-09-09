@@ -69,9 +69,5 @@ public class Female extends Individual {
 	public boolean isFemale() {
 		return true;
 	}
-	
-	public void die(){
-		IndividualsManager.getManager().killFemale(this);
-	}
 }
 		
