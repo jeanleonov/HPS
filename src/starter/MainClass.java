@@ -56,8 +56,14 @@ public class MainClass {
 				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(10)));
 		arguments.put("multiplier",
 				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
-		arguments.put("object_manager",
-				new ArgPair(parser.addIntegerOption('o',"object_manager"), new Integer(0)));
+		arguments.put("individuals_pull",
+				new ArgPair(parser.addBooleanOption('o', "individuals_pull"), Boolean.FALSE));
+		arguments.put("number_of_cores",
+				new ArgPair(parser.addIntegerOption('c', "number_of_cores"), new Integer(1)));
+		arguments.put("sniffer",
+				new ArgPair(parser.addBooleanOption("sniffer"), Boolean.FALSE));
+		arguments.put("introspector",
+				new ArgPair(parser.addBooleanOption("introspector"), Boolean.FALSE));
 		
 		arguments.put("project_path",
 				new ArgPair(parser.addStringOption('f', "project_path"), Pathes.PROJECT_PATH));
@@ -124,7 +130,9 @@ public class MainClass {
 					proj_path + (String)getArgument("initiation"),
 					proj_path + (String)getArgument("statistic"),
 					(Integer)getArgument("multiplier"),
-					containers
+					containers,
+					(Boolean)getArgument("sniffer"),
+					(Boolean)getArgument("introspector")
 			};
 			
 			IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
@@ -139,8 +147,8 @@ public class MainClass {
 		} 
 	}
 	
-	static void shutDown(){
+	static void shutDown() {
 		runtime.shutDown();
+		System.exit(0);
 	}
-
 }
