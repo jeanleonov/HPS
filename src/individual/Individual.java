@@ -4,6 +4,8 @@ import genotype.Genotype;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import settings.Settings;
 import settings.ViabilityPair;
@@ -59,17 +61,26 @@ public abstract class Individual implements Serializable{
 	}
 	
 	public Integer whereDoGo(){
-		ArrayList<Float> neighbours = Settings.getMovePosibilitiesFrom(myZone.getZoneNumber());
-		double	weightSum = 0, 
-				totalWeight = 0, 
-				point = Math.random();
-		int zoneNumber=0;
-		for(Float movePosibility : neighbours)
-			weightSum += movePosibility;
-		point *=  weightSum;
-		while((point > totalWeight + neighbours.get(zoneNumber)) && zoneNumber < neighbours.size())
-			totalWeight += neighbours.get(zoneNumber++);
-		return zoneNumber;
+		HashMap<Integer, Float> neighboursTravelCost = myZone.getZoneTravelPossibilities();
+		if(neighboursTravelCost != null){
+			double	weightSum = 0, 
+					totalWeight = 0;
+			for(Float movePosibility : neighboursTravelCost.values()){
+				totalWeight += movePosibility;
+			}
+					
+			double point =  Math.random() * totalWeight;
+			Iterator<Integer> zoneNum = neighboursTravelCost.keySet().iterator();
+			while(zoneNum.hasNext()){
+				Integer currentZone = zoneNum.next();
+				weightSum += neighboursTravelCost.get(currentZone);
+				if(point < weightSum){
+					return currentZone;
+				}
+			}
+			return null;
+		}
+		else return -1;
 	}
 
 	public abstract boolean isFemale();

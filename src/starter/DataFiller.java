@@ -1,6 +1,7 @@
 package starter;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,8 @@ public class DataFiller {
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	private HashMap<Integer, ArrayList<Float>> movePosibilitiesTable = new HashMap<Integer, ArrayList<Float>>();
+	private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
+	private static float DEFAULT_ESCAPING_CHANCE = 0;
 	private Vector<Rule> rules;
 	
 	public DataFiller(
@@ -57,7 +59,7 @@ public class DataFiller {
 		return posterityTable;
 	}
 
-	public HashMap<Integer, ArrayList<Float>> getMovePosibilitiesTable() {
+	public HashMap<Integer, HashMap<Integer, Float>> getMovePosibilitiesTable() {
 		return movePosibilitiesTable;
 	}
 
@@ -143,13 +145,36 @@ public class DataFiller {
 	}
 	
 	private void movePossibilitiesFill(){
-		// TODO!!!!!!!!!!!!!!
-		// Temporery (1.0 is anywhere):
-		for (int i=0; i<getExperimentDistribution().getZoneDistributions().size(); i++){
-			ArrayList<Float> possibilities = new ArrayList<Float>();
-			for (int j=0; j<getExperimentDistribution().getZoneDistributions().size(); j++)
-				possibilities.add((i==j)?0f:1f);
-			movePosibilitiesTable.put(i, possibilities);			
+		BufferedReader reader = new BufferedReader(movePossibilitiesReader);
+		try{
+			String zonePossibilities;
+			
+			for(int i = 0; ((zonePossibilities = reader.readLine()) != null) && i < (getExperimentDistribution().getZoneDistributions().size()); i++){
+				
+				String[] travelCostsString = zonePossibilities.split(" ");
+				HashMap<Integer, Float> travelCosts = new HashMap<Integer, Float>();
+				
+				// DMY: for possibility to escape
+				if(travelCostsString.length != 0){			
+					float travelCost = Float.parseFloat(travelCostsString[0]);
+					travelCosts.put(-1, travelCost);
+				}
+			
+				for(int j = 1; j < travelCostsString.length; j++){
+					float travelCost = Float.parseFloat(travelCostsString[j]);
+					if((travelCost != 0) && (i != (j - 1))){
+						travelCosts.put(j - 1, travelCost);
+					}
+				}
+				
+				if(travelCosts.isEmpty() != true){
+					movePosibilitiesTable.put(i, travelCosts);
+				}
+			}
+		}
+		catch(IOException e){
+			System.out.println("Incorrect zone map input");
+			e.printStackTrace();
 		}
 	}
 	

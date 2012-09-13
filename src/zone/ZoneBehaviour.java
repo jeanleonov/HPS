@@ -100,7 +100,14 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		movedThisYear=0;
 		for (Individual indiv : myZone.getIndividuals())
 			if (indiv.isGoingOut()){
-				sendIndividualTo(indiv, indiv.whereDoGo());			// TODO take it better! group messages.
+				Integer outZone = indiv.whereDoGo();
+				if(outZone == null){
+					System.out.println("something wrong with whereDoGo function, technical (not idea) bug");
+					break;
+				}
+				if(outZone != new Integer(-1)){
+					sendIndividualTo(indiv, outZone);			// TODO take it better! group messages.
+				}
 				myZone.killIndividual(indiv);
 			}
 		waitForResponsesFromZones();

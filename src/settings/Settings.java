@@ -18,7 +18,7 @@ public class Settings extends Agent implements Vocabulary {
 
 	static private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	static private HashMap<Integer, ArrayList<Float>> movePosibilitiesTable = new HashMap<Integer, ArrayList<Float>>();
+	static private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
 	
 	static private HashMap<Integer, AID> zoneTable = new HashMap<Integer, AID>();
 
@@ -28,7 +28,7 @@ public class Settings extends Agent implements Vocabulary {
 		Object[] args = getArguments();
 		viabilityTable = (HashMap<genotype.Genotype, ArrayList<ViabilityPair>>) args[0];
 		posterityTable = (HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>) args[1];
-		movePosibilitiesTable = (HashMap<Integer, ArrayList<Float>>) args[2];
+		movePosibilitiesTable = (HashMap<Integer, HashMap<Integer, Float>>) args[2];
 		confirmationOfReadiness((AID)args[3]);
 	}
 	
@@ -57,7 +57,7 @@ public class Settings extends Agent implements Vocabulary {
 	}
 
 	// it's for Individual
-	static public ArrayList<Float> getMovePosibilitiesFrom(Integer zoneNumber){
+	static public HashMap<Integer, Float> getMovePosibilitiesFrom(Integer zoneNumber){
 		return movePosibilitiesTable.get(zoneNumber);
 	}
 	

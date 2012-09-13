@@ -10,7 +10,10 @@ import individual.Male;
 import jade.core.AID;
 import jade.core.Agent;
 
+import java.util.HashMap;
 import java.util.Vector;
+
+import settings.Settings;
 
 import distribution.GenotypeAgeNumberTrio;
 import distribution.ZoneDistribution;
@@ -23,6 +26,8 @@ public class Zone extends Agent {
 	
 	// DMY: for regulating competitiveness factor in attractivness counting
 	private static final double feedingCoeficient = 1;
+	
+	private HashMap<Integer, Float> travelCosts;
 	
 	Vector<Male> males = new Vector<Male>();
 	Vector<Female> females = new Vector<Female>();
@@ -44,6 +49,8 @@ public class Zone extends Agent {
 	
 	@Override
 	protected void setup(){
+		travelCosts = Settings.getMovePosibilitiesFrom(this.getZoneNumber());
+		
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
 		/*#System.out.println("=== " + zoneDistribution);*/
 		experimentId = (Integer)getArguments()[1];
@@ -66,6 +73,14 @@ public class Zone extends Agent {
 		createIndividuals(zoneDistribution);
 		resources = zoneDistribution.getResourse();
 		addBehaviour(new ZoneBehaviour());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public HashMap<Integer, Float> getZoneTravelPossibilities(){
+		if(travelCosts != null){
+			return (HashMap<Integer, Float>) travelCosts.clone();
+		}
+		else return null;
 	}
 	
 	public void createIndividuals(ZoneDistribution zoneDistribution) {
