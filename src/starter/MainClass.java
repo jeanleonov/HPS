@@ -70,7 +70,7 @@ public class MainClass {
 		arguments.put("posterity",
 				new ArgPair(parser.addStringOption('p', "posterity"), "/Posterity.csv"));
 		arguments.put("movePossibilities",
-				new ArgPair(parser.addStringOption('m', "map"), "/Map.csv"));			// movePossibilities
+				new ArgPair(parser.addStringOption('m', "map"), "/Map.zmp"));			// movePossibilities
 		arguments.put("scenario",
 				new ArgPair(parser.addStringOption('s', "scenario"), "/Scenario.scn"));
 		arguments.put("initiation",
