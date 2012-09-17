@@ -1,6 +1,7 @@
 package statistic;
 
 import java.io.Serializable;
+import genotype.Genotype;
 
 public class GenotypeAgeCountTrioStat implements Serializable{
 
@@ -20,6 +21,6 @@ public class GenotypeAgeCountTrioStat implements Serializable{
 	}
 	
 	public String toString() {
-		return genotype + ";" + age + ";" + number;
+		return Genotype.getGenotypeById(genotype) + ";" + age + ";" + number;
 	}
 }
