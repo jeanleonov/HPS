@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import settings.PosterityResultPair;
 import settings.Settings;
 import zone.Zone;
-import distribution.GenotypeAgeNumberTrio;
+import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 
 public class Female extends Individual {
@@ -52,7 +52,7 @@ public class Female extends Individual {
 		ArrayList<PosterityResultPair> resultsInterbreeding = Settings.getPosteritySettings(myGenotype, male.myGenotype);
 		if (resultsInterbreeding != null)																					// TODO is it needed
 			for(PosterityResultPair pair : resultsInterbreeding)
-				posterity.addGenotypeDistribution(new GenotypeAgeNumberTrio(pair.getGenotype(), 0, (int) (posteritySize*pair.getProbability())));
+				posterity.addGenotypeDistribution(new GenotypeAgeCountTrio(pair.getGenotype(), 0, (int) (posteritySize*pair.getProbability())));
 		return posterity;
 	}
 	

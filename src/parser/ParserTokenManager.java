@@ -9,7 +9,7 @@ import experiment.SingleAppearance;
 import experiment.Action;
 import experiment.ZoneCommand;
 import distribution.ZoneDistribution;
-import distribution.GenotypeAgeNumberTrio;
+import distribution.GenotypeAgeCountTrio;
 import genotype.Genotype;
 
 /** Token Manager. */

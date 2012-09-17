@@ -11,7 +11,7 @@ import experiment.SingleAppearance;
 import experiment.Action;
 import experiment.ZoneCommand;
 import distribution.ZoneDistribution;
-import distribution.GenotypeAgeNumberTrio;
+import distribution.GenotypeAgeCountTrio;
 import genotype.Genotype;
 
 public class Parser implements ParserConstants {
@@ -179,7 +179,7 @@ public class Parser implements ParserConstants {
       tokenA = jj_consume_token(NUMBER);
       tokenN = jj_consume_token(NUMBER);
            zoneDistribution.addGenotypeDistribution(
-                                new GenotypeAgeNumberTrio(
+                                new GenotypeAgeCountTrio(
                                         Genotype.getGenotype(tokenG.image),
                                         Integer.parseInt(tokenA.image),
                                         Integer.parseInt(tokenN.image)));

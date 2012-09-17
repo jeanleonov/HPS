@@ -8,17 +8,17 @@ public class ZoneDistribution implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int resource = 0;
-	Vector<GenotypeAgeNumberTrio> genotypeAgeNumberTrio;
+	Vector<GenotypeAgeCountTrio> genotypeAgeNumberTrio;
 	
 	public ZoneDistribution() {
-		genotypeAgeNumberTrio = new Vector<GenotypeAgeNumberTrio>();
+		genotypeAgeNumberTrio = new Vector<GenotypeAgeCountTrio>();
 	}
 	
-	public void addGenotypeDistribution (GenotypeAgeNumberTrio trio) {
+	public void addGenotypeDistribution (GenotypeAgeCountTrio trio) {
 		genotypeAgeNumberTrio.add(trio);
 	}
 	
-	public Vector<GenotypeAgeNumberTrio> getGenotypeDistributions(){
+	public Vector<GenotypeAgeCountTrio> getGenotypeDistributions(){
 		return genotypeAgeNumberTrio;
 	}
 	
@@ -38,7 +38,7 @@ public class ZoneDistribution implements Serializable {
 		for(int i = 1; i < t.length; i++){
 			try{
 				if((t[i] != null) && !(t[i].equals("")))
-					zone.addGenotypeDistribution(GenotypeAgeNumberTrio.parseGenotype(t[i]));
+					zone.addGenotypeDistribution(GenotypeAgeCountTrio.parseGenotype(t[i]));
 			}
 			catch(NumberFormatException e){
 				throw e;
@@ -50,7 +50,7 @@ public class ZoneDistribution implements Serializable {
 	
 	public String toString(){
 		StringBuffer str = new StringBuffer();
-		for (GenotypeAgeNumberTrio trio : genotypeAgeNumberTrio)
+		for (GenotypeAgeCountTrio trio : genotypeAgeNumberTrio)
 			str.append(trio.toString() + "; ");
 		return str.toString();
 	}

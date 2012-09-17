@@ -1,10 +1,6 @@
 package statistic;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.Serializable;
-
-import jxl.write.WriteException;
 
 public class StatisticPackage implements Serializable {
 	
@@ -30,11 +26,12 @@ public class StatisticPackage implements Serializable {
 		genotypeAgeDistribution.print();
 	}
 	
-	public void writeToFile(BufferedWriter bw) throws WriteException, IOException {		
-		String header = String.valueOf(experimentId) +";" +
-				     String.valueOf(zoneId) + ";" +
-				     String.valueOf(iteration) + ";";
-		//bw.write(str);	
-		genotypeAgeDistribution.writeToFile(bw, header);	
+	public String toStringMain() {
+		return experimentId + ";" + zoneId + ";" + iteration;
+	}
+	
+	public String toString() {
+		String header = toStringMain() + ";";
+		return genotypeAgeDistribution.toString(header);
 	}
 }

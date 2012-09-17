@@ -10,8 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
-import jxl.write.WriteException;
-
 public class StatisticDispatcher extends Agent{
 
 	private static final long serialVersionUID = 1L;
@@ -19,6 +17,9 @@ public class StatisticDispatcher extends Agent{
 	private String fileLocation = "statistic.csv";	// TODO: default value must be at another place
 	private Vector<StatisticPackage> packages = new Vector<StatisticPackage>() ;
 
+	/**
+	 * Обработать аргументы, добавить поведения, отправить подтверждение
+	 */
 	@Override
 	protected void setup(){
 		fileLocation = (String)getArguments()[0];
@@ -26,21 +27,29 @@ public class StatisticDispatcher extends Agent{
 		confirmation((AID)getArguments()[1]);
 	}
 
+	/**
+	 * Отправить подтверждение о запуске
+	 */
 	private void confirmation(AID systemStarter) {
 		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
 		confirm.addReceiver(systemStarter);
 		send(confirm);
 	}
 
+	/**
+	 * Добавить пакет статистики {эксперимент, зона, год, распределение}
+	 * @param pack
+	 */
 	void addPackage(StatisticPackage pack) {
 		packages.add(pack);
 	}
 
+	/**
+	 * Сделать запись в файл и очистить коллекцию пакетов
+	 */
 	void exportToFile() {
 		try {
-			// TODO
 			File file = createFile();
-		//	System.out.println("Statistic " + file.getAbsolutePath());		#lao
 			writeStatistic(file);
 			packages.clear();				
 		} catch (IOException e) {
@@ -48,22 +57,29 @@ public class StatisticDispatcher extends Agent{
 		}
 	}
 	
+	/**
+	 * Сделать запись в файл
+	 * @param file
+	 */
 	private void writeStatistic(File file) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
-			for (StatisticPackage pack : packages){
-				pack.writeToFile(bw);
+			for (StatisticPackage pack : packages) {
+				bw.write(pack.toString());
 			}
 			bw.flush();
 			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (WriteException e) {
-			e.printStackTrace();
 		}
 		
 	}
 
+	/**
+	 * Создать или открыть существующий файл
+	 * @return
+	 * @throws IOException
+	 */
 	private File createFile() throws IOException {
 		File file = new File(fileLocation);
 		if (!file.exists()) {

@@ -15,7 +15,7 @@ import java.util.Vector;
 
 import settings.Settings;
 
-import distribution.GenotypeAgeNumberTrio;
+import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 
 public class Zone extends Agent {
@@ -48,7 +48,7 @@ public class Zone extends Agent {
 	// private Vector<Individual> strangers;
 	
 	@Override
-	protected void setup(){
+	protected void setup() {
 		travelCosts = Settings.getMovePosibilitiesFrom(this.getZoneNumber());
 		
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
@@ -86,12 +86,12 @@ public class Zone extends Agent {
 	public void createIndividuals(ZoneDistribution zoneDistribution) {
 		if (zoneDistribution == null)
 			return;
-		Vector<GenotypeAgeNumberTrio> gants = zoneDistribution.getGenotypeDistributions();
-		for (GenotypeAgeNumberTrio gant : gants)
+		Vector<GenotypeAgeCountTrio> gants = zoneDistribution.getGenotypeDistributions();
+		for (GenotypeAgeCountTrio gant : gants)
 			createIndividualsByGant(gant);
 	}
 
-	private void createIndividualsByGant(GenotypeAgeNumberTrio gant) {
+	private void createIndividualsByGant(GenotypeAgeCountTrio gant) {
 		for (int i = 0; i < gant.getNumber(); i++)
 			createIndividual(gant.getGenotype(), gant.getAge());
 	}

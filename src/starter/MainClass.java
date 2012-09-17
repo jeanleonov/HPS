@@ -53,7 +53,7 @@ public class MainClass {
 		arguments.put("years",
 				new ArgPair(parser.addIntegerOption('y', "years"), new Integer(100)));
 		arguments.put("experiments",
-				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(10)));
+				new ArgPair(parser.addIntegerOption('e', "experiments"), new Integer(2)));
 		arguments.put("multiplier",
 				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
 		arguments.put("object_manager",

@@ -28,8 +28,6 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private Zone myZone;
 	
-	private StatisticPackage currentPackage;
-	
 	private ScenarioExecutor scenarioExecutor = null;
 	private Random rand = new Random();
 	private int movedThisYear;
@@ -142,10 +140,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		reproductionProcessing();
 		competitionProcessing();
 		int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
-		/*#*/System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
+		/*System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
 										 myZone.immatures.size() + " Immatures; " + 
 										 myZone.females.size() + " Females; " + 
-										 myZone.males.size() + " Males;");
+										 myZone.males.size() + " Males;");*/
 	}
 	
 	private void killingSystemProcessing() {
@@ -184,11 +182,18 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			females[i] = null;
 	}
 
+	/**
+	 * Создать и отослать пакет статистики
+	 */
 	private void refreshStatistic() {
-		currentPackage  = createStatisticPackage();
-		sendStatisticPackage();
+		StatisticPackage currentPackage  = createStatisticPackage();
+		sendStatisticPackage(currentPackage);
 	}
 	
+	/**
+	 * Сгенерировать пакет статистики
+	 * @return
+	 */
 	private StatisticPackage createStatisticPackage(){
 		int experimentId = myZone.experimentId;
 		int zoneId = myZone.zoneId;
@@ -197,7 +202,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
 		return statisticPackage;
 	}
-		
+	
+	/**
+	 * Сгенерировать распределение
+	 * @return
+	 */
 	private GenotypeAgeDistribution createGAD() {
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
 		Vector<Individual> individuals = myZone.getIndividuals();
@@ -206,14 +215,16 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		return gad;
 	}	
 	
-	private void sendStatisticPackage() {		
+	/**
+	 * Отослать пакет статистики диспетчеру
+	 * @param currentPackage
+	 */
+	private void sendStatisticPackage(StatisticPackage currentPackage) {		
 		try {
 			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-		//	message.setContent(STATISTIC);		#lao
 			message.setContentObject(currentPackage);		
 			message.addReceiver(myZone.statisticDispatcher);
 			myAgent.send(message);
-		//	System.out.println("Zone " + myZone.zoneId + " sent statistic");	#lao
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
