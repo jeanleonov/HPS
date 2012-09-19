@@ -26,7 +26,6 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		iFinished = new ACLMessage(ACLMessage.INFORM);
 		iFinished.addReceiver(experiment.myProvider);
 		iFinished.setLanguage(I_FINISHED);
-		iFinished.setContent(experiment.myNodeNumber.toString());
 		yearCursore = 0;
 	}
 

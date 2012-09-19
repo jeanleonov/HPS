@@ -1,7 +1,5 @@
 package starter;
 
-import java.io.IOException;
-
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -23,18 +21,17 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 		super.onStart();
 		starter = (SystemStarter)myAgent;
 		numberOfRuningExperiments = 0;
-		startExperiments();
+		startExperiment();
 		done = false;
 		timeOfStart = System.currentTimeMillis();
 	}
 
 	@Override
 	public void action() {
-		ACLMessage response = starter.blockingReceive(MessageTemplate.MatchLanguage(I_FINISHED));
+		starter.blockingReceive(MessageTemplate.MatchLanguage(I_FINISHED));
 		numberOfRuningExperiments--;
-		int nodeNumber = Integer.parseInt(response.getContent());
 		if (starter.remainingExperiments > 0)
-			sendToContainerNewExperiment(nodeNumber);
+			startExperiment();
 		else
 			done = true;
 	}
@@ -64,15 +61,10 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 		myAgent.send(message);
 	}
 
-	private void startExperiments(){
-		for (int nodeNumber=0; nodeNumber<starter.containerControllers.size(); nodeNumber++)
-			sendToContainerNewExperiment(nodeNumber);
-	}
-	
-	private void sendToContainerNewExperiment(int nodeNumber){
+	private void startExperiment(){
 		try {
 			AgentController agent
-				= starter.containerControllers.get(nodeNumber).createNewAgent(
+				= starter.container.createNewAgent(
 								getExperimentName(starter.remainingExperiments), 
 								"experiment.Experiment", 
 								new Object[]{
@@ -82,8 +74,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 									starter.multiplier,
 									starter.curExperiment,
 									starter.statisticAID,
-									starter.getAID(),
-									nodeNumber});
+									starter.getAID()});
 			agent.start();
 			starter.remainingExperiments--;
 			starter.curExperiment++;

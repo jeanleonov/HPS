@@ -5,6 +5,6 @@ APDescription.txt
 MTPs-Main-Container.txt
 GalynaPatch.patch
 statisticFile.csv
-statistic.csv
+statistic*.csv
 #*.csv
 anti.ind

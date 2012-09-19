@@ -1,59 +1,49 @@
 package starter;
-import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.Codec.CodecException;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Done;
-import jade.content.onto.basic.Result;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.ContainerID;
 import jade.core.NotFoundException;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.util.leap.Iterator;
-import jade.util.leap.List;
-import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-import jade.domain.JADEAgentManagement.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Vector;
 
 public class SystemStarter extends Agent implements Pathes{
 	
 	private static final long serialVersionUID = 1L;
 
 	DataFiller dataFiller;
-	private ContainerController headContainerController;
+	ContainerController container; 
 	private AgentController statisticDispatcher;
-	private Vector<AgentController> settingsAgents;
+	private AgentController settingsAgent;
 	AID statisticAID;
 	
-	Vector<ContainerController> containerControllers; 
 	
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
 					movePossibilitiesPath,
 					experimentInfoPath,
-					scenarioPath,
-					statisticPath;
-	Integer remainingExperiments;		// TODO !!! implement synchronization
+					scenarioPath;
+	Integer remainingExperiments;
 	int curExperiment;
 	int numberOfModelingYears;
 	int multiplier;
 	
 	boolean shutdownFlag = false;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void setup(){
 		/*
@@ -70,25 +60,22 @@ public class SystemStarter extends Agent implements Pathes{
 		this.movePossibilitiesPath = (String)args[2];
 		this.scenarioPath = (String)args[3];
 		this.experimentInfoPath = (String)args[4];
-		this.statisticPath = (String)args[5];
-		this.multiplier = (Integer)args[6];
-		this.containerControllers = (Vector<ContainerController>)args[7];
+		this.multiplier = (Integer)args[5];
+		container = getContainerController();
+		try {
+			curExperiment = (Integer)MainClass.getArgument("cur_experiment");
+		} catch (NotFoundException e)	{e.printStackTrace();}
 		
-		settingsAgents = new Vector<AgentController>();
-		headContainerController = getContainerController();
-		curExperiment = 0;
-		
-		if((Boolean) args[8]) startSniffer();
-		if((Boolean) args[9]) startIntrospector();
+		if((Boolean) args[6]) startSniffer();
+		if((Boolean) args[7]) startIntrospector();
 		
 		startSystem();
 	}
 	
 	private void startAgent(String name, String className) {
-		AgentContainer c = getContainerController();
 		AgentController a;
 		try {
-			a = c.createNewAgent(name, className, null);
+			a = container.createNewAgent(name, className, null);
 			a.start();
 		} catch (StaleProxyException e2) {
 			e2.printStackTrace();
@@ -144,13 +131,17 @@ public class SystemStarter extends Agent implements Pathes{
 	public void startSystem(){
 		readData();
 		createAndStartSettingsAgents();
-		getConfirmationFromSettingsAgents();
+		getConfirmationFromSettingsAgent();
 		createAndStartStatisticDispatcherAgent();
 		getConfirmationFromStatisticDispatcherAgent();
 		try {
-			remainingExperiments = (Integer)MainClass.getArgument("experiments");
+			remainingExperiments = (Integer)MainClass.getArgument("number_of_experiments") - curExperiment;
 			numberOfModelingYears = (Integer)MainClass.getArgument("years");
 		} catch (NotFoundException e) {e.printStackTrace();}
+		if (curExperiment == -1)
+			curExperiment = 0;
+		if (remainingExperiments < 1)
+			remainingExperiments = 1;
 		startExperimetnProvider();
 	}
 	
@@ -175,49 +166,44 @@ public class SystemStarter extends Agent implements Pathes{
 	}
 	
 	private void createAndStartSettingsAgents(){
-		for (ContainerController container : containerControllers){
-		//*** SETTINGS_AGENT STARTS ON EACH NODE
-			try {
-				AgentController settingsAgent =
-								container.createNewAgent(
-									"Settings",
-									"settings.Settings",
-									new Object[]{
-											dataFiller.getViabilityTable(),
-											dataFiller.getPosterityTable(),
-											dataFiller.getMovePosibilitiesTable(),
-											getAID()}
-								);
-				settingsAgents.add(settingsAgent);
-				settingsAgent.start();
-			} catch (StaleProxyException e) {
-				e.printStackTrace();
-			}
+		try {
+			settingsAgent =
+							container.createNewAgent(
+								"Settings",
+								"settings.Settings",
+								new Object[]{
+										dataFiller.getViabilityTable(),
+										dataFiller.getPosterityTable(),
+										dataFiller.getMovePosibilitiesTable(),
+										getAID()}
+							);
+			settingsAgent.start();
+		} catch (StaleProxyException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
-			statisticDispatcher	= headContainerController.createNewAgent(
+			statisticDispatcher	= container.createNewAgent(
 										"statisticDispatcher", 
 										"statistic.StatisticDispatcher", 
-										new Object[]{statisticPath,
+										new Object[]{"statistics" +
+													((curExperiment==-1)?(""):("_"+curExperiment)) +
+													".csv",
 													 getAID()}
 								  );
 			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
-			
 			statisticDispatcher.start();
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void getConfirmationFromSettingsAgents(){
-		for (int i = 0; i < containerControllers.size(); i++){
-			ACLMessage confirm = blockingReceive();
-			if (confirm.getPerformative() != ACLMessage.CONFIRM)
-				/*throws new Exception("Problems with Settings agent")*/;		// TODO
-		}
+	private void getConfirmationFromSettingsAgent(){
+		ACLMessage confirm = blockingReceive();
+		if (confirm.getPerformative() != ACLMessage.CONFIRM)
+			/*throws new Exception("Problems with Settings agent")*/;		// TODO
 	}
 	
 	private void getConfirmationFromStatisticDispatcherAgent(){
