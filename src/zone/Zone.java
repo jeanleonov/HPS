@@ -40,8 +40,8 @@ public class Zone extends Agent {
 	int experimentId;
 	int zoneId;
 	
-	int resources;
-	double totalCompetitiveness = 0.0001;
+	float resources; 
+	double totalCompetitiveness = 0.0001; // DMY: what's this (not mine, but i'm interested in)? 
 	int iteration = -1;
 	int maxSizeOfListOfFemales, minNumberOfMalesForContinue, individualMultiplier;
 	

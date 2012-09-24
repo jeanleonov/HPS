@@ -29,7 +29,7 @@ public interface Messaging {
 	String START_EVOLUTION	= "evolution";				//3.2 Zone -> Posterity
 //	DISTRIBUTION  										//3.2 Posterity -> Zone
 	
-	String START_COMPETITION	= "competiotion";		//3.3 Zone -> Individual
+	String START_COMPETITION	= "competition";		//3.3 Zone -> Individual
 	  String I_WANT_TO_EAT_YOU	= "iWantToEatYou";		//3.3.1 [MatureIndividual -> Yearling]
 	  	String DEREGISTER		= "deregister";			//3.3.1.1 Yearling -> Zone
 //	  String OKKEY				= "ok";					//3.3.2 Individual -> Zone

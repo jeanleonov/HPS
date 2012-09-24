@@ -7,7 +7,7 @@ public class ZoneDistribution implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private int resource = 0;
+	private float resource = 0;
 	Vector<GenotypeAgeCountTrio> genotypeAgeNumberTrio;
 	
 	public ZoneDistribution() {
@@ -22,7 +22,7 @@ public class ZoneDistribution implements Serializable {
 		return genotypeAgeNumberTrio;
 	}
 	
-	public int getResourse(){
+	public float getResourse(){
 		return resource;
 	}
 	
