@@ -86,4 +86,8 @@ public class ObjectPull implements IIndividualsManager{
 				femaleStorage[i] = temp[i];
 		}
 	}
+
+	public int getCapacityOfPull() {
+		return femaleStorage.length + maleStorage.length;
+	}
 }

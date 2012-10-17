@@ -3,7 +3,7 @@ package distribution;
 import java.io.Serializable;
 import java.util.Vector;
 
-public class ZoneDistribution implements Serializable {
+public class ZoneDistribution implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	

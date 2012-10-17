@@ -14,6 +14,7 @@ import settings.ViabilityPair;
 import settings.Vocabulary.Convertor;
 import settings.Vocabulary.Param;
 import distribution.ExperimentDistribution;
+import distribution.ZoneDistribution;
 import experiment.Rule;
 import experiment.Scenario;
 
@@ -30,14 +31,16 @@ public class DataFiller {
 	private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
 	private static float DEFAULT_ESCAPING_CHANCE = 0;
 	private Vector<Rule> rules;
+	private int zoneMultiplier;
 	
 	public DataFiller(
 			Reader viabilityReader, 
 			Reader posterityReader,
 			Reader movePossibilitiesReader,
 			Reader scenarioReader,
-			Reader experimentInfoReader){
-		
+			Reader experimentInfoReader,
+			int zoneMultiplier){
+		this.zoneMultiplier = zoneMultiplier;
 		this.viabilityReader = viabilityReader;
 		this.posterityReader = posterityReader;
 		this.movePossibilitiesReader = movePossibilitiesReader;
@@ -145,6 +148,10 @@ public class DataFiller {
 	}
 	
 	private void movePossibilitiesFill(){
+		if (movePossibilitiesReader==null){
+			defaultMovePossibilitiesFill();
+			return;
+		}
 		BufferedReader reader = new BufferedReader(movePossibilitiesReader);
 		try{
 			String zonePossibilities;
@@ -175,6 +182,15 @@ public class DataFiller {
 		catch(IOException e){
 			System.out.println("Incorrect zone map input");
 			e.printStackTrace();
+		}
+	}
+	
+	private void defaultMovePossibilitiesFill(){
+		for (int i=0; i<experimentDistribution.getZoneDistributions().size(); i++){
+			HashMap<Integer, Float> travelCosts = new HashMap<Integer, Float>();
+			for (int j=0; j<experimentDistribution.getZoneDistributions().size(); j++)
+				travelCosts.put(j, 1f);
+			movePosibilitiesTable.put(i, travelCosts);
 		}
 	}
 	
@@ -222,6 +238,16 @@ public class DataFiller {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
+		multiplyZonesInDistribution();
+	}
+	
+	private void multiplyZonesInDistribution(){
+		Vector<ZoneDistribution> zoneDistributions = experimentDistribution.getZoneDistributions();
+		int oldNumberOfZones = zoneDistributions.size();
+		if (zoneMultiplier<1)
+			return;					// ignore invalid input
+		for (int i=0; i<oldNumberOfZones*(zoneMultiplier-1); i++)
+			experimentDistribution.addZoneDistribution(zoneDistributions.get(i%oldNumberOfZones));
 	}
 }

@@ -52,7 +52,7 @@ public class Zone extends Agent {
 		travelCosts = Settings.getMovePosibilitiesFrom(this.getZoneNumber());
 		
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
-		/*#System.out.println("=== " + zoneDistribution);*/
+		/*System.out.println("=== " + zoneDistribution);#*/
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneId);

@@ -1,5 +1,6 @@
 package experiment;
 
+import individual.IndividualsManagerDispatcher;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
@@ -31,7 +32,9 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 
 	@Override
 	public void action() {
-		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
+		int capacityOfPull = IndividualsManagerDispatcher.getCapacityOfPull();
+		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber +
+							((capacityOfPull!=-1)?("\n  Capacity of individuals pull: " + capacityOfPull):""));/*#*/
 		dieProcessing();
 		try {
 			scenarioCommandsProcessing();

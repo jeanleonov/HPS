@@ -13,6 +13,7 @@ import java.util.Hashtable;
 
 public class MainClass {
 		
+	final static String DEFAULT_MAP = "*";
 	private static Hashtable<String, ArgPair> arguments = new Hashtable<String, ArgPair>();
 	private static CmdLineParser parser = new CmdLineParser();
 	static Runtime runtime;
@@ -44,10 +45,11 @@ public class MainClass {
 			"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
 			"	                              (== -1: for runing on cluster,\n" +
 			"	                              DON'T use this argument whit -e)\n" +
-			"	[{-M, --multiplier} int]  temporary argument for control size of population | DEFAULT 10\n" +
+			"	[{-M, --indiv_multiplier} int]  temporary argument for control size of population | DEFAULT 10\n" +
+			"	[{-z, --zone_multiplier} int]  temporary argument for control number of zones | DEFAULT 1\n" +
 			"	[{-f, --project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
 			"	[{-v, --viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
-			"	[{-m, --map} string]  name of file with map settings | DEFAULT \'Map.zmp\'\n" +
+			"	[{-m, --map} string]  name of file with map settings | DEFAULT \'DEFAULT_MAP\'\n" +
 			"	[{-p, --posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
 			"	[{-s, --scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
 			"	[{-i, --initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n" +
@@ -68,8 +70,10 @@ public class MainClass {
 				new ArgPair(parser.addIntegerOption('e', "cur_experiment"), new Integer(-1)));
 		arguments.put("number_of_experiments",
 				new ArgPair(parser.addIntegerOption('E', "number_of_experiments"), new Integer(-1)));
-		arguments.put("multiplier",
-				new ArgPair(parser.addIntegerOption('M', "multiplier"), new Integer(10)));
+		arguments.put("indiv_multiplier",
+				new ArgPair(parser.addIntegerOption('M', "indiv_multiplier"), new Integer(10)));
+		arguments.put("zone_multiplier",
+				new ArgPair(parser.addIntegerOption('z', "zone_multiplier"), new Integer(1)));
 		arguments.put("object_manager",
 				new ArgPair(parser.addIntegerOption('o', "object_manager"), new Integer(0)));
 		arguments.put("sniffer",
@@ -87,7 +91,7 @@ public class MainClass {
 		arguments.put("port",
 				new ArgPair(parser.addIntegerOption('P', "port"), new Integer(0)));
 		arguments.put("movePossibilities",
-				new ArgPair(parser.addStringOption('m', "map"), "Map.zmp"));			// movePossibilities
+				new ArgPair(parser.addStringOption('m', "map"), DEFAULT_MAP));			// movePossibilities
 		arguments.put("scenario",
 				new ArgPair(parser.addStringOption('s', "scenario"), "Scenario.scn"));
 		arguments.put("initiation",
@@ -141,7 +145,9 @@ public class MainClass {
 					proj_path + '/' + (String)getArgument("movePossibilities"),
 					proj_path + '/' + (String)getArgument("scenario"),
 					proj_path + '/' + (String)getArgument("initiation"),
-					(Integer)getArgument("multiplier"),
+					(Integer)getArgument("indiv_multiplier"),
+					(Integer)getArgument("zone_multiplier"),
+					(Integer)getArgument("cur_experiment"),
 					(Boolean)getArgument("sniffer"),
 					(Boolean)getArgument("introspector")
 			};

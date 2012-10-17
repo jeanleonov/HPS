@@ -49,7 +49,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	public void action() {
 		ACLMessage message = myAgent.blockingReceive();/*#*/
 		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
-							myZone.experimentId + " got " + message.getContent());#lao*/
+							myZone.experimentId + " got " + message.getContent()); //#lao*/
 		if(message.getPerformative() == ACLMessage.REQUEST){
 			String language = message.getLanguage();
 			ACLMessage reply = message.createReply();
@@ -142,11 +142,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void lastPhaseProcessing() {
 		reproductionProcessing();
 		competitionProcessing();
-		int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
-		/*System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
+		/*int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
+		System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
 										 myZone.immatures.size() + " Immatures; " + 
 										 myZone.females.size() + " Females; " + 
-										 myZone.males.size() + " Males;");*/
+										 myZone.males.size() + " Males;");#*/
 	}
 	
 	private void killingSystemProcessing() {

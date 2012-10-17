@@ -4,7 +4,7 @@ import genotype.Genotype;
 import zone.Zone;
 
 public class DefaultManager implements IIndividualsManager {
-
+	
 	@Override
 	public Male getMale(Genotype genotype, int age, Zone zone) {
 		return new Male(genotype,age,zone);
@@ -22,5 +22,4 @@ public class DefaultManager implements IIndividualsManager {
 	@Override
 	public void killFemale(Female female) {
 	}
-
 }

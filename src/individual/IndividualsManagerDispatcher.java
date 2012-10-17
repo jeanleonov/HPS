@@ -39,4 +39,20 @@ public class IndividualsManagerDispatcher {
 			return (defaultManager==null)?(defaultManager=new DefaultManager()):defaultManager;
 		}
 	}
+	
+	static public int getCapacityOfPull(){
+		switch (mode){
+		case SINGLE_OBJECT_PULL:
+			return (objectPull != null)? objectPull.getCapacityOfPull() : -1;
+		case MULTIPROC_OBJECT_PULL:
+			if (objectPulls == null)
+				return -1;
+			int capacity=0;
+			for (int i=0; i<objectPulls.size(); i++)
+				capacity += (objectPulls.get(i)!=null)? objectPulls.get(i).getCapacityOfPull() : 0;
+			return capacity;
+		default:
+			return -1;
+		}
+	}
 }

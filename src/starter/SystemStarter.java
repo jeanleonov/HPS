@@ -40,7 +40,8 @@ public class SystemStarter extends Agent implements Pathes{
 	Integer remainingExperiments;
 	int curExperiment;
 	int numberOfModelingYears;
-	int multiplier;
+	int indivMultiplier;
+	int zoneMultiplier;
 	
 	boolean shutdownFlag = false;
 
@@ -60,15 +61,12 @@ public class SystemStarter extends Agent implements Pathes{
 		this.movePossibilitiesPath = (String)args[2];
 		this.scenarioPath = (String)args[3];
 		this.experimentInfoPath = (String)args[4];
-		this.multiplier = (Integer)args[5];
+		this.indivMultiplier = (Integer)args[5];
+		this.zoneMultiplier = (Integer)args[6];
 		container = getContainerController();
-		try {
-			curExperiment = (Integer)MainClass.getArgument("cur_experiment");
-		} catch (NotFoundException e)	{e.printStackTrace();}
-		
-		if((Boolean) args[6]) startSniffer();
-		if((Boolean) args[7]) startIntrospector();
-		
+		curExperiment = (Integer)args[7];
+		if((Boolean) args[8]) startSniffer();
+		if((Boolean) args[9]) startIntrospector();
 		startSystem();
 	}
 	
@@ -154,10 +152,13 @@ public class SystemStarter extends Agent implements Pathes{
 		try {
 			viabilitySettingsReader = new BufferedReader(new FileReader(viabilitySettingsPath));
 			posteritySettingsReader = new BufferedReader(new FileReader(posteritySettingPath));
-			movePossibilitiesReader = new BufferedReader(new FileReader(movePossibilitiesPath));
+			if (movePossibilitiesPath.endsWith(MainClass.DEFAULT_MAP))
+				movePossibilitiesReader = null;
+			else
+				movePossibilitiesReader = new BufferedReader(new FileReader(movePossibilitiesPath));
 			experimentInfoReader = new BufferedReader(new FileReader(experimentInfoPath));
 			scenarioReader = new BufferedReader(new FileReader(scenarioPath));
-			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader);
+			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader, zoneMultiplier);
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
