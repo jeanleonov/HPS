@@ -151,7 +151,6 @@ public class MainClass {
 					(Boolean)getArgument("sniffer"),
 					(Boolean)getArgument("introspector")
 			};
-			
 			IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
 			starter = container.createNewAgent("SystemStarter", "starter.SystemStarter", startArgs);
 			starter.start();

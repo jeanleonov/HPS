@@ -33,14 +33,14 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public void action() {
 		int capacityOfPull = IndividualsManagerDispatcher.getCapacityOfPull();
-		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber +
-							((capacityOfPull!=-1)?("\n  Capacity of individuals pull: " + capacityOfPull):""));/*#*/
+		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
 		dieProcessing();
 		try {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
 		moveProcessing();
 		lastPhaseProcessing();
+		System.out.println((capacityOfPull!=-1)?("  Capacity of individuals pull: " + capacityOfPull):"");
 		yearCursore++;
 	}
 
