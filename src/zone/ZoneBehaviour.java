@@ -26,9 +26,6 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 
 	private static final long serialVersionUID = 1L;
 	
-	//DMY: roughly, average chance for yearling to survive in zone with 1 big frog 
-	private static final float CANNIBAL_MODIFIER = 1;
-	
 	private Zone myZone;
 	
 	private ScenarioExecutor scenarioExecutor = null;
@@ -170,15 +167,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<10);
 	}
 	
-	private float calculatePartOfEatenResources(){
-		return 1;
-	}
-	
 	private void competitionProcessing(){
 		Vector<Individual> individuals = myZone.getIndividuals();
 		if(individuals.size() > myZone.capacity){
 			for(Individual individual : individuals){
-				double chanceToSurvive = individual.getCompetitiveness() * (myZone.capacity / (individuals.size()));
+				double chanceToSurvive = Zone.getFeedingCoeficient() * individual.getCompetitiveness() * (myZone.capacity / (individuals.size()));
 				if(chanceToSurvive < Math.random()){
 					myZone.killIndividual(individual);
 				}

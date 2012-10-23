@@ -9,6 +9,7 @@ import jade.wrapper.StaleProxyException;
 import java.util.Vector;
 
 import settings.Settings;
+import zone.Zone;
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
 
@@ -43,6 +44,7 @@ public class Experiment extends Agent {
 		ContainerController controller = this.getContainerController();
 		Vector<AgentController> zoneAgents = new Vector<AgentController>();
 		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
+		Zone.setFeedingCoeficient(distribution.getFeedingCoeficient());
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
 			try {

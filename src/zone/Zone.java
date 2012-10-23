@@ -24,8 +24,8 @@ public class Zone extends Agent {
 	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10;			// improve it (move it to MainClass)
 	private static final int DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3;		// improve it (move it to MainClass)
 	
-	// DMY: for regulating competitiveness factor in attractivness counting
-	private static final double feedingCoeficient = 1;
+	// DMY: for regulating competitiveness factor
+	private static double feedingCoeficient = 1;
 	
 	private HashMap<Integer, Float> travelCosts;
 	
@@ -181,6 +181,14 @@ public class Zone extends Agent {
 	public double getFreeSpace(){		//# temporery (5000/N) re- TODO
 		double res = individualMultiplier*100d/(yearlings.size()+10*males.size()+10*females.size());
 		return (res>1)?1:res;
+	}
+	
+	public static double getFeedingCoeficient(){
+		return feedingCoeficient;
+	}
+	
+	public static void setFeedingCoeficient(double c){
+		feedingCoeficient = c;
 	}
 	
 }

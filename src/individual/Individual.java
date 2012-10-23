@@ -51,7 +51,7 @@ public abstract class Individual implements Serializable{
 	
 	public boolean isDead(){
 		double randVal = Math.random();
-		if(randVal <= curSurvival * curCompetitiveness * myZone.getFreeSpace())			//# temporery	re- TODO
+		if(randVal <= curSurvival)	
 			return false;
 		return true;
 	}
