@@ -170,6 +170,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<10);
 	}
 	
+	private void updateResource(){
+	}
+	
 	private float calculatePartOfEatenResources(){
 		return 1;
 	}
@@ -221,8 +224,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void competitionProcessing(){
-		feedResources(myZone.resources * calculatePartOfEatenResources(), myZone.getIndividuals());
-		cannibalism();
+		Vector<Individual> individuals = myZone.getIndividuals();
+		if(individuals.size() > myZone.capacity){
+			for(Individual individual : individuals){
+				double chanceToSurvive = individual.getCompetitiveness() * (myZone.capacity / (individuals.size()));
+				if(chanceToSurvive < Math.random()){
+					myZone.killIndividual(individual);
+				}
+			}
+		}
 	}
 	
 	private void randomFilling(Female[] females){

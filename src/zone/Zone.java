@@ -40,7 +40,7 @@ public class Zone extends Agent {
 	int experimentId;
 	int zoneId;
 	
-	float resources; 
+	float capacity; 
 	double totalCompetitiveness = 0.0001; // DMY: what's this (not mine, but i'm interested in)? 
 	int iteration = -1;
 	int maxSizeOfListOfFemales, minNumberOfMalesForContinue, individualMultiplier;
@@ -71,7 +71,7 @@ public class Zone extends Agent {
 		else
 			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
 		createIndividuals(zoneDistribution);
-		resources = zoneDistribution.getResourse();
+		capacity = zoneDistribution.getResourse();
 		addBehaviour(new ZoneBehaviour());
 	}
 	
