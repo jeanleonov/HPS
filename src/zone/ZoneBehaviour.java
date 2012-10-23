@@ -170,57 +170,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<10);
 	}
 	
-	private void updateResource(){
-	}
-	
 	private float calculatePartOfEatenResources(){
 		return 1;
-	}
-	
-	private void feedResources(float resources, Vector<Individual> individuals){
-		float totalCompetitiveness = 0;
-		for(Individual individual : individuals){
-			totalCompetitiveness += individual.getCompetitiveness();
-		}
-		
-		for(Individual individual : individuals){
-			individual.eat(resources * (individual.getCompetitiveness() / totalCompetitiveness));
-		}
-	}
-	
-	private void cannibalism(){
-		Vector<Individual> cannibals = new Vector<Individual>();
-		// clarify who are cannibals
-		cannibals.addAll(myZone.males);
-		cannibals.addAll(myZone.females);
-		cannibals.addAll(myZone.immatures);
-		float totalCannibalCompetitiveness = 0;
-		for(Individual cannibal : cannibals){
-			totalCannibalCompetitiveness += cannibal.getCompetitiveness();
-		}
-		
-		@SuppressWarnings("unchecked")
-		Vector<Individual> victims = (Vector<Individual>)(myZone.yearlings.clone());
-		float totalVictimCompetitiveness = 0;
-		for(Individual victim : victims){
-			totalVictimCompetitiveness += victim.getCompetitiveness();
-		}
-		
-		float surviveCoeficient = totalVictimCompetitiveness / (totalVictimCompetitiveness + totalCannibalCompetitiveness);
-		
-		// DMY: Внимание! высосано из пальца!
-		// Translation: Attention! I'm not sure it's right algorithm
-		float eatenVictimResource = 0;
-		for(Individual victim : victims){
-			if(Math.random() > surviveCoeficient){
-				if(Math.random() > (victim.getCompetitiveness() / totalVictimCompetitiveness)){
-					eatenVictimResource += victim.getResource();
-					myZone.killIndividual(victim);
-				}
-			}
-		}
-		
-		feedResources(eatenVictimResource, cannibals);
 	}
 	
 	private void competitionProcessing(){

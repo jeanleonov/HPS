@@ -16,14 +16,10 @@ public abstract class Individual implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-	//DMY: must be big enough to have a chance to survive at least in first die_off process 
-	protected static final float BASE_RESOURCE_NUMBER = 0;
-		
 	protected Genotype myGenotype;
 	protected int age;
 	protected Zone myZone;
 	
-	protected float resource;
 	protected float curSurvival;
 	protected float curCompetitiveness;
 	protected float curReproduction;
@@ -41,7 +37,6 @@ public abstract class Individual implements Serializable{
 		viabilitySettings = Settings.getViabilitySettings(getGenotype());
 		updater = new SettingsUpdater();
 		updater.updateSettings();
-		resource = BASE_RESOURCE_NUMBER;
 	}
 	
 	public void setZone(Zone newZone){
@@ -112,14 +107,6 @@ public abstract class Individual implements Serializable{
 	
 	public float getCompetitiveness(){
 		return curCompetitiveness;
-	}
-	
-	public float getResource(){
-		return resource;
-	}
-	
-	public void eat(float resource){
-		this.resource += resource;
 	}
 	
 	protected Float getSetting(Vocabulary.Param param) {
