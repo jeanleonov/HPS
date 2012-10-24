@@ -1,9 +1,9 @@
 package starter;
 
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import messaging.Messaging;
 
@@ -11,57 +11,77 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private ContainerController controller;
 	private SystemStarter starter;
-	private int curExperiment;
-	
-	ExperimentsProvider(ContainerController controller){
-		this.controller = controller;
-	}
+	long timeOfStart;
+	boolean done;
+	int numberOfRuningExperiments;
 	
 	@Override
 	public void onStart() {
 		super.onStart();
 		starter = (SystemStarter)myAgent;
-		if (controller == null)/*#may be temporary*/
-			System.out.println("FIIIIIRRREEEEEEe: no ContainerController");
-		curExperiment = 0;
+		numberOfRuningExperiments = 0;
+		startExperiment();
+		done = false;
+		timeOfStart = System.currentTimeMillis();
 	}
 
 	@Override
 	public void action() {
-		sendToContainerNewExperiment();
-		waitToResponse();
-		starter.remainingExperiments--;
-		curExperiment++;
+		starter.blockingReceive(MessageTemplate.MatchLanguage(I_FINISHED));
+		numberOfRuningExperiments--;
+		if (starter.remainingExperiments > 0)
+			startExperiment();
+		else
+			done = true;
 	}
 
 	@Override
 	public boolean done() {
-		return starter.remainingExperiments <= 0;
+		return done;
 	}
 	
-	private void sendToContainerNewExperiment(){
+	@Override
+	public int onEnd() {
+		long executingTime = System.currentTimeMillis()-timeOfStart,
+			 hour = executingTime/1000/60/60,
+			 min = executingTime/1000/60 - hour*60,
+			 sec = executingTime/1000 - min*60 - hour*3600,
+			 msec = executingTime - sec*1000 - min*60000 - hour*3600000; 
+		System.out.printf("--------------------------------\n"+
+						  "Executing time:	[%2s:%2s:%2s.%3s]\n",hour,min,sec,msec);
+		stopStatisticDispatcher();
+		starter.doDelete();
+		return super.onEnd();
+	}
+		
+	private void stopStatisticDispatcher() {		
+		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);	
+		message.addReceiver(starter.statisticAID);
+		myAgent.send(message);
+	}
+
+	private void startExperiment(){
 		try {
 			AgentController agent
-				= controller.createNewAgent(
+				= starter.container.createNewAgent(
 								getExperimentName(starter.remainingExperiments), 
 								"experiment.Experiment", 
 								new Object[]{
 									starter.dataFiller.getExperimentDistribution(),
 									starter.dataFiller.getScenario(),
 									starter.numberOfModelingYears,
-									curExperiment,
+									starter.indivMultiplier,
+									starter.curExperiment,
 									starter.statisticAID,
 									starter.getAID()});
 			agent.start();
+			starter.remainingExperiments--;
+			starter.curExperiment++;
+			numberOfRuningExperiments++;
 		} catch (StaleProxyException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void waitToResponse(){
-		starter.blockingReceive(MessageTemplate.MatchContent(I_FINISHED));
 	}
 	
 	private String getExperimentName(int i){

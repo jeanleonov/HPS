@@ -1,5 +1,6 @@
 package experiment;
 
+import individual.IndividualsManagerDispatcher;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
@@ -25,19 +26,21 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		experiment.scenario.start();
 		iFinished = new ACLMessage(ACLMessage.INFORM);
 		iFinished.addReceiver(experiment.myProvider);
-		iFinished.setContent(I_FINISHED);
+		iFinished.setLanguage(I_FINISHED);
 		yearCursore = 0;
 	}
 
 	@Override
 	public void action() {
+		int capacityOfPull = IndividualsManagerDispatcher.getCapacityOfPull();
 		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
 		dieProcessing();
 		try {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
 		moveProcessing();
-		// TODO (in Zone) lastPhaseProcessing();
+		lastPhaseProcessing();
+		System.out.println((capacityOfPull!=-1)?("  Capacity of individuals pull: " + capacityOfPull):"");
 		yearCursore++;
 	}
 
@@ -103,12 +106,12 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
-	/*private void lastPhaseProcessing(){
+	private void lastPhaseProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setLanguage(START_LAST_PHASE);
 		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
-	}#temporary*/
+	}
 	
 	private ACLMessage getMessageForMassMailing(){
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);

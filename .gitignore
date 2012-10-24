@@ -3,10 +3,8 @@
 /bin
 APDescription.txt
 MTPs-Main-Container.txt
-src/starter/Pathes.java
-src/starter/Initiation.hpsi
-statistic.csv
 GalynaPatch.patch
-#statisticFile.csv
-*.csv
+statisticFile.csv
+statistic*.csv
+#*.csv
 anti.ind

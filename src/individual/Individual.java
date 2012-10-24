@@ -1,138 +1,96 @@
 package individual;
 
-import genotype.Genome;
 import genotype.Genotype;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.FailureException;
-import jade.domain.FIPAAgentManagement.NotUnderstoodException;
-import jade.domain.FIPAAgentManagement.SearchConstraints;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 
-import java.io.NotActiveException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
+import settings.Settings;
 import settings.ViabilityPair;
+import settings.Vocabulary;
+import zone.Zone;
 
-public class Individual extends Agent implements Serializable{
-
+public abstract class Individual implements Serializable{
+	
 	private static final long serialVersionUID = 1L;
 	
-	private Genotype myGenotype;
+	protected Genotype myGenotype;
 	protected int age;
+	protected Zone myZone;
 	
-	protected AID myZone;
+	protected float curSurvival;
+	protected float curCompetitiveness;
+	protected float curReproduction;
+	protected float curFertility;
+	protected float curAmplexusRepeat;
+	protected boolean readyToReproduction=true;
+	protected ArrayList<ViabilityPair> viabilitySettings;
 	
-	private final static int maxDFRequests = 20;
+	SettingsUpdater updater;
 	
-	ArrayList<ViabilityPair> uSettings;
-	
-	@Override
-	protected void setup() {
-		Object[] args = getArguments();
-		if (args.length < 3)
-			return;
-		myGenotype = (Genotype) args[0];
-		age = (Integer) args[1];
-		myZone = (AID) args[2];
-
-		GetSettings();
-		BehaviourRegister();
-	}
-	public AID getAID_Zone(){
-		return myZone;
+	public Individual(Genotype myGenotype, int age, Zone myZone) {
+		this.myGenotype = myGenotype;
+		this.age = age;
+		this.myZone = myZone;
+		viabilitySettings = Settings.getViabilitySettings(getGenotype());
+		updater = new SettingsUpdater();
+		updater.updateSettings();
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void GetSettings() {
-		DFAgentDescription template = new DFAgentDescription();
-  		ServiceDescription templateSd = new ServiceDescription();
-  		templateSd.setType("Settings");
-  		template.addServices(templateSd);
-  		
-  		SearchConstraints sc = new SearchConstraints();
-  		// We want to receive 1 result
-  		sc.setMaxResults(new Long(1));
-  		
-  		try {
-  			DFAgentDescription[] results = null;
-  			int DFRequestsCounter = 0;
-  			while(results == null || results.length < 1) {  					
-  				try {
-  					results = DFService.search(this, template, sc);
-  				}
-  				catch(FailureException e) {
-  					DFRequestsCounter++;
-  	  				if(DFRequestsCounter > maxDFRequests) {
-  	  					e.printStackTrace();
-  	  					throw new NotActiveException("Cannot get DF service, " + maxDFRequests + " attempts");
-  	  				}
-  					
-  					//System.err.println("DF search exception #" + DFRequestsCounter);
-  					if (results == null || results.length < 1)
-  						doWait(1000);
-  				}
-  			}
-  			DFAgentDescription dfd = results[0];
-  			AID provider = dfd.getName();
-  			
-  			ACLMessage msg = new ACLMessage(ACLMessage.QUERY_REF);
-			msg.addReceiver(provider);
-			try {
-				msg.setContentObject(myGenotype);
+	public void setZone(Zone newZone){
+		myZone = newZone;
+	}
+	
+	public void updateSettings(){
+		age++;
+		readyToReproduction=true;
+		updater.updateSettings();
+	}
+	
+	public boolean isDead(){
+		double randVal = Math.random();
+		if(randVal <= curSurvival)	
+			return false;
+		return true;
+	}
+	
+	public boolean isGoingOut(){
+		return Math.random() > myZone.getAttractivness();
+	}
+	
+	public Integer whereDoGo(){
+		HashMap<Integer, Float> neighboursTravelCost = myZone.getZoneTravelPossibilities();
+		if(neighboursTravelCost != null){
+			double	weightSum = 0, 
+					totalWeight = 0;
+			for(Float movePosibility : neighboursTravelCost.values()){
+				totalWeight += movePosibility;
 			}
-			catch (Exception ex) { ex.printStackTrace(); }
-			
-			ACLMessage response = null;
-			int DFMsgResponses = 0;
-			do {
-				DFMsgResponses++;
-  				if(DFMsgResponses > maxDFRequests)
-  					throw new NotActiveException("Unexpected behaviour of DF, " + maxDFRequests + " attempts");
-  				
-  				send(msg);
-  				response = blockingReceive(MessageTemplate.MatchSender( provider ));
+					
+			double point =  Math.random() * totalWeight;
+			Iterator<Integer> zoneNum = neighboursTravelCost.keySet().iterator();
+			while(zoneNum.hasNext()){
+				Integer currentZone = zoneNum.next();
+				weightSum += neighboursTravelCost.get(currentZone);
+				if(point < weightSum){
+					return currentZone;
+				}
 			}
-			while(response.getPerformative() == ACLMessage.FAILURE);
-			
-			if(response.getPerformative() != ACLMessage.CONFIRM) {
-				throw new NotUnderstoodException("Not understood");
-			}
-			
-			uSettings = (ArrayList<ViabilityPair>) response.getContentObject();
-			
-		} catch (FIPAException e) {
-			e.printStackTrace();
-		} catch (UnreadableException e) {
-			e.printStackTrace();
-		} catch(NotActiveException e) {
-			e.printStackTrace();
+			return null;
 		}
+		else return -1;
 	}
-	
-	protected Float getSetting(settings.Vocabulary.Param param) {
-		for(settings.ViabilityPair pair : uSettings) {
-			if(pair.getParam() == param) return pair.getValue();
-		}
-		return 0f;
-	}
-	
-	private void BehaviourRegister() {
-		if (myGenotype.getGender() == Genome.X)
-			addBehaviour(new FemaleBehaviour());
-		else addBehaviour(new MaleBehaviour());
-	}
-	
 
-	public void changeZone(AID aid){
-		myZone = aid;
+	public abstract boolean isFemale();
+	
+	public boolean isMature(){
+		return age >= getSetting(Vocabulary.Param.Spawning);
+	}
+	
+	public boolean isReadyToReproduction(){
+		return readyToReproduction;
 	}
 	
 	public Genotype getGenotype(){
@@ -141,5 +99,70 @@ public class Individual extends Agent implements Serializable{
 	
 	public int getAge(){
 		return age;
+	}
+
+	public Zone getMyZone() {
+		return myZone;
+	}
+	
+	public float getCompetitiveness(){
+		return curCompetitiveness;
+	}
+	
+	protected Float getSetting(Vocabulary.Param param) {
+		for(ViabilityPair pair : viabilitySettings)
+			if(pair.getParam() == param) return pair.getValue();
+		return 0f;
+	}
+	
+	class SettingsUpdater{
+
+		public void updateSettings(){
+			if (age == 0)	updateSettingsForYearling();
+			else			updateSettingsForNotYearling();
+			if (isMature())	updateSettingsForMature();
+			else			updateSettingsForImmature();
+		}
+		
+		private void updateSettingsForYearling(){
+			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst);
+			curCompetitiveness = getSetting(Vocabulary.Param.CompetitivenessFactorFirst);
+		}
+		
+		private void updateSettingsForNotYearling(){
+			if (age > getSetting(Vocabulary.Param.Lifetime))
+				curSurvival = curCompetitiveness = 0f;
+			else{
+				float survivalAgeCorrection = pow(1+getSetting(Vocabulary.Param.SurvivalFactor), age),
+					  competitivenessAgeCorrection = pow(1+getSetting(Vocabulary.Param.CompetitivenessFactor), age);
+				curSurvival = getSetting(Vocabulary.Param.Survival)*survivalAgeCorrection;
+				curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness)*competitivenessAgeCorrection;
+			}
+		}
+		
+		private void updateSettingsForMature(){
+			float reprodAgeCorrection = pow(1+getSetting(Vocabulary.Param.ReproductionFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
+				  fertilityAgeCorrection = pow(1+getSetting(Vocabulary.Param.FertilityFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
+				  repeatAgeCorrection = pow(1+getSetting(Vocabulary.Param.AmplexusRepeatFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1));
+			curReproduction = getSetting(Vocabulary.Param.Reproduction)*reprodAgeCorrection;
+			curFertility = getSetting(Vocabulary.Param.Fertility)*fertilityAgeCorrection;
+			curAmplexusRepeat = getSetting(Vocabulary.Param.AmplexusRepeat)*repeatAgeCorrection;
+		}
+		
+		private void updateSettingsForImmature(){
+			curReproduction = 0f;
+			curFertility = 0f;
+			curAmplexusRepeat = 0f;
+		}
+		
+		private float pow(float a, int p){
+			float res;
+			for (res=1f; p>0; res*=a, p--);
+			return res;
+		}
+	}
+	
+	public String toString(){
+		return myGenotype.toString() + " " + age;
 	}
 }

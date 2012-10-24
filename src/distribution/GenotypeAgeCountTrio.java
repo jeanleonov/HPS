@@ -4,7 +4,7 @@ import genotype.Genotype;
 
 import java.io.Serializable;
 
-public class GenotypeAgeNumberTrio implements Serializable {
+public class GenotypeAgeCountTrio implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -12,7 +12,7 @@ public class GenotypeAgeNumberTrio implements Serializable {
 	private int age;
 	private int number;
 	
-	public GenotypeAgeNumberTrio(Genotype genotype, int age, int number) {
+	public GenotypeAgeCountTrio(Genotype genotype, int age, int number) {
 		this.genotype = genotype;
 		this.age = age;
 		this.number = number;
@@ -31,7 +31,7 @@ public class GenotypeAgeNumberTrio implements Serializable {
 	}
 	
 	// by DMY
-	public static GenotypeAgeNumberTrio parseGenotype(String resource) throws NumberFormatException{
+	public static GenotypeAgeCountTrio parseGenotype(String resource) throws NumberFormatException{
 		// Later I'm plan to throw my own exception, if it will be necessary 
 		
 		String[] t = resource.split(" ");
@@ -47,7 +47,7 @@ public class GenotypeAgeNumberTrio implements Serializable {
 		}
 		
 		
-		return new GenotypeAgeNumberTrio(Genotype.getGenotype(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
+		return new GenotypeAgeCountTrio(Genotype.getGenotype(t[0]), Integer.parseInt(t[1]), Integer.parseInt(t[2]));
 	}
 	
 	public String toString(){

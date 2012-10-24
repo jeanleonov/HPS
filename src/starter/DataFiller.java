@@ -1,6 +1,7 @@
 package starter;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import settings.ViabilityPair;
 import settings.Vocabulary.Convertor;
 import settings.Vocabulary.Param;
 import distribution.ExperimentDistribution;
+import distribution.ZoneDistribution;
 import experiment.Rule;
 import experiment.Scenario;
 
@@ -20,27 +22,35 @@ public class DataFiller {
 	
 	private Reader	viabilityReader,
 					posterityReader, 
+					movePossibilitiesReader,
 					scenarioReader,
 					experimentInfoReader;
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
+	private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
+	private static float DEFAULT_ESCAPING_CHANCE = 0;
 	private Vector<Rule> rules;
+	private int zoneMultiplier;
 	
 	public DataFiller(
 			Reader viabilityReader, 
-			Reader posterityReader, 
+			Reader posterityReader,
+			Reader movePossibilitiesReader,
 			Reader scenarioReader,
-			Reader experimentInfoReader){
-		
+			Reader experimentInfoReader,
+			int zoneMultiplier){
+		this.zoneMultiplier = zoneMultiplier;
 		this.viabilityReader = viabilityReader;
 		this.posterityReader = posterityReader;
+		this.movePossibilitiesReader = movePossibilitiesReader;
 		this.scenarioReader = scenarioReader;
 		this.experimentInfoReader = experimentInfoReader;
 		viabilityFill();
 		posterityFill();
 		scenarioFill();
 		experimentFill();
+		movePossibilitiesFill();
 		
 	}
 	
@@ -50,6 +60,10 @@ public class DataFiller {
 
 	public HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> getPosterityTable() {
 		return posterityTable;
+	}
+
+	public HashMap<Integer, HashMap<Integer, Float>> getMovePosibilitiesTable() {
+		return movePosibilitiesTable;
 	}
 
 	public ExperimentDistribution getExperimentDistribution() {
@@ -133,11 +147,58 @@ public class DataFiller {
 		}
 	}
 	
+	private void movePossibilitiesFill(){
+		if (movePossibilitiesReader==null){
+			defaultMovePossibilitiesFill();
+			return;
+		}
+		BufferedReader reader = new BufferedReader(movePossibilitiesReader);
+		try{
+			String zonePossibilities;
+			
+			for(int i = 0; ((zonePossibilities = reader.readLine()) != null) && i < (getExperimentDistribution().getZoneDistributions().size()); i++){
+				
+				String[] travelCostsString = zonePossibilities.split(" ");
+				HashMap<Integer, Float> travelCosts = new HashMap<Integer, Float>();
+				
+				// DMY: for possibility to escape
+				if(travelCostsString.length != 0){			
+					float travelCost = Float.parseFloat(travelCostsString[0]);
+					travelCosts.put(-1, travelCost);
+				}
+			
+				for(int j = 1; j < travelCostsString.length; j++){
+					float travelCost = Float.parseFloat(travelCostsString[j]);
+					if((travelCost != 0) && (i != (j - 1))){
+						travelCosts.put(j - 1, travelCost);
+					}
+				}
+				
+				if(travelCosts.isEmpty() != true){
+					movePosibilitiesTable.put(i, travelCosts);
+				}
+			}
+		}
+		catch(IOException e){
+			System.out.println("Incorrect zone map input");
+			e.printStackTrace();
+		}
+	}
+	
+	private void defaultMovePossibilitiesFill(){
+		for (int i=0; i<experimentDistribution.getZoneDistributions().size(); i++){
+			HashMap<Integer, Float> travelCosts = new HashMap<Integer, Float>();
+			for (int j=0; j<experimentDistribution.getZoneDistributions().size(); j++)
+				travelCosts.put(j, 1f);
+			movePosibilitiesTable.put(i, travelCosts);
+		}
+	}
+	
 	public void printPosterityTable() {
 		for(PosterityParentsPair parents : posterityTable.keySet()) {
 			System.out.print(parents.getMale() + "+" + parents.getFemale() + ": ");
 			for(PosterityResultPair pair : posterityTable.get(parents)) {
-				System.out.print(pair.getGenome() + "(" + pair.getProbability() + ") ,");
+				System.out.print(pair.getGenotype() + "(" + pair.getProbability() + ") ,");
 			}
 			System.out.println();
 		}
@@ -177,6 +238,16 @@ public class DataFiller {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
+		multiplyZonesInDistribution();
+	}
+	
+	private void multiplyZonesInDistribution(){
+		Vector<ZoneDistribution> zoneDistributions = experimentDistribution.getZoneDistributions();
+		int oldNumberOfZones = zoneDistributions.size();
+		if (zoneMultiplier<1)
+			return;					// ignore invalid input
+		for (int i=0; i<oldNumberOfZones*(zoneMultiplier-1); i++)
+			experimentDistribution.addZoneDistribution(zoneDistributions.get(i%oldNumberOfZones));
 	}
 }

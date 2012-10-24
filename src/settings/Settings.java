@@ -1,114 +1,68 @@
 package settings;
 
+import genotype.Genotype;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
+// This agent is not really agent.
+// It will be created on each node, where a experiments will be executing,
+// which will can get info about viabilitySettings and posteritySettings
 public class Settings extends Agent implements Vocabulary {
 
 	private static final long serialVersionUID = 1L;
 
-	private final static String serviceName = "Settings";
-	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
-	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
+	static private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
+	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
+	static private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
+	
+	static private HashMap<Integer, AID> zoneTable = new HashMap<Integer, AID>();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setup() {
 		Object[] args = getArguments();
-		if (args.length < 2)
-			return;
 		viabilityTable = (HashMap<genotype.Genotype, ArrayList<ViabilityPair>>) args[0];
 		posterityTable = (HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>) args[1];
-		
-		DFRegister();
-		BehaviourRegister();
-		confirmationOfReadiness((AID)args[2]);
+		movePosibilitiesTable = (HashMap<Integer, HashMap<Integer, Float>>) args[2];
+		confirmationOfReadiness((AID)args[3]);
 	}
-
-	@Override
-	protected void takeDown() {
-		DFDeregister();
-	}
-
-	private void DFRegister() {
-		try {
-			DFAgentDescription dfd = new DFAgentDescription();
-			dfd.setName(getAID());
-			ServiceDescription sd = new ServiceDescription();
-			sd.setName(serviceName);
-			sd.setType(serviceName);
-			dfd.addServices(sd);
-
-			DFService.register(this, dfd);
-		} catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-	}
-
-	private void DFDeregister() {
-		try {
-			DFService.deregister(this);
-		} catch (FIPAException fe) {
-			fe.printStackTrace();
-		}
-	}
-
-	private void BehaviourRegister() {
-		addBehaviour(new SettingsMessageListener());
-	}
-		
-	private void confirmationOfReadiness(AID systemStarter){
+	
+	private void confirmationOfReadiness(AID systemStarter){ 	// PAA: maybe confirmation(AID) is better name ?
 		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
 		confirm.addReceiver(systemStarter);
 		send(confirm);
 	}
+	
+	// it's for Individual
+	static public ArrayList<ViabilityPair> getViabilitySettings (Genotype indivGenotype){
+		return viabilityTable.get(indivGenotype);
+	}
+	
+	// it's for Female
+	static public ArrayList<PosterityResultPair> getPosteritySettings (Genotype motherGenotype, Genotype fatherGenotype){
+		return posterityTable.get(new PosterityParentsPair(motherGenotype, fatherGenotype));
+	}
+	
+	// it's for Experiment
+	static public void updateZoneTable(Vector<AID> zonesAIDs){
+		zoneTable.clear();
+		int i=0;
+		for (AID aid : zonesAIDs)
+			zoneTable.put(i++, aid);
+	}
 
-	class SettingsMessageListener extends CyclicBehaviour {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void action() {
-			ACLMessage msg = blockingReceive();
-			if (msg == null) {
-				block();
-				return;
-			}
-
-			try {
-				ACLMessage reply = msg.createReply();
-
-				if (msg.getPerformative() == ACLMessage.QUERY_REF) {
-					Object content = msg.getContentObject();
-					if (content instanceof genotype.Genotype) {
-						genotype.Genotype genotype = (genotype.Genotype) content;
-						ArrayList<ViabilityPair> value = viabilityTable.get(genotype);
-						reply.setPerformative(ACLMessage.CONFIRM);
-						reply.setContentObject(value);
-					} else if (content instanceof PosterityParentsPair) {
-						PosterityParentsPair pair = (PosterityParentsPair) content;
-						ArrayList<PosterityResultPair> result = posterityTable.get(pair);
-						reply.setPerformative(ACLMessage.CONFIRM);
-						reply.setContentObject(result);
-					} else {
-						reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-					}
-				} else {
-					reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-				}
-
-				send(reply);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+	// it's for Individual
+	static public HashMap<Integer, Float> getMovePosibilitiesFrom(Integer zoneNumber){
+		return movePosibilitiesTable.get(zoneNumber);
+	}
+	
+	// it's for Zone
+	static public AID getZoneAID(Integer zoneNumber){
+		return zoneTable.get(zoneNumber);
 	}
 }

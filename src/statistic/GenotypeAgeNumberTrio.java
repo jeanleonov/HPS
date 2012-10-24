@@ -6,7 +6,8 @@ import java.io.Serializable;
 
 public class GenotypeAgeNumberTrio implements Serializable{
 
-	int genotype;
+	private static final long serialVersionUID = 1L;
+	int genotype; // not int ???
 	int age;
 	int number;
 

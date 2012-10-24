@@ -1,18 +1,24 @@
 package zone;
 
+import genotype.Genotype;
+import individual.Female;
+import individual.Individual;
+import individual.Male;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.Vector;
 
 import messaging.Messaging;
+import settings.Settings;
 import statistic.GenotypeAgeDistribution;
 import statistic.StatisticPackage;
 import experiment.ZoneCommand;
-import genotype.Genotype;
 
 
 
@@ -22,15 +28,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private Zone myZone;
 	
-	private StatisticPackage currentPackage;
-	
-	protected Migration migrationExecutor = null; 
-	protected ScenarioExecutor scenarioExecutor = null;
+	private ScenarioExecutor scenarioExecutor = null;
+	private Random rand = new Random();
+	private int movedThisYear;
 	
 	@Override
 	public void onStart(){
 		myZone = (Zone)myAgent;
-		migrationExecutor = new Migration(myZone);
 		scenarioExecutor = new ScenarioExecutor(myZone);
 	}
 	
@@ -42,7 +46,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	public void action() {
 		ACLMessage message = myAgent.blockingReceive();/*#*/
 		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
-							myZone.experimentId + " got " + message.getContent());#lao*/
+							myZone.experimentId + " got " + message.getContent()); //#lao*/
 		if(message.getPerformative() == ACLMessage.REQUEST){
 			String language = message.getLanguage();
 			ACLMessage reply = message.createReply();
@@ -59,22 +63,16 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			}
 			else if (language.compareTo(START_LAST_PHASE) == 0){
 				lastPhaseProcessing();
+				myZone.updateListsAndIndividualSettings();
 				// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
 			}
 			else if (language.compareTo(I_KILL_YOU) == 0){
 				killingSystemProcessing();
 			}
 			else if (language.compareTo(MIGRATION) == 0){
-				try{
-					Object individualParams[] = (Object[])message.getContentObject();
-					myZone.addIndividualToList((String)individualParams[0], (Genotype)individualParams[1], (Integer)individualParams[2]);
-				}
-				catch(UnreadableException e){
-					System.out.println("Unknown parameters for immigrating individuals");
-					e.printStackTrace();
-				}
+				myZone.createIndividual(message.getContent());
 			}
-			myZone.send(reply);/*#*/
+			myZone.send(reply);
 		}
 	}
 
@@ -91,82 +89,119 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void dieProcessing() {
-		sendMessageToIndividuals(START_DIE, ACLMessage.INFORM);
-		getAnswersOnDieMessage();
+		for (Individual indiv : myZone.getIndividuals())
+			if (indiv.isDead())
+				myZone.killIndividual(indiv);
 	}
 
-	private void getAnswersOnDieMessage() {
-		ACLMessage message;
-		int individualCounter = myZone.getIndividualsNumber();
-		for (int i = individualCounter; i > 0; i--){	//warning
-			message = getMessage();
-			try{
-				if (message.getContent().equals(YES)/*#*/){
-					myZone.killIndividual(message.getSender());
+	private void moveProcessing() {
+		movedThisYear=0;
+		for (Individual indiv : myZone.getIndividuals())
+			if (indiv.isGoingOut()){
+				Integer outZone = indiv.whereDoGo();
+				if(outZone == null){
+					System.out.println("something wrong with whereDoGo function, technical (not idea) bug");
+					break;
 				}
+				if(outZone != new Integer(-1)){
+					sendIndividualTo(indiv, outZone);			// TODO take it better! group messages.
+				}
+				myZone.killIndividual(indiv);
 			}
-			catch(NullPointerException e){
-				System.out.println(message.getLanguage() + " " + message.getSender());
-				e.printStackTrace();
+		waitForResponsesFromZones();
+	}
+	
+	private void sendIndividualTo(Individual indiv, int zoneNumber){
+		AID newZone = Settings.getZoneAID(zoneNumber);
+		if (newZone != null){
+			movedThisYear++;
+			ACLMessage journey = new ACLMessage(ACLMessage.REQUEST);
+			journey.addReceiver(newZone);
+			journey.setLanguage(MIGRATION);
+			journey.setContent(indiv.toString());
+			myAgent.send(journey);
+		}
+	}
+	
+	private void waitForResponsesFromZones(){
+		for (int i=0; i<movedThisYear;){				// BAD CODE! 
+			ACLMessage message = myAgent.blockingReceive(MessageTemplate.MatchLanguage(MIGRATION));
+			if (message.getContent() == null)
+				i++;
+			else{
+				ACLMessage reply = message.createReply();
+				myZone.createIndividual(message.getContent());
+				myZone.send(reply);
 			}
 		}
 	}
-
-	// DMY: removed to Zone
-/*	private void killIndividual(AID individual) {
-		myZone.males.remove(individual);
-		myZone.females.remove(individual);
-		myZone.immatures.remove(individual);
-	}*/
-
-	private void moveProcessing() {
-		migrationExecutor.action(null);
-	}
-	
 	
 	private void lastPhaseProcessing() {
-		// TODO implement last phase process
+		reproductionProcessing();
+		competitionProcessing();
+		/*int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
+		System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
+										 myZone.immatures.size() + " Immatures; " + 
+										 myZone.females.size() + " Females; " + 
+										 myZone.males.size() + " Males;");#*/
 	}
 	
 	private void killingSystemProcessing() {
-		sendMessageToIndividuals(I_KILL_YOU, ACLMessage.INFORM);
-		killMyself();
-	}
-	
-	private void killMyself() {
 		myAgent.doDelete();
 	}
-
-	private ACLMessage getMessage(){
-		return myAgent.blockingReceive();
-	}
-
-	private void sendMessageToIndividuals(String message, int performative) {
-		/*#LAO: you can take it with one Message object. >>Anton, remove it.
-		 for (AID individual : myZone.getIndividuals()){
-			sendMessage(individual, message, performative);
-		}
-		*/
-		ACLMessage aclMessage = new ACLMessage(performative);
-		for (AID individual : myZone.getIndividuals())
-			aclMessage.addReceiver(individual);
-		aclMessage.setLanguage(message);
-		myAgent.send(aclMessage);
-	}
-
-	/*#LAO: >>Anton, remove it.
-	private void sendMessage(AID individual, String messageLanguage, int performative) {
-		ACLMessage message = new ACLMessage(performative);
-		message.setLanguage(messageLanguage);
-		message.addReceiver(individual);
-		myAgent.send(message);		
-	}*/
-
-	private void refreshStatistic() {
-		currentPackage  = createStatisticPackage();
-		sendStatisticPackage();
+	
+	private void reproductionProcessing() {
+		int readyMales, cicles=0;
+		do{
+			readyMales=0;
+			for (Male male : myZone.males){
+				if (male.isReadyToReproduction()){
+					Female[] femaleList = male.getFemaleListForUpdating();
+					randomFilling(femaleList);
+					male.chooseFemale();
+					readyMales++;
+				}
+			}
+			for (Female female : myZone.females)
+				myZone.createIndividuals(female.getPosterity());
+		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<10);
 	}
 	
+	private void competitionProcessing(){
+		Vector<Individual> individuals = myZone.getIndividuals();
+		if(individuals.size() > myZone.capacity){
+			for(Individual individual : individuals){
+				double chanceToSurvive = Zone.getFeedingCoeficient() * individual.getCompetitiveness() * (myZone.capacity / (individuals.size()));
+				if(chanceToSurvive < Math.random()){
+					myZone.killIndividual(individual);
+				}
+			}
+		}
+	}
+	
+	private void randomFilling(Female[] females){
+		int i=0;
+		if (myZone.females.size()!=0){
+			int numberOfFemales = Math.abs(rand.nextInt()%(myZone.maxSizeOfListOfFemales+1));
+			for (i=0; i<numberOfFemales; i++)
+				females[i] = myZone.females.get(Math.abs(rand.nextInt()%myZone.females.size()));
+		}
+		for (; i<myZone.maxSizeOfListOfFemales; i++)
+			females[i] = null;
+	}
+
+	/**
+	 * Создать и отослать пакет статистики
+	 */
+	private void refreshStatistic() {
+		StatisticPackage currentPackage  = createStatisticPackage();
+		sendStatisticPackage(currentPackage);
+	}
+	
+	/**
+	 * Сгенерировать пакет статистики
+	 * @return
+	 */
 	private StatisticPackage createStatisticPackage(){
 		int experimentId = myZone.experimentId;
 		int zoneId = myZone.zoneId;
@@ -175,52 +210,29 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
 		return statisticPackage;
 	}
-		
+	
+	/**
+	 * Сгенерировать распределение
+	 * @return
+	 */
 	private GenotypeAgeDistribution createGAD() {
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
-		Vector<AID> individuals = myZone.getIndividuals();
-		for (AID individualAID : individuals){
-			int age = getIndividualAge(individualAID);
-			int genotype = getIndividualGenotype(individualAID);
-			gad.addToGant(genotype, age);
-		}
+		Vector<Individual> individuals = myZone.getIndividuals();
+		for (Individual indiv : individuals)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
 		return gad;
-	}
-
-	private int getIndividualAge(AID individualAID) {
-	/* 			TODO Have to get message with individual genotype 
-		sendMessage(individualAID, GIVE_ME_YOUR_AGE, ACLMessage.REQUEST);
-		String messageContent = getMessage().getContent();
-		int age = Integer.parseInt(messageContent);
-*/
-		return 88;
 	}	
 	
-	private int getIndividualGenotype(AID individualAID) {	
-		int genotypeId = -1;
-		/*try {
-		           TODO Have to get message with individual genotype
-			sendMessage(individualAID, GIVE_ME_YOUR_GENOTYPE, ACLMessage.REQUEST);
-			Genotype messageContent  = (Genotype)getMessage().getContentObject();
-			genotypeId = Genotype.getIdOf(messageContent);
-			*/
-			genotypeId = 99;
-			/*
-		} catch (UnreadableException e) {
-			e.printStackTrace();
-		}
-		*/
-		return genotypeId;
-	}	
-	
-	private void sendStatisticPackage() {		
+	/**
+	 * Отослать пакет статистики диспетчеру
+	 * @param currentPackage
+	 */
+	private void sendStatisticPackage(StatisticPackage currentPackage) {		
 		try {
 			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-		//	message.setContent(STATISTIC);		#lao
 			message.setContentObject(currentPackage);		
 			message.addReceiver(myZone.statisticDispatcher);
 			myAgent.send(message);
-		//	System.out.println("Zone " + myZone.zoneId + " sent statistic");	#lao
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
