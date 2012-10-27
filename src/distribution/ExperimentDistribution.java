@@ -7,7 +7,6 @@ public class ExperimentDistribution implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private double feedingCoeficient = 1;;
 	Vector <ZoneDistribution> zoneDistributions;
 	
 	public ExperimentDistribution() {
@@ -22,10 +21,6 @@ public class ExperimentDistribution implements Serializable {
 		return zoneDistributions;
 	}
 	
-	public double getFeedingCoeficient(){
-		return feedingCoeficient;
-	}
-	
 	// by DMY
 	public static ExperimentDistribution parseExperiment(String resource) throws NumberFormatException{
 		// Later I'm plan to throw my own exception, if it will be necessary 
@@ -33,8 +28,7 @@ public class ExperimentDistribution implements Serializable {
 		ExperimentDistribution experiment = new ExperimentDistribution();
 		
 		String[] t = resource.split(";");
-		experiment.feedingCoeficient = Double.parseDouble(t[0]);
-		for(int i = 1; i < t.length; i++){
+		for(int i = 0; i < t.length; i++){
 			try{
 				if((t[i] != null) && !(t[i].equals("")))
 					experiment.addZoneDistribution(ZoneDistribution.parseZone(t[i]));

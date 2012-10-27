@@ -43,7 +43,7 @@ public class Zone extends Agent {
 	float capacity; 
 	double totalCompetitiveness = 0.0001; // DMY: what's this (not mine, but i'm interested in)? 
 	int iteration = -1;
-	int maxSizeOfListOfFemales, minNumberOfMalesForContinue, individualMultiplier;
+	int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
 	
 	// private Vector<Individual> strangers;
 	
@@ -56,18 +56,17 @@ public class Zone extends Agent {
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneId);
-		individualMultiplier = (Integer)getArguments()[3];
-		statisticDispatcher = (AID)getArguments()[4];
-		if (getArguments().length>5)
-			maxSizeOfListOfFemales = (Integer)getArguments()[5];
+		statisticDispatcher = (AID)getArguments()[3];
+		if (getArguments().length>4)
+			maxSizeOfListOfFemales = (Integer)getArguments()[4];
 		else
 			maxSizeOfListOfFemales = DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
-		if (getArguments().length>6)
-			minNumberOfMalesForContinue = (Integer)getArguments()[6];
+		if (getArguments().length>5)
+			minNumberOfMalesForContinue = (Integer)getArguments()[5];
 		else
 			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
-		if (getArguments().length>7)
-			minNumberOfMalesForContinue = (Integer)getArguments()[7];
+		if (getArguments().length>6)
+			minNumberOfMalesForContinue = (Integer)getArguments()[6];
 		else
 			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
 		createIndividuals(zoneDistribution);
@@ -176,11 +175,6 @@ public class Zone extends Agent {
 			addIndividualToList(indiv);
 			indiv.updateSettings();
 		}
-	}
-	
-	public double getFreeSpace(){		//# temporery (5000/N) re- TODO
-		double res = individualMultiplier*100d/(yearlings.size()+10*males.size()+10*females.size());
-		return (res>1)?1:res;
 	}
 	
 	public static double getFeedingCoeficient(){

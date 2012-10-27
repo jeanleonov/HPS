@@ -45,7 +45,7 @@ public class MainClass {
 			"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
 			"	                              (== -1: for runing on cluster,\n" +
 			"	                              DON'T use this argument whit -e)\n" +
-			"	[{-M, --indiv_multiplier} int]  temporary argument for control size of population | DEFAULT 10\n" +
+			"	[{-F, --feeding_coeficient} int]  argument for controlling dying possibility in competition | DEFAULT 10\n" +
 			"	[{-z, --zone_multiplier} int]  temporary argument for control number of zones | DEFAULT 1\n" +
 			"	[{-f, --project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
 			"	[{-v, --viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
@@ -70,8 +70,8 @@ public class MainClass {
 				new ArgPair(parser.addIntegerOption('e', "cur_experiment"), new Integer(-1)));
 		arguments.put("number_of_experiments",
 				new ArgPair(parser.addIntegerOption('E', "number_of_experiments"), new Integer(-1)));
-		arguments.put("indiv_multiplier",
-				new ArgPair(parser.addIntegerOption('M', "indiv_multiplier"), new Integer(10)));
+		arguments.put("feeding_coeficient",
+				new ArgPair(parser.addIntegerOption('F', "feeding_coeficient"), new Integer(10)));
 		arguments.put("zone_multiplier",
 				new ArgPair(parser.addIntegerOption('z', "zone_multiplier"), new Integer(1)));
 		arguments.put("object_manager",
@@ -145,7 +145,7 @@ public class MainClass {
 					proj_path + '/' + (String)getArgument("movePossibilities"),
 					proj_path + '/' + (String)getArgument("scenario"),
 					proj_path + '/' + (String)getArgument("initiation"),
-					(Integer)getArgument("indiv_multiplier"),
+					(Integer)getArgument("feeding_coeficient"),
 					(Integer)getArgument("zone_multiplier"),
 					(Integer)getArgument("cur_experiment"),
 					(Boolean)getArgument("sniffer"),

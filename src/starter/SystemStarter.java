@@ -40,7 +40,7 @@ public class SystemStarter extends Agent implements Pathes{
 	Integer remainingExperiments;
 	int curExperiment;
 	int numberOfModelingYears;
-	int indivMultiplier;
+	int feedingCoeficient;
 	int zoneMultiplier;
 	
 	boolean shutdownFlag = false;
@@ -61,7 +61,7 @@ public class SystemStarter extends Agent implements Pathes{
 		this.movePossibilitiesPath = (String)args[2];
 		this.scenarioPath = (String)args[3];
 		this.experimentInfoPath = (String)args[4];
-		this.indivMultiplier = (Integer)args[5];
+		this.feedingCoeficient = (Integer)args[5];
 		this.zoneMultiplier = (Integer)args[6];
 		container = getContainerController();
 		curExperiment = (Integer)args[7];
