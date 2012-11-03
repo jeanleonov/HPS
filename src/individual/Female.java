@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import settings.PosterityResultPair;
 import settings.Settings;
+import starter.Shared;
 import zone.Zone;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
@@ -48,7 +49,7 @@ public class Female extends Individual {
 	
 	ZoneDistribution createPosterityWith(Male male){
 		ZoneDistribution posterity = new ZoneDistribution();
-		int posteritySize = (int)(male.curFertility * curFertility);
+		int posteritySize = (int)(male.curFertility * curFertility * Shared.POSTERITY_SIZE_MULTUPLIER);			// TODO delete this shit
 		ArrayList<PosterityResultPair> resultsInterbreeding = Settings.getPosteritySettings(myGenotype, male.myGenotype);
 		if (resultsInterbreeding != null)
 			for(PosterityResultPair pair : resultsInterbreeding)

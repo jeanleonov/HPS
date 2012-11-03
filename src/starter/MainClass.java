@@ -13,6 +13,8 @@ import java.util.Hashtable;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
+import zone.Zone;
+
 public class MainClass {
 	
 	private static Hashtable<String, ArgPair> arguments = new Hashtable<String, ArgPair>();
@@ -35,6 +37,7 @@ public class MainClass {
 	
 	static void start(){
 		try {
+			Zone.setFeedingCoeficient((Double)getArgument("feeding_coeficient"));
 			Object[] systemStarterArgs = getSystemStarterArgs();
 			IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
 			starter = container.createNewAgent("SystemStarter", SystemStarter.class.getName(), systemStarterArgs);
@@ -56,7 +59,6 @@ public class MainClass {
 				proj_path + '/' + (String)getArgument("movePossibilities"),
 				proj_path + '/' + (String)getArgument("scenario"),
 				proj_path + '/' + (String)getArgument("initiation"),
-				(Integer)getArgument("feeding_coeficient"),
 				(Integer)getArgument("zone_multiplier"),
 				(Integer)getArgument("cur_experiment"),
 				(Boolean)getArgument("sniffer"),
@@ -97,7 +99,7 @@ public class MainClass {
 		arguments.put("years", new ArgPair(parser.addIntegerOption('y', "years"), new Integer(1)));
 		arguments.put("cur_experiment", new ArgPair(parser.addIntegerOption('e', "cur_experiment"), new Integer(-1)));
 		arguments.put("number_of_experiments", new ArgPair(parser.addIntegerOption('E', "number_of_experiments"), new Integer(-1)));
-		arguments.put("feeding_coeficient", new ArgPair(parser.addIntegerOption('F', "feeding_coeficient"), new Integer(10)));
+		arguments.put("feeding_coeficient", new ArgPair(parser.addDoubleOption('F', "feeding_coeficient"), new Double(0.5)));
 		arguments.put("zone_multiplier", new ArgPair(parser.addIntegerOption('z', "zone_multiplier"), new Integer(1)));
 		arguments.put("object_manager", new ArgPair(parser.addIntegerOption('o', "object_manager"), new Integer(0)));
 		arguments.put("sniffer", new ArgPair(parser.addBooleanOption("sniffer"), Boolean.FALSE));

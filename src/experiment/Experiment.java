@@ -20,7 +20,6 @@ public class Experiment extends Agent {
 	Vector<AID> zonesAIDs;
 	Integer numberOfModelingYears;
 	Integer experimentNumber;
-	Integer feedingCoeficient;
 	Scenario scenario;
 	AID myProvider;
 	
@@ -29,10 +28,9 @@ public class Experiment extends Agent {
 		zonesAIDs = new Vector<AID>();
 		scenario = (Scenario)getArguments()[1];
 		numberOfModelingYears = (Integer)getArguments()[2];
-		feedingCoeficient = (Integer)getArguments()[3];
-		experimentNumber = (Integer)getArguments()[4];
-		AID statisticAID = (AID)getArguments()[5];
-		myProvider = (AID)getArguments()[6];
+		experimentNumber = (Integer)getArguments()[3];
+		AID statisticAID = (AID)getArguments()[4];
+		myProvider = (AID)getArguments()[5];
 		startZones(createZones(statisticAID));
 		Settings.updateZoneTable(zonesAIDs);
 		addBehaviour(new ExperimentBehaviour());
@@ -42,7 +40,6 @@ public class Experiment extends Agent {
 		ContainerController controller = this.getContainerController();
 		Vector<AgentController> zoneAgents = new Vector<AgentController>();
 		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
-		Zone.setFeedingCoeficient(feedingCoeficient);
 		int i=0;
 		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
 			try {

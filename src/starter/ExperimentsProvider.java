@@ -72,7 +72,6 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 									starter.dataFiller.getExperimentDistribution(),
 									starter.dataFiller.getScenario(),
 									starter.numberOfModelingYears,
-									starter.feedingCoeficient,
 									starter.curExperiment,
 									starter.statisticAID,
 									starter.getAID()});

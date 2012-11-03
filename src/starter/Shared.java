@@ -21,7 +21,7 @@ public interface Shared {
 						"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
 						"	                              (== -1: for runing on cluster,\n" +
 						"	                              DON'T use this argument whit -e)\n" +
-						"	[{-F, --feeding_coeficient} int]  argument for controlling dying possibility in competition | DEFAULT 10\n" +
+						"	[{-F, --feeding_coeficient} double]  argument for controlling dying possibility in competition (is in [0..1]) | DEFAULT 0.5\n" +
 						"	[{-z, --zone_multiplier} int]  temporary argument for control number of zones | DEFAULT 1\n" +
 						"	[{-f, --project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
 						"	[{-v, --viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
@@ -39,6 +39,8 @@ public interface Shared {
 		DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,
 		DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3,
 		MAX_NUMBER_OF_REPRODUCTION_CIRCLES = 10;
+	
+	double POSTERITY_SIZE_MULTUPLIER = 1;
 	
 	Logger	problemsLogger = Logger.getLogger("problemsLogger"),
 			debugLogger = Logger.getLogger("debugLogger"),

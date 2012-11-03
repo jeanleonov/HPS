@@ -103,7 +103,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 					break;
 				}
 				if(outZone != new Integer(-1))
-					sendIndividualTo(indiv, outZone);			// TODO take it better! group messages.
+					sendIndividualTo(indiv, outZone);
 				myZone.killIndividual(indiv);
 			}
 		waitForResponsesFromZones();

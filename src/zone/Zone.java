@@ -22,7 +22,7 @@ public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static double feedingCoeficient = 1;
+	private static double feedingCoeficient;
 	Vector<Male> males = new Vector<Male>();
 	Vector<Female> females = new Vector<Female>();
 	Vector<Individual> immatures = new Vector<Individual>();

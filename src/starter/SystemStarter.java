@@ -42,7 +42,6 @@ public class SystemStarter extends Agent implements Shared{
 	Integer remainingExperiments;
 	int curExperiment;
 	int numberOfModelingYears;
-	int feedingCoeficient;
 	int zoneMultiplier;
 	
 	boolean shutdownFlag = false;
@@ -63,12 +62,11 @@ public class SystemStarter extends Agent implements Shared{
 		this.movePossibilitiesPath = (String)args[2];
 		this.scenarioPath = (String)args[3];
 		this.experimentInfoPath = (String)args[4];
-		this.feedingCoeficient = (Integer)args[5];
-		this.zoneMultiplier = (Integer)args[6];
+		this.zoneMultiplier = (Integer)args[5];
 		container = getContainerController();
-		curExperiment = (Integer)args[7];
-		if((Boolean) args[8]) startSniffer();
-		if((Boolean) args[9]) startIntrospector();
+		curExperiment = (Integer)args[6];
+		if((Boolean) args[7]) startSniffer();
+		if((Boolean) args[8]) startIntrospector();
 		startSystem();
 	}
 	
