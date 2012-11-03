@@ -17,8 +17,6 @@ public class Experiment extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static final String ZONE_CLASS_PATH = "zone.Zone";
-	
 	Vector<AID> zonesAIDs;
 	Integer numberOfModelingYears;
 	Integer experimentNumber;
@@ -51,7 +49,7 @@ public class Experiment extends Agent {
 				zoneAgents.add(
 						controller.createNewAgent(
 								getZoneName(i),
-								ZONE_CLASS_PATH, 
+								Zone.class.getName(), 
 								new Object[]{
 											 zoneDistr,
 											 experimentNumber,

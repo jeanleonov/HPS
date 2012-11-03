@@ -29,7 +29,6 @@ public class DataFiller {
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
 	private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
-	private static float DEFAULT_ESCAPING_CHANCE = 0;
 	private Vector<Rule> rules;
 	private int zoneMultiplier;
 	
@@ -98,8 +97,8 @@ public class DataFiller {
 					arr.add(new ViabilityPair(Float.parseFloat(strArr[i + 3]), param));
 				}
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Exception e) {
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -142,8 +141,8 @@ public class DataFiller {
 					posterityTable.get(pair).add(new PosterityResultPair(genotypeOrder.get(i), value));
 				}
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Exception e) {
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -180,8 +179,7 @@ public class DataFiller {
 			}
 		}
 		catch(IOException e){
-			System.out.println("Incorrect zone map input");
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -209,8 +207,8 @@ public class DataFiller {
 		try {
 			for (int i = startFrom; i < strArr.length; i++)
 				arr.add(genotype.Genotype.getGenotype(strArr[i]));
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (Exception e) {
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -220,7 +218,7 @@ public class DataFiller {
 			rules = parser.readRules();
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -237,7 +235,7 @@ public class DataFiller {
 			experimentDistribution = ExperimentDistribution.parseExperiment(res);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 		multiplyZonesInDistribution();
 	}

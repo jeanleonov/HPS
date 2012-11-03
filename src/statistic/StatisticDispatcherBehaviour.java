@@ -1,5 +1,6 @@
 package statistic;
 
+import starter.Shared;
 import messaging.Messaging;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -9,21 +10,19 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Mes
 
 	private static final long serialVersionUID = 1L;
 	private int totalPackages = 0;
-	private int packageBuffer = 10;
+	private int packageBuffer = Shared.DEFAULT_PACKAGE_BUFFER;
 	
 	@Override
 	public void action() {
 		ACLMessage message = getMessage();
-		if (message.getPerformative() == ACLMessage.INFORM){			/*STATISTIC#lao*/
+		if (message.getPerformative() == ACLMessage.INFORM){
 			totalPackages++;
 			addPackageFromMessage(message);
 		}
-		if (message.getPerformative() == ACLMessage.REQUEST){			/*EXPORT#lao*/
+		if (message.getPerformative() == ACLMessage.REQUEST)
 			exportStatistic();
-		}
-		if (totalPackages == packageBuffer){
+		if (totalPackages == packageBuffer)
 			exportStatistic();
-		}
 	}
 
 	private void addPackageFromMessage(ACLMessage message){		

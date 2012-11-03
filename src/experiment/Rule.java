@@ -32,8 +32,7 @@ public class Rule implements Serializable {
 			return ACTIVE;
 		if (yearNumber>=0 && yearNumber<startYear)
 			return UNSTARTED;
-//		if (yearNumber>endYear)
-			return FINISHED;
+		return FINISHED;
 	}
 	
 	public Vector<Action> getCommandsForIteration(int iterationNumber){

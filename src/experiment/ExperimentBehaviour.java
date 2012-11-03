@@ -8,6 +8,8 @@ import jade.lang.acl.ACLMessage;
 import java.io.IOException;
 import java.util.Vector;
 
+import starter.Shared;
+
 import messaging.Messaging;
 
 public class ExperimentBehaviour extends Behaviour implements Messaging {
@@ -33,14 +35,14 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	@Override
 	public void action() {
 		int capacityOfPull = IndividualsManagerDispatcher.getCapacityOfPull();
-		System.out.println("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);/*#*/
+		Shared.infoLogger.info("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);
 		dieProcessing();
 		try {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
 		moveProcessing();
 		lastPhaseProcessing();
-		System.out.println((capacityOfPull!=-1)?("  Capacity of individuals pull: " + capacityOfPull):"");
+		Shared.infoLogger.info((capacityOfPull!=-1)?("  Capacity of individuals pull: " + capacityOfPull):"  Capacity of individuals pull: UNDEF");
 		yearCursore++;
 	}
 
@@ -75,7 +77,6 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 			for (int j=0; j<command.zonesNumbers.size(); j++)
 				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers.get(i)));
 			messages[i].setContentObject(command.command);
-			// may be should be append...
 		}
 		return messages;
 	}
@@ -86,7 +87,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 			return;
 		ACLMessage[] commands 
 					= convertCommandsToACLMessages(actions);
-		for (ACLMessage command : commands)				// send commands
+		for (ACLMessage command : commands)
 			experiment.send(command);
 		ignoreNMessages(countOfMessages);
 	}
@@ -102,7 +103,6 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ACLMessage message = getMessageForMassMailing();
 		message.setLanguage(START_MOVE);
 		experiment.send(message);
-		// TODO listening of migration requests
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
@@ -121,7 +121,7 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	}
 	
 	private void ignoreNMessages(int N){
-		for (int i=0; i<N; i++)				// waiting for reports 	!!!!BAD CODE! 
+		for (int i=0; i<N; i++)
 			myAgent.blockingReceive();
 	}
 	

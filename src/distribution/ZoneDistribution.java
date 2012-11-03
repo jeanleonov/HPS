@@ -7,7 +7,7 @@ public class ZoneDistribution implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private float resource = 0;
+	private float capacity = 0;
 	Vector<GenotypeAgeCountTrio> genotypeAgeNumberTrio;
 	
 	public ZoneDistribution() {
@@ -22,8 +22,8 @@ public class ZoneDistribution implements Serializable, Cloneable {
 		return genotypeAgeNumberTrio;
 	}
 	
-	public float getResourse(){
-		return resource;
+	public float getCapacity(){
+		return capacity;
 	}
 	
 	// by DMY
@@ -33,7 +33,7 @@ public class ZoneDistribution implements Serializable, Cloneable {
 		ZoneDistribution zone = new ZoneDistribution();
 		String[] t = resource.split("\\|");
 		
-		zone.resource = Integer.parseInt(t[0]);
+		zone.capacity = Integer.parseInt(t[0]);
 		
 		for(int i = 1; i < t.length; i++){
 			try{

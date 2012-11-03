@@ -10,11 +10,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
+import starter.Shared;
+
 public class StatisticDispatcher extends Agent{
 
 	private static final long serialVersionUID = 1L;
 	
-	private String fileLocation = "statistic.csv";	// TODO: default value must be at another place
+	private String fileLocation = Shared.DEFAULT_STATISTIC_FILE;
 	private Vector<StatisticPackage> packages = new Vector<StatisticPackage>() ;
 
 	/**

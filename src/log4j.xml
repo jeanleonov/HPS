@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+  <appender name="ConsoleDebug" class="org.apache.log4j.ConsoleAppender">
+    <param name="target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%5p] %m at %l%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMax" value="DEBUG"/>
+    </filter>
+  </appender>
+
+  <appender name="ConsoleInfo" class="org.apache.log4j.ConsoleAppender">
+    <param name="target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="--- %m%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="INFO"/>
+    </filter>
+  </appender>
+
+  <appender name="FileDebug" class="org.apache.log4j.FileAppender">
+    <param name="file" value="log/debug.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+    </layout>
+  </appender>
+
+  <appender name="FileProblem" class="org.apache.log4j.FileAppender">
+    <param name="file" value="log/problems.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="WARN"/>
+    </filter>
+  </appender>
+
+  <appender name="FileInfo" class="org.apache.log4j.FileAppender">
+    <param name="file" value="log/info.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="INFO"/>
+      <param name="LevelMax" value="INFO"/>
+    </filter>
+  </appender>
+
+  <logger name="problemsLogger" additivity="false">
+    <level value="WARN"/>
+    <appender-ref ref="FileProblem"/>
+    <appender-ref ref="ConsoleInfo"/>
+  </logger>
+
+  <logger name="runningTimeLogger">
+    <level value="INFO"/>
+    <appender-ref ref="ConsoleInfo"/>
+    <appender-ref ref="FileInfo"/>
+  </logger>
+
+  <logger name="infoLogger">
+    <level value="INFO"/>
+    <appender-ref ref="ConsoleInfo"/>
+    <appender-ref ref="FileInfo"/>
+  </logger>
+
+  <logger name="debugLogger">
+    <level value="info"/>                   <!-- stub.. change "info" to "debug" if you want to debug the application  -->
+    <appender-ref ref="ConsoleDebug"/>
+  </logger>
+
+</log4j:configuration>
+
+<!--                         PROPERTIES vs XML
+ Properties can be defined by a properties file or by an XML file. Log4j looks for a file named log4j.xml 
+and then for a file named log4j.properties. Both must be placed in the src folder.
+
+The property file is less verbose than an XML file. The XML requires the log4j.dtd to be placed in the 
+source folder as well. The XML requires a dom4j.jar which might not be included in older Java versions.
+
+The properties file does not support some advanced configuration options like Filters, custom 
+ErrorHandlers and a special type of appenders, i.e. AsyncAppender. ErrorHandlers defines how errors in 
+log4j itself are handled, for example badly configured appenders. Filters are more interesting. From 
+the available filters, I think that the level range filter is really missing for property files.
+
+This filter allows to define that a[n] appender should receive log messages from Level INFO to WARN. 
+This allows to split log messages across different logfiles. One for DEBUGGING messages, another for warnings, ...
+
+The property appender only supports a minimum level. If you set it do INFO, you will receive WARN, 
+ERROR and FATAL messages as well. -->

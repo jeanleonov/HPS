@@ -21,14 +21,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-public class SystemStarter extends Agent implements Pathes{
+import settings.Settings;
+import statistic.StatisticDispatcher;
+
+public class SystemStarter extends Agent implements Shared{
 	
 	private static final long serialVersionUID = 1L;
 
 	DataFiller dataFiller;
 	ContainerController container; 
 	private AgentController statisticDispatcher;
-	private AgentController settingsAgent;
 	AID statisticAID;
 	
 	
@@ -75,17 +77,17 @@ public class SystemStarter extends Agent implements Pathes{
 		try {
 			a = container.createNewAgent(name, className, null);
 			a.start();
-		} catch (StaleProxyException e2) {
-			e2.printStackTrace();
+		} catch (StaleProxyException e) {
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
 	private void startIntrospector() {
-		startAgent("Introspector", "jade.tools.introspector.Introspector");
+		startAgent("Introspector", jade.tools.introspector.Introspector.class.getName());
 	}
 	
 	private void startSniffer() {
-		startAgent("Sniffer", "jade.tools.sniffer.Sniffer");
+		startAgent("Sniffer", jade.tools.sniffer.Sniffer.class.getName());
 	}
 	
 	private void shutdownPlatformQuery() {
@@ -97,9 +99,9 @@ public class SystemStarter extends Agent implements Pathes{
 			getContentManager().fillContent(msg, new Action(getAID(), new ShutdownPlatform()));
 			send(msg);
 		} catch (CodecException e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		} catch (OntologyException e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -109,7 +111,7 @@ public class SystemStarter extends Agent implements Pathes{
 		try {
 			recMsg = getContentManager().extractContent(receivedMessage);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 			return false;
 		}
 	    return recMsg.getClass() == Done.class;
@@ -128,14 +130,15 @@ public class SystemStarter extends Agent implements Pathes{
 	
 	public void startSystem(){
 		readData();
-		createAndStartSettingsAgents();
-		getConfirmationFromSettingsAgent();
+		Settings.init(dataFiller.getViabilityTable(), dataFiller.getPosterityTable(), dataFiller.getMovePosibilitiesTable());
 		createAndStartStatisticDispatcherAgent();
 		getConfirmationFromStatisticDispatcherAgent();
 		try {
 			remainingExperiments = (Integer)MainClass.getArgument("number_of_experiments") - curExperiment;
 			numberOfModelingYears = (Integer)MainClass.getArgument("years");
-		} catch (NotFoundException e) {e.printStackTrace();}
+		} catch (NotFoundException e) {
+			Shared.problemsLogger.error(e.getMessage());
+		}
 		if (curExperiment == -1)
 			curExperiment = 0;
 		if (remainingExperiments < 1)
@@ -152,7 +155,7 @@ public class SystemStarter extends Agent implements Pathes{
 		try {
 			viabilitySettingsReader = new BufferedReader(new FileReader(viabilitySettingsPath));
 			posteritySettingsReader = new BufferedReader(new FileReader(posteritySettingPath));
-			if (movePossibilitiesPath.endsWith(MainClass.DEFAULT_MAP))
+			if (movePossibilitiesPath.endsWith(Shared.DEFAULT_MAP_FILE))
 				movePossibilitiesReader = null;
 			else
 				movePossibilitiesReader = new BufferedReader(new FileReader(movePossibilitiesPath));
@@ -161,34 +164,16 @@ public class SystemStarter extends Agent implements Pathes{
 			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader, zoneMultiplier);
 		}
 		catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 		
-	}
-	
-	private void createAndStartSettingsAgents(){
-		try {
-			settingsAgent =
-							container.createNewAgent(
-								"Settings",
-								"settings.Settings",
-								new Object[]{
-										dataFiller.getViabilityTable(),
-										dataFiller.getPosterityTable(),
-										dataFiller.getMovePosibilitiesTable(),
-										getAID()}
-							);
-			settingsAgent.start();
-		} catch (StaleProxyException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
 			statisticDispatcher	= container.createNewAgent(
 										"statisticDispatcher", 
-										"statistic.StatisticDispatcher", 
+										StatisticDispatcher.class.getName(), 
 										new Object[]{"statistics" +
 													((curExperiment==-1)?(""):("_"+curExperiment)) +
 													".csv",
@@ -197,14 +182,8 @@ public class SystemStarter extends Agent implements Pathes{
 			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
 			statisticDispatcher.start();
 		} catch (StaleProxyException e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
-	}
-	
-	private void getConfirmationFromSettingsAgent(){
-		ACLMessage confirm = blockingReceive();
-		if (confirm.getPerformative() != ACLMessage.CONFIRM)
-			/*throws new Exception("Problems with Settings agent")*/;		// TODO
 	}
 	
 	private void getConfirmationFromStatisticDispatcherAgent(){

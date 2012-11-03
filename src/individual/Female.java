@@ -48,9 +48,9 @@ public class Female extends Individual {
 	
 	ZoneDistribution createPosterityWith(Male male){
 		ZoneDistribution posterity = new ZoneDistribution();
-		int posteritySize = (int)(male.curFertility * curFertility	* 0.01f);					//# 0.1 is TEMPORERY!!!!!
+		int posteritySize = (int)(male.curFertility * curFertility);
 		ArrayList<PosterityResultPair> resultsInterbreeding = Settings.getPosteritySettings(myGenotype, male.myGenotype);
-		if (resultsInterbreeding != null)																					// TODO is it needed
+		if (resultsInterbreeding != null)
 			for(PosterityResultPair pair : resultsInterbreeding)
 				posterity.addGenotypeDistribution(new GenotypeAgeCountTrio(pair.getGenotype(), 0, (int) (posteritySize*pair.getProbability())));
 		return posterity;
@@ -58,7 +58,7 @@ public class Female extends Individual {
 	
 	double getAttractivness(){
 		// TODO !!!!!!!!!!!!!!!!!!!!!
-		return super.curSurvival;
+		return 0.5;
 	}
 	
 	void addLover(Male male){

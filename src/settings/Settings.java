@@ -2,19 +2,12 @@ package settings;
 
 import genotype.Genotype;
 import jade.core.AID;
-import jade.core.Agent;
-import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-// This agent is not really agent.
-// It will be created on each node, where a experiments will be executing,
-// which will can get info about viabilitySettings and posteritySettings
-public class Settings extends Agent implements Vocabulary {
-
-	private static final long serialVersionUID = 1L;
+public class Settings implements Vocabulary {
 
 	static private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
@@ -22,34 +15,30 @@ public class Settings extends Agent implements Vocabulary {
 	
 	static private HashMap<Integer, AID> zoneTable = new HashMap<Integer, AID>();
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void setup() {
-		Object[] args = getArguments();
-		viabilityTable = (HashMap<genotype.Genotype, ArrayList<ViabilityPair>>) args[0];
-		posterityTable = (HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>) args[1];
-		movePosibilitiesTable = (HashMap<Integer, HashMap<Integer, Float>>) args[2];
-		confirmationOfReadiness((AID)args[3]);
-	}
-	
-	private void confirmationOfReadiness(AID systemStarter){ 	// PAA: maybe confirmation(AID) is better name ?
-		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
-		confirm.addReceiver(systemStarter);
-		send(confirm);
+	public static void init(
+				HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viability,
+				HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterity,
+				HashMap<Integer, HashMap<Integer, Float>> movePosibilities) {
+		viabilityTable = viability;
+		posterityTable = posterity;
+		movePosibilitiesTable = movePosibilities;
 	}
 	
 	// it's for Individual
 	static public ArrayList<ViabilityPair> getViabilitySettings (Genotype indivGenotype){
+		// TODO process NullPointer or implement Singleton
 		return viabilityTable.get(indivGenotype);
 	}
 	
 	// it's for Female
 	static public ArrayList<PosterityResultPair> getPosteritySettings (Genotype motherGenotype, Genotype fatherGenotype){
+		// TODO process NullPointer or implement Singleton
 		return posterityTable.get(new PosterityParentsPair(motherGenotype, fatherGenotype));
 	}
 	
 	// it's for Experiment
 	static public void updateZoneTable(Vector<AID> zonesAIDs){
+		// TODO process NullPointer or implement Singleton
 		zoneTable.clear();
 		int i=0;
 		for (AID aid : zonesAIDs)
@@ -58,11 +47,13 @@ public class Settings extends Agent implements Vocabulary {
 
 	// it's for Individual
 	static public HashMap<Integer, Float> getMovePosibilitiesFrom(Integer zoneNumber){
+		// TODO process NullPointer or implement Singleton
 		return movePosibilitiesTable.get(zoneNumber);
 	}
 	
 	// it's for Zone
 	static public AID getZoneAID(Integer zoneNumber){
+		// TODO process NullPointer or implement Singleton
 		return zoneTable.get(zoneNumber);
 	}
 }

@@ -14,21 +14,15 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import settings.Settings;
-
+import starter.Shared;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 
 public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10;			// improve it (move it to MainClass)
-	private static final int DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3;		// improve it (move it to MainClass)
 	
-	// DMY: for regulating competitiveness factor
 	private static double feedingCoeficient = 1;
-
-	private HashMap<Integer, Float> travelCosts;
-	
 	Vector<Male> males = new Vector<Male>();
 	Vector<Female> females = new Vector<Female>();
 	Vector<Individual> immatures = new Vector<Individual>();
@@ -40,19 +34,15 @@ public class Zone extends Agent {
 	int experimentId;
 	int zoneId;
 	
-	float capacity; 
-	double totalCompetitiveness = 0.0001; // DMY: what's this (not mine, but i'm interested in)? 
+	float capacity;
+	private HashMap<Integer, Float> travelCosts;
 	int iteration = -1;
 	int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
-	
-	// private Vector<Individual> strangers;
 	
 	@Override
 	protected void setup() {
 		travelCosts = Settings.getMovePosibilitiesFrom(this.getZoneNumber());
-		
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
-		/*System.out.println("=== " + zoneDistribution);#*/
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
 		individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneId);
@@ -60,17 +50,17 @@ public class Zone extends Agent {
 		if (getArguments().length>4)
 			maxSizeOfListOfFemales = (Integer)getArguments()[4];
 		else
-			maxSizeOfListOfFemales = DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
+			maxSizeOfListOfFemales = Shared.DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
 		if (getArguments().length>5)
 			minNumberOfMalesForContinue = (Integer)getArguments()[5];
 		else
-			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
+			minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
 		if (getArguments().length>6)
 			minNumberOfMalesForContinue = (Integer)getArguments()[6];
 		else
-			minNumberOfMalesForContinue = DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
+			minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
 		createIndividuals(zoneDistribution);
-		capacity = zoneDistribution.getResourse();
+		capacity = zoneDistribution.getCapacity();
 		addBehaviour(new ZoneBehaviour());
 	}
 	

@@ -1,6 +1,7 @@
 .project
 .classpath
 /bin
+/log
 APDescription.txt
 MTPs-Main-Container.txt
 GalynaPatch.patch

@@ -6,7 +6,7 @@ import genotype.Genotype;
 public class GenotypeAgeCountTrioStat implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	int genotype; // not int ???
+	int genotype;
 	int age;
 	int number;
 

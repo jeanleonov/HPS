@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import messaging.Messaging;
 import settings.Settings;
+import starter.Shared;
 import statistic.GenotypeAgeDistribution;
 import statistic.StatisticPackage;
 import experiment.ZoneCommand;
@@ -45,8 +46,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	@Override
 	public void action() {
 		ACLMessage message = myAgent.blockingReceive();/*#*/
-		/*System.out.println("Zone " + myZone.zoneId + " in Experiment " + 
-							myZone.experimentId + " got " + message.getContent()); //#lao*/
+		Shared.debugLogger.debug("Zone " + myZone.zoneId + " in Experiment " + 
+							myZone.experimentId + " got " + message.getContent());
 		if(message.getPerformative() == ACLMessage.REQUEST){
 			String language = message.getLanguage();
 			ACLMessage reply = message.createReply();
@@ -80,11 +81,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		try {
 			scenarioExecutor.action((ZoneCommand)message.getContentObject());
 		} catch (UnreadableException e) {
-			System.out.println("getting content object error");
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Error command executing");
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
@@ -103,9 +102,8 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 					System.out.println("something wrong with whereDoGo function, technical (not idea) bug");
 					break;
 				}
-				if(outZone != new Integer(-1)){
+				if(outZone != new Integer(-1))
 					sendIndividualTo(indiv, outZone);			// TODO take it better! group messages.
-				}
 				myZone.killIndividual(indiv);
 			}
 		waitForResponsesFromZones();
@@ -137,13 +135,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void lastPhaseProcessing() {
-		reproductionProcessing();
 		competitionProcessing();
-		/*int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
-		System.out.println("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
-										 myZone.immatures.size() + " Immatures; " + 
-										 myZone.females.size() + " Females; " + 
-										 myZone.males.size() + " Males;");#*/
+		reproductionProcessing();
+		int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
+		Shared.debugLogger.debug("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
+				 myZone.immatures.size() + " Immatures; " + 
+				 myZone.females.size() + " Females; " + 
+				 myZone.males.size() + " Males;");
 	}
 	
 	private void killingSystemProcessing() {
@@ -164,7 +162,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			}
 			for (Female female : myZone.females)
 				myZone.createIndividuals(female.getPosterity());
-		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<10);
+		}while (readyMales>myZone.minNumberOfMalesForContinue && cicles++<Shared.MAX_NUMBER_OF_REPRODUCTION_CIRCLES);
 	}
 	
 	private void competitionProcessing(){
@@ -234,7 +232,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			message.addReceiver(myZone.statisticDispatcher);
 			myAgent.send(message);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 }

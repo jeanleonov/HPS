@@ -7,6 +7,8 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 import messaging.Messaging;
 
+import org.apache.log4j.Logger;
+
 public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	private static final long serialVersionUID = 1L;
@@ -47,9 +49,8 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 			 hour = executingTime/1000/60/60,
 			 min = executingTime/1000/60 - hour*60,
 			 sec = executingTime/1000 - min*60 - hour*3600,
-			 msec = executingTime - sec*1000 - min*60000 - hour*3600000; 
-		System.out.printf("--------------------------------\n"+
-						  "Executing time:	[%2s:%2s:%2s.%3s]\n",hour,min,sec,msec);
+			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
+		Logger.getLogger("runningTimeLogger").info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
 		stopStatisticDispatcher();
 		starter.doDelete();
 		return super.onEnd();
@@ -80,7 +81,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 			starter.curExperiment++;
 			numberOfRuningExperiments++;
 		} catch (StaleProxyException e) {
-			e.printStackTrace();
+			Shared.problemsLogger.error(e.getMessage());
 		}
 	}
 	
