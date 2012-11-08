@@ -115,30 +115,10 @@ public class SystemStarter extends Agent implements Pathes{
 	    return recMsg.getClass() == Done.class;
 	}
 	
-	private void joinStatisticDispatcher() {
-		while(true) {
-			ACLMessage message = new ACLMessage(ACLMessage.QUERY_IF);
-			message.addReceiver(statisticAID);
-			send(message);
-			
-			ACLMessage ret = blockingReceive();
-			if(ret.getPerformative() == ACLMessage.REFUSE) {
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			else break;
-		}
-	}
-	
 	@Override
 	public void doDelete() {
 		if(shutdownFlag) return;
 		shutdownFlag = true;
-		
-		joinStatisticDispatcher();
 		
 		shutdownPlatformQuery();
 		if(listenForAMSReply()) MainClass.shutDown();
