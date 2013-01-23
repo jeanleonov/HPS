@@ -2,7 +2,6 @@ package starter;
 
 import org.apache.log4j.Logger;
 
-
 public interface Shared {
 
 	String  PROJECT_PATH = ProjectPathGetter.getProjectPath(),
@@ -22,7 +21,8 @@ public interface Shared {
 						"	                              (== -1: for runing on cluster,\n" +
 						"	                              DON'T use this argument whit -e)\n" +
 						"	[{-F, --feeding_coeficient} double]  argument for controlling dying possibility in competition (is in [0..1]) | DEFAULT 0.5\n" +
-						"	[{-z, --zone_multiplier} int]  temporary argument for control number of zones | DEFAULT 1\n" +
+						"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones" +
+						"	[{-z, --zone_multiplier} int]  temporary argument for multipling number of zones | DEFAULT 1\n" +
 						"	[{-f, --project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
 						"	[{-v, --viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
 						"	[{-m, --map} string]  name of file with map settings | DEFAULT \'DEFAULT_MAP\'\n" +
@@ -35,7 +35,7 @@ public interface Shared {
 						"	                                     | DEFAULT 0\n" +
 						"	[{-P, --port} int]";
 	
-	int	DEFAULT_PACKAGE_BUFFER = 1000,
+	int	DEFAULT_PACKAGE_BUFFER = 100,
 		DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,
 		DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3,
 		MAX_NUMBER_OF_REPRODUCTION_CIRCLES = 10;

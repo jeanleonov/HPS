@@ -5,17 +5,17 @@ public interface Messaging {
 	String SCENARIO_COMMANDS= "scenarioCommands";		//0 Experiment -> Zone
 //	  String OKKEY			= "ok";						//0 Zone -> Experiment
 	
-	String START_DIE 		= "die";					//1 Experiment -> Zone, Zone -> Individual
+	String START_DIE 		= "Die";					//1 Experiment -> Zone, Zone -> Individual
 	  String OKKEY			= "ok";						//1 Individual -> Zone, Zone -> Experiment
 	
-	String START_MOVE 		= "move";					//2 Experiment -> Zone, Zone -> Individual
+	String START_MOVE 		= "Move";					//2 Experiment -> Zone, Zone -> Individual
 	String DIE				= "Die";					// Zone -> Individual (when immigrating out of Experiment)
 	String MIGRATION		= "Migration";				// Zone -> Individual
-	String IMMIGRATION		= "immigration";			// Individual -> Zone
+	String IMMIGRATION		= "Immigration";			// Individual -> Zone
 	
 	//	  String OKKEY			= "ok";						//2 Individual -> Zone, Zone -> Experiment
 	
-	String START_LAST_PHASE	= "lastPhase";				//3 Experiment -> Zone
+	String START_FIRST_PHASE	= "LastPhase";				//3 Experiment -> Zone
 				
 	String CONTINUE_REPRODUCTION = "reproduction";      //3.1.1 Zone --FemaleSet--> Male or Zone--> Female
 	String I_WANT_YOU       	 = "iWantYou";			//3.1.2 Male -> Female  (from female set)
@@ -26,7 +26,7 @@ public interface Messaging {
 	  String NO				= "no";						//3.1.5 Female -> Male, [Female -> Zone]
 
 	
-	String START_EVOLUTION	= "evolution";				//3.2 Zone -> Posterity
+	String START_EVOLUTION	= "Evolution";				//3.2 Zone -> Posterity
 //	DISTRIBUTION  										//3.2 Posterity -> Zone
 	
 	String START_COMPETITION	= "competition";		//3.3 Zone -> Individual
@@ -49,6 +49,6 @@ public interface Messaging {
 	String STATISTIC = "statisticPackage";				// Zone -> StatisticDispatcher
 	String EXPORT = "exportCommand";					// Zone -> StatisticDispatcher
 		
-	String SCENARIO = "scenario";						// Expirement -> Zone
+	String SCENARIO = "Scenario";						// Expirement -> Zone
 	String SURVIVED		= "survived_berries_distribution";
 }

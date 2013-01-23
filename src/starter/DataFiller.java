@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import parser.Parser;
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
 import settings.ViabilityPair;
 import settings.Vocabulary.Convertor;
 import settings.Vocabulary.Param;
+import utils.parser.Parser;
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
 import experiment.Rule;

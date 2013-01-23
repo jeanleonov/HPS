@@ -6,23 +6,26 @@ import java.util.ArrayList;
 
 import settings.PosterityResultPair;
 import settings.Settings;
+import settings.ViabilityPair;
+import settings.Vocabulary;
+import settings.Vocabulary.Param;
 import starter.Shared;
 import zone.Zone;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 
-public class Female extends Individual {
+public class Female extends Individual implements Shared{
 
 	private static final long serialVersionUID = 1L;
 	
 	ArrayList<Male> lovers;
 	
-	Female(Genotype myGenotype, int age, Zone myZone) {
+	public Female(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
 		lovers = new ArrayList<Male>();
 	}
 	
-	Female reset(Genotype myGenotype, int age, Zone myZone){
+	public Female reset(Genotype myGenotype, int age, Zone myZone){
 		this.myGenotype = myGenotype;
 		this.age = age;
 		this.myZone = myZone;
@@ -49,11 +52,16 @@ public class Female extends Individual {
 	
 	ZoneDistribution createPosterityWith(Male male){
 		ZoneDistribution posterity = new ZoneDistribution();
-		int posteritySize = (int)(male.curFertility * curFertility * Shared.POSTERITY_SIZE_MULTUPLIER);			// TODO delete this shit
+		int posteritySize = (int)(male.curFertility * curFertility * POSTERITY_SIZE_MULTUPLIER);			// TODO delete this shit
 		ArrayList<PosterityResultPair> resultsInterbreeding = Settings.getPosteritySettings(myGenotype, male.myGenotype);
 		if (resultsInterbreeding != null)
 			for(PosterityResultPair pair : resultsInterbreeding)
-				posterity.addGenotypeDistribution(new GenotypeAgeCountTrio(pair.getGenotype(), 0, (int) (posteritySize*pair.getProbability())));
+				posterity.addGenotypeDistribution(
+						new GenotypeAgeCountTrio(
+							pair.getGenotype(),
+							0,
+							(int) (posteritySize*pair.getProbability()
+							*getSetting(Settings.getViabilitySettings(pair.getGenotype()), Param.SurvivalFactorFirst))));
 		return posterity;
 	}
 	
@@ -69,6 +77,13 @@ public class Female extends Individual {
 	@Override
 	public boolean isFemale() {
 		return true;
+	}
+	
+	protected Float getSetting(ArrayList<ViabilityPair> viabilitySettings, Vocabulary.Param param) {
+		for(ViabilityPair pair : viabilitySettings)
+			if(pair.getParam() == param)
+				return pair.getValue();
+		return 0f;
 	}
 }
 		

@@ -1,6 +1,7 @@
 package experiment;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Rule implements Serializable {
@@ -35,10 +36,10 @@ public class Rule implements Serializable {
 		return FINISHED;
 	}
 	
-	public Vector<Action> getCommandsForIteration(int iterationNumber){
-		Vector<Action> commands = null;
+	public ArrayList<Action> getCommandsForIteration(int iterationNumber){
+		ArrayList<Action> commands = null;
 		if (actionAppearance.shouldDoAction(iterationNumber-startYear)){
-			commands = new Vector<Action>();
+			commands = new ArrayList<Action>();
 			for (Action action : actions)
 				commands.add(action);
 		}

@@ -9,6 +9,8 @@ import messaging.Messaging;
 
 import org.apache.log4j.Logger;
 
+import statistic.visualisation.VisualisationFrame;
+
 public class ExperimentsProvider extends Behaviour implements Messaging {
 	
 	private static final long serialVersionUID = 1L;
@@ -52,6 +54,8 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
 		Logger.getLogger("runningTimeLogger").info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
 		stopStatisticDispatcher();
+		if (starter.shouldDisplayDiagram)
+			new VisualisationFrame(starter.curStatisticFileURL);
 		starter.doDelete();
 		return super.onEnd();
 	}

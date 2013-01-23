@@ -10,12 +10,12 @@ public class Male extends Individual {
 	
 	private Female[] femalesList;
 
-	Male(Genotype myGenotype, int age, Zone myZone) {
+	public Male(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
 		femalesList = new Female[myZone.getMaxSizeOfListOfFemales()];
 	}
 	
-	Male reset(Genotype myGenotype, int age, Zone myZone){
+	public Male reset(Genotype myGenotype, int age, Zone myZone){
 		this.myGenotype = myGenotype;
 		this.age = age;
 		this.myZone = myZone;
@@ -44,7 +44,7 @@ public class Male extends Individual {
 	
 	double getAttractivness(){
 		// TODO !!!!!!!!!!!!!!!!!!!!!
-		return super.curSurvival;
+		return 0.5;
 	}
 
 	@Override

@@ -11,14 +11,18 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Vector;
+import java.util.Set;
 
 import messaging.Messaging;
 import settings.Settings;
 import starter.Shared;
 import statistic.GenotypeAgeDistribution;
 import statistic.StatisticPackage;
+import utils.ProbabilityCollection;
 import experiment.ZoneCommand;
 
 
@@ -45,27 +49,24 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	 */
 	@Override
 	public void action() {
-		ACLMessage message = myAgent.blockingReceive();/*#*/
-		Shared.debugLogger.debug("Zone " + myZone.zoneId + " in Experiment " + 
-							myZone.experimentId + " got " + message.getContent());
+		ACLMessage message = myAgent.blockingReceive();
 		if(message.getPerformative() == ACLMessage.REQUEST){
 			String language = message.getLanguage();
 			ACLMessage reply = message.createReply();
-			if (language.compareTo(START_DIE) == 0){
-				myZone.iteration++;
-				refreshStatistic(); // TODO бпелеммн !!!
+	/*@#	if (language.compareTo(START_DIE) == 0){
 				dieProcessing();
 			}
-			else if(language.compareTo(START_MOVE) == 0){
+			else*/
+			if(language.compareTo(START_MOVE) == 0){
 				moveProcessing();
 			}
 			else if(language.compareTo(SCENARIO) == 0){
 				scenarioCommandProcessing(message);
 			}
-			else if (language.compareTo(START_LAST_PHASE) == 0){
-				lastPhaseProcessing();
-				myZone.updateListsAndIndividualSettings();
-				// TODO after all operations we have to send package to statistic Dispatcher (or Experiment) !!!!!!!
+			else if (language.compareTo(START_FIRST_PHASE) == 0){
+				myZone.iteration++;
+				refreshStatistic();
+				firstPhaseProcessing();
 			}
 			else if (language.compareTo(I_KILL_YOU) == 0){
 				killingSystemProcessing();
@@ -88,12 +89,29 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void dieProcessing() {
-		for (Individual indiv : myZone.getIndividuals())
+		logPopulationSizes("Die         ");
+		ArrayList<Male> malesToKill = new ArrayList<Male>();
+		ArrayList<Female> femalesToKill = new ArrayList<Female>();
+		ArrayList<Individual> immaturesToKill = new ArrayList<Individual>();
+		for (Male indiv : myZone.males)
 			if (indiv.isDead())
-				myZone.killIndividual(indiv);
+				malesToKill.add(indiv);
+		for (Female indiv : myZone.females)
+			if (indiv.isDead())
+				femalesToKill.add(indiv);
+		for (Individual indiv : myZone.immatures)
+			if (indiv.isDead())
+				immaturesToKill.add(indiv);
+		for (Male indiv : malesToKill)
+			myZone.killMale(indiv);
+		for (Female indiv : femalesToKill)
+			myZone.killFemale(indiv);
+		for (Individual indiv : immaturesToKill)
+			myZone.killImmature(indiv);
 	}
 
 	private void moveProcessing() {
+		logPopulationSizes("Move        ");
 		movedThisYear=0;
 		for (Individual indiv : myZone.getIndividuals())
 			if (indiv.isGoingOut()){
@@ -102,9 +120,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 					System.out.println("something wrong with whereDoGo function, technical (not idea) bug");
 					break;
 				}
-				if(outZone != new Integer(-1))
+				if(outZone != new Integer(-1) && outZone != myZone.zoneId){
 					sendIndividualTo(indiv, outZone);
-				myZone.killIndividual(indiv);
+					myZone.killIndividual(indiv);
+				}
 			}
 		waitForResponsesFromZones();
 	}
@@ -134,14 +153,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		}
 	}
 	
-	private void lastPhaseProcessing() {
-		competitionProcessing();
+	private void firstPhaseProcessing() {
+		myZone.updateListsAndIndividualSettings();
 		reproductionProcessing();
-		int total = myZone.yearlings.size() + myZone.immatures.size() + myZone.females.size() + myZone.males.size();
-		Shared.debugLogger.debug("   In Zone" + myZone.zoneId + ": " + total + " Total; " + myZone.yearlings.size() + " Yearlings; " + 
-				 myZone.immatures.size() + " Immatures; " + 
-				 myZone.females.size() + " Females; " + 
-				 myZone.males.size() + " Males;");
+		competitionProcessing();
+		dieProcessing();
 	}
 	
 	private void killingSystemProcessing() {
@@ -149,6 +165,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void reproductionProcessing() {
+		logPopulationSizes("Reproduction");
 		int readyMales, cicles=0;
 		do{
 			readyMales=0;
@@ -166,15 +183,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void competitionProcessing(){
-		Vector<Individual> individuals = myZone.getIndividuals();
-		if(individuals.size() > myZone.capacity){
-			for(Individual individual : individuals){
-				double chanceToSurvive = Zone.getFeedingCoeficient() * individual.getCompetitiveness() * (myZone.capacity / (individuals.size()));
-				if(chanceToSurvive < Math.random()){
-					myZone.killIndividual(individual);
-				}
-			}
-		}
+		logPopulationSizes("Competition ");
+		List<Individual> individuals = myZone.getIndividuals();
+		int individualsNumber = individuals.size();
+		if(individualsNumber <= myZone.capacity)
+			return;
+		ProbabilityCollection<Individual> probabilityCollection = new ProbabilityCollection<Individual>(individuals);
+		Set<Individual> individualsToKill = probabilityCollection.getElements(individualsNumber-myZone.capacity);
+		for (Individual indiv : individualsToKill)
+			myZone.killIndividual(indiv);
 	}
 	
 	private void randomFilling(Female[] females){
@@ -215,9 +232,10 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	 */
 	private GenotypeAgeDistribution createGAD() {
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
-		Vector<Individual> individuals = myZone.getIndividuals();
+		List<Individual> individuals = myZone.getIndividuals();
 		for (Individual indiv : individuals)
-			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
+			if (indiv.isMature())
+				gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
 		return gad;
 	}	
 	
@@ -234,5 +252,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		} catch (IOException e) {
 			Shared.problemsLogger.error(e.getMessage());
 		}
+	}
+	
+	private void logPopulationSizes(String beforePhaseName){
+		int	males = myZone.males.size(),
+			females = myZone.females.size(),
+			immatures = myZone.immatures.size(),
+			yearlings = myZone.yearlings.size();
+		Shared.debugLogger.debug(MessageFormat.format(
+				"Before {0}: M-{1,number},\tF-{2,number},\tI-{3,number},\tY-{4,number}", 
+				beforePhaseName, males, females, immatures, yearlings));
 	}
 }

@@ -1,16 +1,15 @@
 package experiment;
 
-import individual.IndividualsManagerDispatcher;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
-import java.util.Vector;
-
-import starter.Shared;
+import java.util.ArrayList;
 
 import messaging.Messaging;
+import starter.Shared;
+import utils.individuals.allocation.IndividualsManagerDispatcher;
 
 public class ExperimentBehaviour extends Behaviour implements Messaging {
 
@@ -34,14 +33,14 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 
 	@Override
 	public void action() {
-		int capacityOfPull = IndividualsManagerDispatcher.getCapacityOfPull();
 		Shared.infoLogger.info("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);
-		dieProcessing();
+		firstPhaseProcessing();
+	//@#	dieProcessing();
 		try {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
 		moveProcessing();
-		lastPhaseProcessing();
+		int capacityOfPull = IndividualsManagerDispatcher.getCapacityOfPull();
 		Shared.infoLogger.info((capacityOfPull!=-1)?("  Capacity of individuals pull: " + capacityOfPull):"  Capacity of individuals pull: UNDEF");
 		yearCursore++;
 	}
@@ -64,25 +63,24 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	}
 	
 	// method for reading scenario commands
-	private ACLMessage[] convertCommandsToACLMessages(Vector<Action> commands) throws IOException{
+	private ACLMessage[] convertCommandsToACLMessages(ArrayList<Action> commands) throws IOException{
 		// TODO
 		countOfMessages=0;
-		int i=0;
 		ACLMessage[] messages = new ACLMessage[commands.size()];
-		for (Action command : commands){							// TODO merge it with dieOff tick 
+		for (int i=0; i<messages.length; i++){							// TODO merge it with dieOff tick 
 																	// TODO send to Zone array of ZoneCommand
-			countOfMessages += command.zonesNumbers.size();
+			countOfMessages += commands.get(i).zonesNumbers.size();
 			messages[i] = new ACLMessage(ACLMessage.REQUEST);
 			messages[i].setLanguage(SCENARIO);
-			for (int j=0; j<command.zonesNumbers.size(); j++)
-				messages[i].addReceiver(experiment.getZoneAID(command.zonesNumbers.get(i)));
-			messages[i].setContentObject(command.command);
+			for (int j=0; j<commands.get(i).zonesNumbers.size(); j++)
+				messages[i].addReceiver(experiment.getZoneAID(commands.get(i).zonesNumbers.get(j)));
+			messages[i].setContentObject(commands.get(i).command);
 		}
 		return messages;
 	}
 
 	private void scenarioCommandsProcessing() throws IOException{
-		Vector<Action> actions = experiment.scenario.getCommandsForNextYear(yearCursore);
+		ArrayList<Action> actions = experiment.scenario.getCommandsForNextYear(yearCursore);
 		if (actions.size() == 0)
 			return;
 		ACLMessage[] commands 
@@ -92,12 +90,12 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ignoreNMessages(countOfMessages);
 	}
 
-	private void dieProcessing(){
+	/*@# private void dieProcessing(){
 		ACLMessage message = getMessageForMassMailing();
 		message.setLanguage(START_DIE);
 		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
-	}
+	}*/
 
 	private void moveProcessing(){
 		ACLMessage message = getMessageForMassMailing();
@@ -106,9 +104,9 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}
 
-	private void lastPhaseProcessing(){
+	private void firstPhaseProcessing(){
 		ACLMessage message = getMessageForMassMailing();
-		message.setLanguage(START_LAST_PHASE);
+		message.setLanguage(START_FIRST_PHASE);
 		experiment.send(message);
 		ignoreNMessages(experiment.zonesAIDs.size());
 	}

@@ -1,6 +1,5 @@
 package starter;
 
-import individual.IndividualsManagerDispatcher;
 import jade.core.NotFoundException;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -13,6 +12,7 @@ import java.util.Hashtable;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
+import utils.individuals.allocation.IndividualsManagerDispatcher;
 import zone.Zone;
 
 public class MainClass {
@@ -38,6 +38,7 @@ public class MainClass {
 	static void start(){
 		try {
 			Zone.setFeedingCoeficient((Double)getArgument("feeding_coeficient"));
+			Zone.setCapacityMultiplier((Double)getArgument("capacity_multiplier"));
 			Object[] systemStarterArgs = getSystemStarterArgs();
 			IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
 			starter = container.createNewAgent("SystemStarter", SystemStarter.class.getName(), systemStarterArgs);
@@ -61,6 +62,7 @@ public class MainClass {
 				proj_path + '/' + (String)getArgument("initiation"),
 				(Integer)getArgument("zone_multiplier"),
 				(Integer)getArgument("cur_experiment"),
+				(Boolean)getArgument("display_diagram"),
 				(Boolean)getArgument("sniffer"),
 				(Boolean)getArgument("introspector")
 		};
@@ -99,7 +101,8 @@ public class MainClass {
 		arguments.put("years", new ArgPair(parser.addIntegerOption('y', "years"), new Integer(1)));
 		arguments.put("cur_experiment", new ArgPair(parser.addIntegerOption('e', "cur_experiment"), new Integer(-1)));
 		arguments.put("number_of_experiments", new ArgPair(parser.addIntegerOption('E', "number_of_experiments"), new Integer(-1)));
-		arguments.put("feeding_coeficient", new ArgPair(parser.addDoubleOption('F', "feeding_coeficient"), new Double(0.5)));
+		arguments.put("feeding_coeficient", new ArgPair(parser.addDoubleOption('F', "feeding_coeficient"), new Double(1)));
+		arguments.put("capacity_multiplier", new ArgPair(parser.addDoubleOption('M', "capacity_multiplier"), new Double(1)));
 		arguments.put("zone_multiplier", new ArgPair(parser.addIntegerOption('z', "zone_multiplier"), new Integer(1)));
 		arguments.put("object_manager", new ArgPair(parser.addIntegerOption('o', "object_manager"), new Integer(0)));
 		arguments.put("sniffer", new ArgPair(parser.addBooleanOption("sniffer"), Boolean.FALSE));
@@ -107,6 +110,7 @@ public class MainClass {
 		arguments.put("project_path", new ArgPair(parser.addStringOption('f', "project_path"), Shared.PROJECT_PATH));
 		arguments.put("viability", new ArgPair(parser.addStringOption('v', "viability"), Shared.DEFAULT_VIABILITY_FILE));
 		arguments.put("posterity", new ArgPair(parser.addStringOption('p', "posterity"), Shared.DEFAULT_POSTERITY_FILE));
+		arguments.put("display_diagram", new ArgPair(parser.addBooleanOption('d', "display_diagram"), Boolean.FALSE));
 		//QM
 		arguments.put("port", new ArgPair(parser.addIntegerOption('P', "port"), new Integer(0)));
 		arguments.put("movePossibilities", new ArgPair(parser.addStringOption('m', "map"), Shared.DEFAULT_MAP_FILE));
@@ -135,8 +139,9 @@ public class MainClass {
 		return parser.getOptionValue(pair.option, pair.defaultValue);
 	}
 	
-	static void shutDown() {
+	static void shutDown(boolean shouldDisplayDiagram) {
 		runtime.shutDown();
-		System.exit(0);
+		if (!shouldDisplayDiagram)
+			System.exit(0);
 	}
 }

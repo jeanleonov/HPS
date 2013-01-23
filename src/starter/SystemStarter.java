@@ -32,6 +32,7 @@ public class SystemStarter extends Agent implements Shared{
 	ContainerController container; 
 	private AgentController statisticDispatcher;
 	AID statisticAID;
+	String curStatisticFileURL;
 	
 	
 	private String	viabilitySettingsPath,
@@ -45,6 +46,7 @@ public class SystemStarter extends Agent implements Shared{
 	int zoneMultiplier;
 	
 	boolean shutdownFlag = false;
+	boolean shouldDisplayDiagram;
 
 	@Override
 	protected void setup(){
@@ -65,8 +67,9 @@ public class SystemStarter extends Agent implements Shared{
 		this.zoneMultiplier = (Integer)args[5];
 		container = getContainerController();
 		curExperiment = (Integer)args[6];
-		if((Boolean) args[7]) startSniffer();
-		if((Boolean) args[8]) startIntrospector();
+		shouldDisplayDiagram = (Boolean) args[7]; 
+		if((Boolean) args[8]) startSniffer();
+		if((Boolean) args[9]) startIntrospector();
 		startSystem();
 	}
 	
@@ -121,7 +124,7 @@ public class SystemStarter extends Agent implements Shared{
 		shutdownFlag = true;
 		
 		shutdownPlatformQuery();
-		if(listenForAMSReply()) MainClass.shutDown();
+		if(listenForAMSReply()) MainClass.shutDown(shouldDisplayDiagram);
 		else System.err.println("Cannot shutdown platform");
 		super.doDelete();
 	}
@@ -169,12 +172,11 @@ public class SystemStarter extends Agent implements Shared{
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
+			curStatisticFileURL = "statistics" + ((curExperiment==-1)?(""):("_"+curExperiment)) + ".csv";
 			statisticDispatcher	= container.createNewAgent(
 										"statisticDispatcher", 
 										StatisticDispatcher.class.getName(), 
-										new Object[]{"statistics" +
-													((curExperiment==-1)?(""):("_"+curExperiment)) +
-													".csv",
+										new Object[]{curStatisticFileURL,
 													 getAID()}
 								  );
 			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);

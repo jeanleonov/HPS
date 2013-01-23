@@ -1,6 +1,7 @@
 package experiment;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -59,11 +60,14 @@ public class Scenario implements Serializable{
 	}
 	
 	// experimentYearCursor is necessary to avoid desynchronization
-	public Vector<Action> getCommandsForNextYear(int experimentYearCursor){
+	public ArrayList<Action> getCommandsForNextYear(int experimentYearCursor){
 		// TODO if (experimentYearCursor != yearCursor) throw ...; OR reorganize all.
-		Vector<Action> commands = new Vector<Action>();
-		for (Rule rule : activeRules)
-			commands.addAll(rule.getCommandsForIteration(yearCursor));
+		ArrayList<Action> commands = new ArrayList<Action>();
+		for (Rule rule : activeRules){
+			ArrayList<Action> toAdd = rule.getCommandsForIteration(yearCursor);
+			if (toAdd != null)
+				commands.addAll(toAdd);
+		}
 		updateRuleLists();
 		yearCursor++;
 		return commands;

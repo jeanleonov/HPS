@@ -1,4 +1,4 @@
-package individual;
+package utils.individuals.allocation;
 
 import java.util.HashMap;
 
