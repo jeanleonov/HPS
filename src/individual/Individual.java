@@ -26,6 +26,7 @@ public abstract class Individual implements Serializable, WithProbability {
 	protected float curReproduction;
 	protected float curFertility;
 	protected float curAmplexusRepeat;
+	protected float curVoracity;
 	protected boolean readyToReproduction=true;
 	protected ArrayList<ViabilityPair> viabilitySettings;
 	
@@ -110,6 +111,10 @@ public abstract class Individual implements Serializable, WithProbability {
 		return curCompetitiveness;
 	}
 	
+	public float getVoracity() {
+		return curVoracity;
+	}
+	
 	protected Float getSetting(Vocabulary.Param param) {
 		for(ViabilityPair pair : viabilitySettings)
 			if(pair.getParam() == param) return pair.getValue();
@@ -128,26 +133,36 @@ public abstract class Individual implements Serializable, WithProbability {
 		private void updateSettingsForYearling(){
 			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst);
 			curCompetitiveness = getSetting(Vocabulary.Param.CompetitivenessFactorFirst);
+			curVoracity = getSetting(Vocabulary.Param.Voracity01);
 		}
 		
 		private void updateSettingsForNotYearling(){
 			if (age > getSetting(Vocabulary.Param.Lifetime))
 				curSurvival = curCompetitiveness = 0f;
 			else{
-				float survivalAgeCorrection = pow(1+getSetting(Vocabulary.Param.SurvivalFactor), age),
-					  competitivenessAgeCorrection = pow(1+getSetting(Vocabulary.Param.CompetitivenessFactor), age);
-				curSurvival = getSetting(Vocabulary.Param.Survival)*survivalAgeCorrection;
-				curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness)*competitivenessAgeCorrection;
+				if (age == 1) {
+					curSurvival = getSetting(Vocabulary.Param.Survival);
+					curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness);
+				}
+				else {
+					curSurvival = curSurvival+(1-curSurvival)*getSetting(Vocabulary.Param.SurvivalFactor);
+					curCompetitiveness = curCompetitiveness+(1-curCompetitiveness)*getSetting(Vocabulary.Param.CompetitivenessFactor);
+				}
+				curVoracity = getCurVoracity();
 			}
 		}
 		
 		private void updateSettingsForMature(){
-			float reprodAgeCorrection = pow(1+getSetting(Vocabulary.Param.ReproductionFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
-				  fertilityAgeCorrection = pow(1+getSetting(Vocabulary.Param.FertilityFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1)),
-				  repeatAgeCorrection = pow(1+getSetting(Vocabulary.Param.AmplexusRepeatFactor), (int)(age-getSetting(Vocabulary.Param.Spawning)+1));
-			curReproduction = getSetting(Vocabulary.Param.Reproduction)*reprodAgeCorrection;
-			curFertility = getSetting(Vocabulary.Param.Fertility)*fertilityAgeCorrection;
-			curAmplexusRepeat = getSetting(Vocabulary.Param.AmplexusRepeat)*repeatAgeCorrection;
+			if (age == getSetting(Vocabulary.Param.Spawning)) {
+				curReproduction = getSetting(Vocabulary.Param.Reproduction);
+				curFertility = getSetting(Vocabulary.Param.Fertility);
+				curAmplexusRepeat = getSetting(Vocabulary.Param.AmplexusRepeat);
+			}
+			else {
+				curReproduction = curReproduction*(1+getSetting(Vocabulary.Param.ReproductionFactor));
+				curFertility = curFertility*(1+getSetting(Vocabulary.Param.FertilityFactor));
+				curAmplexusRepeat = curAmplexusRepeat*(1+getSetting(Vocabulary.Param.AmplexusRepeatFactor));
+			}
 		}
 		
 		private void updateSettingsForImmature(){
@@ -156,10 +171,19 @@ public abstract class Individual implements Serializable, WithProbability {
 			curAmplexusRepeat = 0f;
 		}
 		
-		private float pow(float a, int p){
-			float res;
-			for (res=1f; p>0; res*=a, p--);
-			return res;
+		private float getCurVoracity() {
+			switch (age+1) {
+			case 2: return getSetting(Vocabulary.Param.Voracity02);
+			case 3: return getSetting(Vocabulary.Param.Voracity03);
+			case 4: return getSetting(Vocabulary.Param.Voracity04);
+			case 5: return getSetting(Vocabulary.Param.Voracity05);
+			case 6: return getSetting(Vocabulary.Param.Voracity06);
+			case 7: return getSetting(Vocabulary.Param.Voracity07);
+			case 8: return getSetting(Vocabulary.Param.Voracity08);
+			case 9: return getSetting(Vocabulary.Param.Voracity09);
+			case 10: return getSetting(Vocabulary.Param.Voracity10_N);
+			default: return getSetting(Vocabulary.Param.Voracity10_N);
+			}
 		}
 	}
 	

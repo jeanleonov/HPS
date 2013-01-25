@@ -9,7 +9,7 @@ public class Genome implements Serializable{
 	final static public byte	X = 1,
 								Y = 2,
 								UNDEF = -1;
-	enum GenomeName{
+	public enum GenomeName{
 		R, L;
 	}
 	

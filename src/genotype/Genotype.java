@@ -47,6 +47,10 @@ public class Genotype implements Serializable {
 			return Genome.Y;
 		return Genome.UNDEF;
 	}
+	
+	public boolean isFemale() {
+		return getGender()==Genome.X;
+	}
 
 	public Genome[] getGenomes() {
 		return genomes;

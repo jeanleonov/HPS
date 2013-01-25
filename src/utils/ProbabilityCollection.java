@@ -12,16 +12,23 @@ public class ProbabilityCollection<T extends WithProbability> {
 
 	public ProbabilityCollection(List<T> collection) {
 		elements = collection;
-		for (WithProbability element : elements)
+		totalSumOfProbabilities = getTotalSumOfProbabilities(elements);
+	}
+	
+	static private <T extends WithProbability>
+	double getTotalSumOfProbabilities(List<T> collection) {
+		double totalSumOfProbabilities=0;
+		for (WithProbability element : collection)
 			totalSumOfProbabilities += element.getProbability();
+		return totalSumOfProbabilities;
 	}
 	
 	/** @return random elements according to specified probabilities */
 	public Set<T> getElements(float approximateQuantity) {
 		HashSet<T> result = new HashSet<T>();
-		double coeficient = totalSumOfProbabilities/approximateQuantity/(totalSumOfProbabilities/elements.size())/stubCoeficient;
+		double coeficient = approximateQuantity/elements.size()/(totalSumOfProbabilities/elements.size());
 		for (T element : elements)
-			if (Math.random() <= element.getProbability()/coeficient)
+			if (Math.random() <= element.getProbability()*coeficient)
 				result.add(element);
 		float aa = approximateQuantity;					// 
 		float a = result.size() - approximateQuantity;	// #temporary.. collapse it to one line
@@ -30,16 +37,17 @@ public class ProbabilityCollection<T extends WithProbability> {
 		return result;
 	}
 	
-	/** @return random elements according to specified probabilities */
-	/*public Set<T> removeAntiElementsForCapacity(float approximateCapacity) {
-		HashSet<T> result = new HashSet<T>();
-		double coeficient = totalSumOfProbabilities/approximateCapacity/(totalSumOfProbabilities/elements.size())/stubCoeficient;
+	/** @return random elements according to specified probabilities 
+	 *  */
+	/*public List<T> getElementsForCapacity(float approximateCapacity) {
+		List<T> result = new ArrayList<T>();
+		double coeficient = totalSumOfProbabilities/approximateCapacity*stubCoeficient;
 		for (T element : elements)
-			if (Math.random() <= element.getProbability()/coeficient)
+			if (Math.random() <= element.getProbability()*coeficient)
 				result.add(element);
-		float aa = approximateCapacity;					// 
-		float a = result.size() - approximateCapacity;	// #temporary.. collapse it to one line
-		float correction = -a/aa;						// 
+		float aa = approximateCapacity;																			// 
+		float a = (float) ((float)getTotalSumOfProbabilities(result) - (approximateCapacity-totalSumOfProbabilities));	// #temporary.. collapse it to one line
+		float correction = -a/aa;																				// 
 		stubCoeficient += correction;
 		return result;
 	}*/

@@ -65,7 +65,6 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			}
 			else if (language.compareTo(START_FIRST_PHASE) == 0){
 				myZone.iteration++;
-				refreshStatistic();
 				firstPhaseProcessing();
 			}
 			else if (language.compareTo(I_KILL_YOU) == 0){
@@ -154,10 +153,14 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void firstPhaseProcessing() {
-		myZone.updateListsAndIndividualSettings();
+		refreshStatistic(1);
 		reproductionProcessing();
+		refreshStatistic(2);
 		competitionProcessing();
+		refreshStatistic(3);
+		myZone.updateListsAndIndividualSettings();
 		dieProcessing();
+		refreshStatistic(0);
 	}
 	
 	private void killingSystemProcessing() {
@@ -185,7 +188,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void competitionProcessing(){
 		logPopulationSizes("Competition ");
 		List<Individual> individuals = myZone.getIndividuals();
-		int individualsNumber = individuals.size();
+		float individualsNumber = individuals.size();
 		if(individualsNumber <= myZone.capacity)
 			return;
 		ProbabilityCollection<Individual> probabilityCollection = new ProbabilityCollection<Individual>(individuals);
@@ -193,6 +196,54 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		for (Individual indiv : individualsToKill)
 			myZone.killIndividual(indiv);
 	}
+	
+	
+	/*
+	private void competitionProcessing(){
+		logPopulationSizes("Competition ");
+		List<Individual> individuals = myZone.getIndividuals();
+		double totalVoracity = getTotalVoracity(individuals);
+		if(totalVoracity <= myZone.capacity)
+			return;
+		//#ProbabilityCollection<Individual> probabilityCollection = new ProbabilityCollection<Individual>(individuals);
+		//#Set<Individual> individualsToKill = probabilityCollection.getElements(individualsNumber-myZone.capacity);
+		Set<Individual> individualsToKill = getLoosers(individuals, totalVoracity);
+		//#List<Individual> individualsToKill = probabilityCollection.getElementsForCapacity(myZone.capacity);
+		for (Individual indiv : individualsToKill)
+			myZone.killIndividual(indiv);
+	}
+	
+	private static double stubCoeficient = 1; */
+	
+	/** @return random elements according to specified probabilities */
+	/*public Set<Individual> getLoosers(List<Individual> individuals, double totalVoracity) {
+		double totalSumOfProbabilities = getTotalCompetitiveness(individuals);
+		double voracityOverflow = totalVoracity - myZone.capacity;
+		HashSet<Individual> result = new HashSet<Individual>();
+		double coeficient = voracityOverflow/totalVoracity/(totalSumOfProbabilities/individuals.size())*stubCoeficient;
+		for (Individual element : individuals)
+			if (Math.random() <= element.getProbability() + (1-element.getProbability())*coeficient)
+				result.add(element);
+		double aa = voracityOverflow;								// 
+		double a = getTotalVoracity(result) - voracityOverflow;		// #temporary.. collapse it to one line
+		double correction = -a/aa;									// 
+		//stubCoeficient += correction;
+		return result;
+	}
+	
+	private static double getTotalVoracity(Iterable<Individual> individuals) {
+		float sum = 0;
+		for (Individual indiv : individuals)
+			sum += indiv.getVoracity();
+		return sum;
+	}
+	
+	private static double getTotalCompetitiveness(Iterable<Individual> individuals) {
+		float sum = 0;
+		for (Individual indiv : individuals)
+			sum += indiv.getCompetitiveness();
+		return sum;
+	}*/
 	
 	private void randomFilling(Female[] females){
 		int i=0;
@@ -208,9 +259,13 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	/**
 	 * —оздать и отослать пакет статистики
 	 */
-	private void refreshStatistic() {
-		StatisticPackage currentPackage  = createStatisticPackage();
-		sendStatisticPackage(currentPackage);
+	private void refreshStatistic(int subStepNumber) {
+//		StatisticPackage currentPackage  = createStatisticPackage(subStepNumber);
+//		sendStatisticPackage(currentPackage);
+		if (subStepNumber==3) {
+			StatisticPackage currentPackage  = createStatisticPackage();
+			sendStatisticPackage(currentPackage);
+		}
 	}
 	
 	/**
@@ -227,6 +282,19 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	/**
+	 * —генерировать пакет статистики
+	 * @return
+	 */
+	private StatisticPackage createStatisticPackage(int subStepNumber){
+		int experimentId = myZone.experimentId;
+		int zoneId = myZone.zoneId;
+		int iterationId = myZone.iteration*4 + subStepNumber;
+		GenotypeAgeDistribution gad = createGAD();
+		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
+		return statisticPackage;
+	}
+	
+	/**
 	 * —генерировать распределение
 	 * @return
 	 */
@@ -234,7 +302,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
 		List<Individual> individuals = myZone.getIndividuals();
 		for (Individual indiv : individuals)
-			if (indiv.isMature())
+			if (indiv.isMature() /*indiv.getAge()>0*/)
 				gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
 		return gad;
 	}	

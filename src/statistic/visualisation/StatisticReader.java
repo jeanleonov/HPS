@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 public class StatisticReader {
 
-	private Map<String, SortedMap<Integer, Integer>> genotypeQuantityHistory;
+	private Map<String, Map<Integer, SortedMap<Integer, Integer>>> genotypeQuantityHistory;
 	private BufferedReader reader;
 	private int maxYear=0;
 	private int maxQuantity=0;
@@ -26,10 +26,10 @@ public class StatisticReader {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		genotypeQuantityHistory = new HashMap<String, SortedMap<Integer, Integer>>();
+		genotypeQuantityHistory = new HashMap<String, Map<Integer, SortedMap<Integer, Integer>>>();
 	}
 	
-	public Map<String, SortedMap<Integer, Integer>> getGenotypeQuantityHistory() throws IOException {
+	public Map<String, Map<Integer, SortedMap<Integer, Integer>>> getGenotypeQuantityHistory() throws IOException {
 		if (!isReady)
 			read();
 		return genotypeQuantityHistory;
@@ -72,10 +72,20 @@ public class StatisticReader {
 	}
 	
 	private void addRowToMap(int year, String genotype, int age, int quantity) {
-		SortedMap<Integer, Integer> history = genotypeQuantityHistory.get(genotype); 
+		Map<Integer, SortedMap<Integer, Integer>> genotypeHistories = genotypeQuantityHistory.get(genotype);
+		if (genotypeHistories == null) {
+			genotypeHistories = new HashMap<Integer, SortedMap<Integer, Integer>>();
+			genotypeQuantityHistory.put(genotype, genotypeHistories);
+		}
+		addRowToSubMap(year,age,quantity,genotypeHistories);
+		addRowToSubMap(year,-1,quantity,genotypeHistories);
+	}
+	
+	private void addRowToSubMap(int year, int age, int quantity, Map<Integer, SortedMap<Integer, Integer>> genotypeHistories) {
+		SortedMap<Integer, Integer> history = genotypeHistories.get(age);
 		if (history == null) {
 			history = new TreeMap<Integer, Integer>();
-			genotypeQuantityHistory.put(genotype, history);
+			genotypeHistories.put(age, history);
 			history.put(year, quantity);
 		}
 		else {
@@ -92,10 +102,14 @@ public class StatisticReader {
 	private void addEmptyYears() {
 		Set<String> genotypes = genotypeQuantityHistory.keySet();
 		for (String genotype : genotypes) {
-			SortedMap<Integer, Integer> history = genotypeQuantityHistory.get(genotype);
-			for (Integer i=0; i<=maxYear; i++)
-				if (history.get(i) == null)
-					history.put(i, 0);
+			Map<Integer, SortedMap<Integer, Integer>> genotypeHistory = genotypeQuantityHistory.get(genotype);
+			Set<Integer> genotypeAges = genotypeHistory.keySet();
+			for(Integer age : genotypeAges){
+				SortedMap<Integer, Integer> history = genotypeHistory.get(age);
+				for (Integer i=0; i<=maxYear; i++)
+					if (history.get(i) == null)
+						history.put(i, 0);
+			}
 		}
 	}
 	
