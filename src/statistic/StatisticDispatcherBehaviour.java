@@ -19,10 +19,22 @@ public class StatisticDispatcherBehaviour extends CyclicBehaviour implements Mes
 			totalPackages++;
 			addPackageFromMessage(message);
 		}
-		if (message.getPerformative() == ACLMessage.REQUEST)
+		else if (message.getPerformative() == ACLMessage.REQUEST){			/*EXPORT#lao*/
 			exportStatistic();
-		if (totalPackages == packageBuffer)
+		}
+		else if(message.getPerformative() == ACLMessage.QUERY_IF){
+			sendState(message);
+		}
+		if (totalPackages == packageBuffer){
 			exportStatistic();
+		}
+	}
+	
+	private void sendState(ACLMessage in) {
+		boolean busy = ((StatisticDispatcher)myAgent).isBusy();
+		ACLMessage message = new ACLMessage((busy) ? ACLMessage.REFUSE : ACLMessage.CONFIRM);
+		message.addReceiver(in.getSender());
+		myAgent.send(message);
 	}
 
 	private void addPackageFromMessage(ACLMessage message){		

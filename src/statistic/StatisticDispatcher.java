@@ -18,6 +18,8 @@ public class StatisticDispatcher extends Agent{
 	
 	private String fileLocation = Shared.DEFAULT_STATISTIC_FILE;
 	private Vector<StatisticPackage> packages = new Vector<StatisticPackage>() ;
+	
+	protected boolean busy = false;
 
 	/**
 	 * Обработать аргументы, добавить поведения, отправить подтверждение
@@ -50,6 +52,7 @@ public class StatisticDispatcher extends Agent{
 	 * Сделать запись в файл и очистить коллекцию пакетов
 	 */
 	void exportToFile() {
+		busy = true;
 		try {
 			File file = createFile();
 			writeStatistic(file);
@@ -57,6 +60,16 @@ public class StatisticDispatcher extends Agent{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		busy = false;
+	}
+	
+	protected boolean isBusy() {
+		if(busy) return true;
+		if(!packages.isEmpty()) {
+			System.err.println("dafuq?");
+			return true;
+		}
+		return false;
 	}
 	
 	/**
