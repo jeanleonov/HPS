@@ -12,4 +12,6 @@ public interface IIndividualsManager {
 	
 	public void killMale(Male male);
 	public void killFemale(Female female);
+	
+	int getCapacityOfPull();
 }

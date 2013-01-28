@@ -179,6 +179,9 @@ public class Zone extends Agent {
 	}
 	
 	void updateListsAndIndividualSettings(){
+		int numberOfMalesBefore = males.size(),
+		numberOfFemalesBefore = females.size(),
+		numberOfImmaturesBefore = immatures.size();
 		for (Individual indiv : males)
 			indiv.updateSettings();
 		for (Individual indiv : females)
@@ -198,6 +201,12 @@ public class Zone extends Agent {
 		}
 		for (Individual indiv : immaturesToDelete)
 			immatures.remove(indiv);
+		int numberOfMalesAfter = males.size(),
+		numberOfFemalesAfter = females.size(),
+		numberOfImmaturesAfter = immatures.size();
+		if (numberOfMalesBefore>numberOfMalesAfter || numberOfFemalesBefore>numberOfFemalesAfter)
+			return;
+		return;
 	}
 	
 	public static double getFeedingCoeficient(){

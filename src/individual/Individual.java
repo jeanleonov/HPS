@@ -34,11 +34,12 @@ public abstract class Individual implements Serializable, WithProbability {
 	
 	public Individual(Genotype myGenotype, int age, Zone myZone) {
 		this.myGenotype = myGenotype;
-		this.age = age;
 		this.myZone = myZone;
 		viabilitySettings = Settings.getViabilitySettings(getGenotype());
 		updater = new SettingsUpdater();
-		updater.updateSettings();
+		for (this.age=0; this.age<=age; this.age++)
+			updater.updateSettings();
+		this.age = age;
 	}
 	
 	public void setZone(Zone newZone){

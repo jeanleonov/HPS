@@ -43,36 +43,24 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		scenarioExecutor = new ScenarioExecutor(myZone);
 	}
 	
-	/*
-	 * 	Zone creates new statisticPackage at the beginning of each year
-	 *  (after getting a  SCENARIO_COMMANDS message)
-	 */
 	@Override
 	public void action() {
 		ACLMessage message = myAgent.blockingReceive();
 		if(message.getPerformative() == ACLMessage.REQUEST){
 			String language = message.getLanguage();
 			ACLMessage reply = message.createReply();
-	/*@#	if (language.compareTo(START_DIE) == 0){
-				dieProcessing();
-			}
-			else*/
-			if(language.compareTo(START_MOVE) == 0){
+			if(language.compareTo(START_MOVE) == 0)
 				moveProcessing();
-			}
-			else if(language.compareTo(SCENARIO) == 0){
+			else if(language.compareTo(SCENARIO) == 0)
 				scenarioCommandProcessing(message);
-			}
 			else if (language.compareTo(START_FIRST_PHASE) == 0){
 				myZone.iteration++;
 				firstPhaseProcessing();
 			}
-			else if (language.compareTo(I_KILL_YOU) == 0){
+			else if (language.compareTo(I_KILL_YOU) == 0)
 				killingSystemProcessing();
-			}
-			else if (language.compareTo(MIGRATION) == 0){
+			else if (language.compareTo(MIGRATION) == 0)
 				myZone.createIndividual(message.getContent());
-			}
 			myZone.send(reply);
 		}
 	}
@@ -125,6 +113,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 				}
 			}
 		waitForResponsesFromZones();
+		refreshStatistic(5);		
 	}
 	
 	private void sendIndividualTo(Individual indiv, int zoneNumber){
@@ -153,14 +142,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void firstPhaseProcessing() {
+		refreshStatistic(0);
+		myZone.updateListsAndIndividualSettings();
 		refreshStatistic(1);
 		reproductionProcessing();
 		refreshStatistic(2);
 		competitionProcessing();
 		refreshStatistic(3);
-		myZone.updateListsAndIndividualSettings();
 		dieProcessing();
-		refreshStatistic(0);
+		refreshStatistic(4);
 	}
 	
 	private void killingSystemProcessing() {
@@ -260,12 +250,12 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	 * Создать и отослать пакет статистики
 	 */
 	private void refreshStatistic(int subStepNumber) {
-//		StatisticPackage currentPackage  = createStatisticPackage(subStepNumber);
-//		sendStatisticPackage(currentPackage);
-		if (subStepNumber==3) {
-			StatisticPackage currentPackage  = createStatisticPackage();
-			sendStatisticPackage(currentPackage);
-		}
+		StatisticPackage currentPackage  = createStatisticPackage(subStepNumber);
+		sendStatisticPackage(currentPackage);
+//		if (subStepNumber==3) {
+//			StatisticPackage currentPackage  = createStatisticPackage();
+//			sendStatisticPackage(currentPackage);
+//		}
 	}
 	
 	/**
@@ -288,7 +278,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private StatisticPackage createStatisticPackage(int subStepNumber){
 		int experimentId = myZone.experimentId;
 		int zoneId = myZone.zoneId;
-		int iterationId = myZone.iteration*4 + subStepNumber;
+		int iterationId = myZone.iteration*6 + subStepNumber;
 		GenotypeAgeDistribution gad = createGAD();
 		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
 		return statisticPackage;
@@ -302,7 +292,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
 		List<Individual> individuals = myZone.getIndividuals();
 		for (Individual indiv : individuals)
-			if (indiv.isMature() /*indiv.getAge()>0*/)
+	//		if (indiv.isMature() /*indiv.getAge()>0*/)
 				gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
 		return gad;
 	}	

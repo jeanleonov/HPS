@@ -24,4 +24,9 @@ public class DefaultManager implements IIndividualsManager {
 	@Override
 	public void killFemale(Female female) {
 	}
+	
+	@Override
+	public int getCapacityOfPull() {
+		return -1;
+	}
 }

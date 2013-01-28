@@ -10,7 +10,7 @@ public class IndividualsManagerDispatcher {
 							MULTIPROC_OBJECT_PULL=2;
 	
 	private static DefaultManager defaultManager=null;
-	private static ObjectPull objectPull=null;
+	private static IIndividualsManager objectPull=null;
 	private static HashMap<Integer,ObjectPull> objectPulls=null;
 	
 	private static int mode=DEFAULT;
@@ -25,7 +25,7 @@ public class IndividualsManagerDispatcher {
 	static public IIndividualsManager getIndividualsManager(int zoneNumber){
 		switch (mode){
 		case SINGLE_OBJECT_PULL:
-			return (objectPull==null)?(objectPull=new ObjectPull()):objectPull;
+			return (objectPull==null)?(objectPull=new SynchronizedObjectPull()):objectPull;
 		case MULTIPROC_OBJECT_PULL:
 			if (objectPulls == null){
 				objectPulls = new HashMap<Integer, ObjectPull>();
