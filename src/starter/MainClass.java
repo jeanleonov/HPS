@@ -37,7 +37,6 @@ public class MainClass {
 	
 	static void start(){
 		try {
-			Zone.setFeedingCoeficient((Double)getArgument("feeding_coeficient"));
 			Zone.setCapacityMultiplier((Double)getArgument("capacity_multiplier"));
 			Object[] systemStarterArgs = getSystemStarterArgs();
 			IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
@@ -63,6 +62,7 @@ public class MainClass {
 				(Integer)getArgument("zone_multiplier"),
 				(Integer)getArgument("cur_experiment"),
 				(Boolean)getArgument("display_diagram"),
+				(Boolean)getArgument("detailed_diagram"),
 				(Boolean)getArgument("sniffer"),
 				(Boolean)getArgument("introspector")
 		};
@@ -101,7 +101,6 @@ public class MainClass {
 		arguments.put("years", new ArgPair(parser.addIntegerOption('y', "years"), new Integer(1)));
 		arguments.put("cur_experiment", new ArgPair(parser.addIntegerOption('e', "cur_experiment"), new Integer(-1)));
 		arguments.put("number_of_experiments", new ArgPair(parser.addIntegerOption('E', "number_of_experiments"), new Integer(-1)));
-		arguments.put("feeding_coeficient", new ArgPair(parser.addDoubleOption('F', "feeding_coeficient"), new Double(1)));
 		arguments.put("capacity_multiplier", new ArgPair(parser.addDoubleOption('M', "capacity_multiplier"), new Double(1)));
 		arguments.put("zone_multiplier", new ArgPair(parser.addIntegerOption('z', "zone_multiplier"), new Integer(1)));
 		arguments.put("object_manager", new ArgPair(parser.addIntegerOption('o', "object_manager"), new Integer(0)));
@@ -111,6 +110,7 @@ public class MainClass {
 		arguments.put("viability", new ArgPair(parser.addStringOption('v', "viability"), Shared.DEFAULT_VIABILITY_FILE));
 		arguments.put("posterity", new ArgPair(parser.addStringOption('p', "posterity"), Shared.DEFAULT_POSTERITY_FILE));
 		arguments.put("display_diagram", new ArgPair(parser.addBooleanOption('d', "display_diagram"), Boolean.FALSE));
+		arguments.put("detailed_diagram", new ArgPair(parser.addBooleanOption('D', "detailed_diagram"), Boolean.FALSE));
 		//QM
 		arguments.put("port", new ArgPair(parser.addIntegerOption('P', "port"), new Integer(0)));
 		arguments.put("movePossibilities", new ArgPair(parser.addStringOption('m', "map"), Shared.DEFAULT_MAP_FILE));

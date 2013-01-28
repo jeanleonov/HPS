@@ -24,7 +24,7 @@ import java.io.FileReader;
 import settings.Settings;
 import statistic.StatisticDispatcher;
 
-public class SystemStarter extends Agent implements Shared{
+public class SystemStarter extends Agent {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -47,6 +47,7 @@ public class SystemStarter extends Agent implements Shared{
 	
 	boolean shutdownFlag = false;
 	boolean shouldDisplayDiagram;
+	boolean shouldDisplayDetailedDiagram;
 
 	@Override
 	protected void setup(){
@@ -67,9 +68,10 @@ public class SystemStarter extends Agent implements Shared{
 		this.zoneMultiplier = (Integer)args[5];
 		container = getContainerController();
 		curExperiment = (Integer)args[6];
-		shouldDisplayDiagram = (Boolean) args[7]; 
-		if((Boolean) args[8]) startSniffer();
-		if((Boolean) args[9]) startIntrospector();
+		shouldDisplayDiagram = (Boolean) args[7] || (Boolean) args[8]; 
+		shouldDisplayDetailedDiagram = (Boolean) args[8];
+		if((Boolean) args[9]) startSniffer();
+		if((Boolean) args[10]) startIntrospector();
 		startSystem();
 	}
 	

@@ -15,12 +15,14 @@ public class StatisticReader {
 
 	private Map<String, Map<Integer, SortedMap<Integer, Integer>>> genotypeQuantityHistory;
 	private BufferedReader reader;
-	private int maxYear=0;
+	private int maxIteration=0;
 	private int maxQuantity=0;
 	private boolean isReady = false;
+	private boolean shouldReadDetailedStatistic;
 	// | experiment | zone | year | genotype | age | quantity |
 	
-	public StatisticReader(String statisticFileURL) {
+	public StatisticReader(String statisticFileURL, boolean shouldReadDetailedStatistic) {
+		this.shouldReadDetailedStatistic = shouldReadDetailedStatistic;
 		try {
 			reader = new BufferedReader(new FileReader(statisticFileURL));
 		} catch (FileNotFoundException e) {
@@ -41,10 +43,10 @@ public class StatisticReader {
 		return maxQuantity;
 	}
 	
-	public int getMaxYear() throws IOException {
+	public int getMaxIteration() throws IOException {
 		if (!isReady)
 			read();
-		return maxYear;
+		return maxIteration;
 	}
 	
 	private void read() throws IOException {
@@ -53,7 +55,7 @@ public class StatisticReader {
 			String line = reader.readLine();
 			isFileFinished = readRowAndCheckForEnd(line);
 		} while (!isFileFinished);
-		addEmptyYears();
+		addEmptyIterations();
 		isReady = true;
 	}
 	
@@ -61,52 +63,57 @@ public class StatisticReader {
 		if (line == null)
 			return true;
 		String[] rowElements = line.split(";");
-		int year = Integer.parseInt(rowElements[2]);
-		if (year > maxYear)
-			maxYear = year;
+		int iteration = Integer.parseInt(rowElements[2]);
+		if (!shouldReadDetailedStatistic) {
+			if (iteration%5 != 3)					// 3 - magic number)) it is a number of sub iteration between competition and dying
+				return false;						// 5 - magic number)) it is a number of sub iterations in year (see ZoneBehaviour)
+			iteration /= 5;
+		}
+		if (iteration > maxIteration)
+			maxIteration = iteration;
 		String genotype = rowElements[3];
 		int age = Integer.parseInt(rowElements[4]);
 		int quantity = Integer.parseInt(rowElements[5]);
-		addRowToMap(year, genotype, age, quantity);
+		addRowToMap(iteration, genotype, age, quantity);
 		return false;
 	}
 	
-	private void addRowToMap(int year, String genotype, int age, int quantity) {
+	private void addRowToMap(int iteration, String genotype, int age, int quantity) {
 		Map<Integer, SortedMap<Integer, Integer>> genotypeHistories = genotypeQuantityHistory.get(genotype);
 		if (genotypeHistories == null) {
 			genotypeHistories = new HashMap<Integer, SortedMap<Integer, Integer>>();
 			genotypeQuantityHistory.put(genotype, genotypeHistories);
 		}
-		addRowToSubMap(year,age,quantity,genotypeHistories);
-		addRowToSubMap(year,-1,quantity,genotypeHistories);
+		addRowToSubMap(iteration,age,quantity,genotypeHistories);
+		addRowToSubMap(iteration,-1,quantity,genotypeHistories);
 	}
 	
-	private void addRowToSubMap(int year, int age, int quantity, Map<Integer, SortedMap<Integer, Integer>> genotypeHistories) {
+	private void addRowToSubMap(int iteration, int age, int quantity, Map<Integer, SortedMap<Integer, Integer>> genotypeHistories) {
 		SortedMap<Integer, Integer> history = genotypeHistories.get(age);
 		if (history == null) {
 			history = new TreeMap<Integer, Integer>();
 			genotypeHistories.put(age, history);
-			history.put(year, quantity);
+			history.put(iteration, quantity);
 		}
 		else {
-			Integer previusQuantity = history.get(year);
+			Integer previusQuantity = history.get(iteration);
 			if (previusQuantity == null)
 				previusQuantity = 0;
 			quantity += previusQuantity;
-			history.put(year, quantity);
+			history.put(iteration, quantity);
 			if (quantity > maxQuantity)
 				maxQuantity = quantity;
 		}
 	}
 	
-	private void addEmptyYears() {
+	private void addEmptyIterations() {
 		Set<String> genotypes = genotypeQuantityHistory.keySet();
 		for (String genotype : genotypes) {
 			Map<Integer, SortedMap<Integer, Integer>> genotypeHistory = genotypeQuantityHistory.get(genotype);
 			Set<Integer> genotypeAges = genotypeHistory.keySet();
 			for(Integer age : genotypeAges){
 				SortedMap<Integer, Integer> history = genotypeHistory.get(age);
-				for (Integer i=0; i<=maxYear; i++)
+				for (Integer i=0; i<=maxIteration; i++)
 					if (history.get(i) == null)
 						history.put(i, 0);
 			}

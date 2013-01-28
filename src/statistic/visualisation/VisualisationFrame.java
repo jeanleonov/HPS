@@ -22,12 +22,14 @@ public class VisualisationFrame extends JFrame {
 	private CanvasPanel canvas;
 	private ScrollPane scr;
 	private StatisticReader reader;
+	private boolean shouldDisplayDetailedDiagram;
 	private Map<String, Map<Integer, SortedMap<Integer, Integer>>> genotypesMap=null;
 	
 	private int width=1200, height=550;
 	
-	public VisualisationFrame(String statisticFileURL){
+	public VisualisationFrame(String statisticFileURL, boolean shouldDisplayDetailedDiagram){
 		super("Paint");
+		this.shouldDisplayDetailedDiagram = shouldDisplayDetailedDiagram;
 		initMe();
 		initCanvas(statisticFileURL);
 		initControlPanel();
@@ -41,9 +43,9 @@ public class VisualisationFrame extends JFrame {
 	}
 	
 	private void initCanvas(String statisticFileURL) {
-		reader = new StatisticReader(statisticFileURL);
+		reader = new StatisticReader(statisticFileURL, shouldDisplayDetailedDiagram);
 		try {
-			canvas = new CanvasPanel(width*8, height, reader.getMaxYear(), reader.getMaxQuantity());
+			canvas = new CanvasPanel(width*8, height, reader.getMaxIteration(), reader.getMaxQuantity());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

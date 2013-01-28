@@ -24,7 +24,6 @@ public class Zone extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
-	private static double feedingCoeficient;
 	private static double capacityMultiplier;
 	ArrayList<Male> males = new ArrayList<Male>();
 	ArrayList<Female> females = new ArrayList<Female>();
@@ -121,13 +120,8 @@ public class Zone extends Agent {
 		return males.size() + females.size() + immatures.size();
 	}
 	
-	public double getAttractivness(){
-		// DMY: It's desirable to return value between 0 and 1		
-		// DMY: my version, totalCompetitiveness is taken from individuals while feeding
-		double attractivness = 0.5; // LAO(temporery)(double)resources / (feedingCoeficient * totalCompetitiveness); 
-		// LAO(temporery): if(attractivness > 1)
-		// LAO(temporery)	attractivness = 1;
-		return attractivness;
+	public double getAttractivness() {
+		return 0.5;			//#Stub
 	}
 	
 	List<Individual> getIndividuals(){
@@ -179,9 +173,6 @@ public class Zone extends Agent {
 	}
 	
 	void updateListsAndIndividualSettings(){
-		int numberOfMalesBefore = males.size(),
-		numberOfFemalesBefore = females.size(),
-		numberOfImmaturesBefore = immatures.size();
 		for (Individual indiv : males)
 			indiv.updateSettings();
 		for (Individual indiv : females)
@@ -201,20 +192,6 @@ public class Zone extends Agent {
 		}
 		for (Individual indiv : immaturesToDelete)
 			immatures.remove(indiv);
-		int numberOfMalesAfter = males.size(),
-		numberOfFemalesAfter = females.size(),
-		numberOfImmaturesAfter = immatures.size();
-		if (numberOfMalesBefore>numberOfMalesAfter || numberOfFemalesBefore>numberOfFemalesAfter)
-			return;
-		return;
-	}
-	
-	public static double getFeedingCoeficient(){
-		return feedingCoeficient;
-	}
-	
-	public static void setFeedingCoeficient(double c){
-		feedingCoeficient = c;
 	}
 	
 	public static void setCapacityMultiplier(double multiplier){

@@ -43,8 +43,7 @@ public class Male extends Individual {
 	}
 	
 	double getAttractivness(){
-		// TODO !!!!!!!!!!!!!!!!!!!!!
-		return 0.5;
+		return 0.5;			//#Stub
 	}
 
 	@Override

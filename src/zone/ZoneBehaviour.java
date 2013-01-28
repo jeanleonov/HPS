@@ -113,7 +113,6 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 				}
 			}
 		waitForResponsesFromZones();
-		refreshStatistic(5);		
 	}
 	
 	private void sendIndividualTo(Individual indiv, int zoneNumber){
@@ -129,7 +128,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	}
 	
 	private void waitForResponsesFromZones(){
-		for (int i=0; i<movedThisYear;){				// BAD CODE! 
+		for (int i=0; i<movedThisYear;) {
 			ACLMessage message = myAgent.blockingReceive(MessageTemplate.MatchLanguage(MIGRATION));
 			if (message.getContent() == null)
 				i++;
@@ -143,11 +142,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void firstPhaseProcessing() {
 		refreshStatistic(0);
-		myZone.updateListsAndIndividualSettings();
-		refreshStatistic(1);
 		reproductionProcessing();
-		refreshStatistic(2);
+		refreshStatistic(1);
 		competitionProcessing();
+		refreshStatistic(2);
+		myZone.updateListsAndIndividualSettings();
 		refreshStatistic(3);
 		dieProcessing();
 		refreshStatistic(4);
@@ -252,23 +251,6 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void refreshStatistic(int subStepNumber) {
 		StatisticPackage currentPackage  = createStatisticPackage(subStepNumber);
 		sendStatisticPackage(currentPackage);
-//		if (subStepNumber==3) {
-//			StatisticPackage currentPackage  = createStatisticPackage();
-//			sendStatisticPackage(currentPackage);
-//		}
-	}
-	
-	/**
-	 * —генерировать пакет статистики
-	 * @return
-	 */
-	private StatisticPackage createStatisticPackage(){
-		int experimentId = myZone.experimentId;
-		int zoneId = myZone.zoneId;
-		int iterationId = myZone.iteration;
-		GenotypeAgeDistribution gad = createGAD();
-		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
-		return statisticPackage;
 	}
 	
 	/**
@@ -278,7 +260,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private StatisticPackage createStatisticPackage(int subStepNumber){
 		int experimentId = myZone.experimentId;
 		int zoneId = myZone.zoneId;
-		int iterationId = myZone.iteration*6 + subStepNumber;
+		int iterationId = myZone.iteration*5 + subStepNumber;
 		GenotypeAgeDistribution gad = createGAD();
 		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
 		return statisticPackage;
@@ -292,7 +274,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
 		List<Individual> individuals = myZone.getIndividuals();
 		for (Individual indiv : individuals)
-	//		if (indiv.isMature() /*indiv.getAge()>0*/)
+			if (indiv.isMature() /*indiv.getAge()>0*/)
 				gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
 		return gad;
 	}	

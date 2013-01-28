@@ -14,7 +14,7 @@ import zone.Zone;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 
-public class Female extends Individual implements Shared{
+public class Female extends Individual {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -52,7 +52,7 @@ public class Female extends Individual implements Shared{
 	
 	ZoneDistribution createPosterityWith(Male male){
 		ZoneDistribution posterity = new ZoneDistribution();
-		int posteritySize = (int)(male.curFertility * curFertility * POSTERITY_SIZE_MULTUPLIER);			// TODO delete this shit
+		int posteritySize = (int)(male.curFertility * curFertility * Shared.POSTERITY_SIZE_MULTUPLIER);			// TODO delete this shit
 		ArrayList<PosterityResultPair> resultsInterbreeding = Settings.getPosteritySettings(myGenotype, male.myGenotype);
 		if (resultsInterbreeding != null)
 			for(PosterityResultPair pair : resultsInterbreeding)
@@ -66,8 +66,7 @@ public class Female extends Individual implements Shared{
 	}
 	
 	double getAttractivness(){
-		// TODO !!!!!!!!!!!!!!!!!!!!!
-		return 0.5;
+		return 0.5;			//#Stub
 	}
 	
 	void addLover(Male male){

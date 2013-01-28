@@ -2,9 +2,14 @@ package starter;
 
 import org.apache.log4j.Logger;
 
-public interface Shared {
+public final class Shared {
+	
+	// Just for ban on the creation of objects.
+	// We cann't use keyword 'abstract' with 'final'
+	private Shared(){}
 
-	String  PROJECT_PATH = ProjectPathGetter.getProjectPath(),
+	public final static String
+			PROJECT_PATH = getProjectPath(),
 			DEFAULT_MAP_FILE = "*",
 			DEFAULT_VIABILITY_FILE = "Viability.csv",
 			DEFAULT_POSTERITY_FILE = "Posterity.csv",
@@ -20,7 +25,6 @@ public interface Shared {
 						"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
 						"	                              (== -1: for runing on cluster,\n" +
 						"	                              DON'T use this argument whit -e)\n" +
-						"	[{-F, --feeding_coeficient} double]  argument for controlling dying possibility in competition (is in [0..1]) | DEFAULT 0.5\n" +
 						"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones" +
 						"	[{-z, --zone_multiplier} int]  temporary argument for multipling number of zones | DEFAULT 1\n" +
 						"	[{-f, --project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
@@ -31,25 +35,29 @@ public interface Shared {
 						"	[{-i, --initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n" +
 						"	[{-o, --object_manager} int(0|1|2)]  0 - simple creation of individuals,\n" +
 						"	                                     1 - creation of individuals with using of object pull,\n" +
-						"	                                     2 - creation of individuals with using of object pulls\n" +
+						"	                                     2 - creation of individuals with using of object pulls for each zone\n" +
 						"	                                     | DEFAULT 0\n" +
+						"	[{-d, --display_diagram} boolean] display diagrams after modeling process\n" +
+						"	[{-D, --detailed_diagram} boolean] display detailed diagrams after modeling process\n" +
 						"	[{-P, --port} int]";
 	
+	public final static 
 	int	DEFAULT_PACKAGE_BUFFER = 100,
 		DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,
 		DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3,
 		MAX_NUMBER_OF_REPRODUCTION_CIRCLES = 10;
 	
+	public final static 
 	double POSTERITY_SIZE_MULTUPLIER = 1;
 	
+	public final static 
 	Logger	problemsLogger = Logger.getLogger("problemsLogger"),
 			debugLogger = Logger.getLogger("debugLogger"),
 			infoLogger = Logger.getLogger("infoLogger");
 		
-	static class ProjectPathGetter{
-		static String getProjectPath(){
-			String path = System.getProperty("user.dir");
-			return path;
-		}
+	private final static
+	String getProjectPath(){
+		String path = System.getProperty("user.dir");
+		return path;
 	}
 }
