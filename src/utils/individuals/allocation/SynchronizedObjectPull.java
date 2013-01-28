@@ -60,33 +60,25 @@ public class SynchronizedObjectPull implements IIndividualsManager {
 	}
 	
 	Male removeMale(){
-		synchronized (maleStorage) {
-			return maleStorage[--numberOfMales];
-		}
+		return maleStorage[--numberOfMales];
 	}
 	
 	Female removeFemale(){
-		synchronized (femaleStorage) {
-			return femaleStorage[--numberOfFemales];
-		}
+		return femaleStorage[--numberOfFemales];
 	}
 	
 	private void increaseMaleStorage(){
-		synchronized (maleStorage) {
-			Male[] temp = maleStorage;
-			maleStorage = new Male[temp.length*2];
-			for(int i=0; i<temp.length; i++)
-				maleStorage[i] = temp[i];
-		}
+		Male[] temp = maleStorage;
+		maleStorage = new Male[temp.length*2];
+		for(int i=0; i<temp.length; i++)
+			maleStorage[i] = temp[i];
 	}
 	
 	private void increaseFemaleStorage(){
-		synchronized (femaleStorage) {
-			Female[] temp = femaleStorage;
-			femaleStorage = new Female[temp.length*2];
-			for(int i=0; i<temp.length; i++)
-				femaleStorage[i] = temp[i];
-		}
+		Female[] temp = femaleStorage;
+		femaleStorage = new Female[temp.length*2];
+		for(int i=0; i<temp.length; i++)
+			femaleStorage[i] = temp[i];
 	}
 
 	public int getCapacityOfPull() {
