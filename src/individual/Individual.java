@@ -10,10 +10,9 @@ import java.util.Iterator;
 import settings.Settings;
 import settings.ViabilityPair;
 import settings.Vocabulary;
-import utils.WithProbability;
 import zone.Zone;
 
-public abstract class Individual implements Serializable, WithProbability {
+public abstract class Individual implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -192,8 +191,7 @@ public abstract class Individual implements Serializable, WithProbability {
 		return myGenotype.toString() + " " + age;
 	}
 	
-	@Override
-	public double getProbability(){
+	public double getAntiCompetitiveness(){
 		return 1 - getCompetitiveness();
 	}
 }

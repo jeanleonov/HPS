@@ -10,7 +10,9 @@ import jade.core.Agent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import settings.Settings;
@@ -25,10 +27,10 @@ public class Zone extends Agent {
 	private static final long serialVersionUID = 1L;
 	
 	private static double capacityMultiplier;
-	ArrayList<Male> males = new ArrayList<Male>();
-	ArrayList<Female> females = new ArrayList<Female>();
-	ArrayList<Individual> immatures = new ArrayList<Individual>();
-	ArrayList<Individual> yearlings = new ArrayList<Individual>();
+	List<Male> males = new LinkedList<Male>();
+	List<Female> females = new LinkedList<Female>();
+	List<Individual> otherImmatures = new LinkedList<Individual>();
+	List<Individual> yearlings = new LinkedList<Individual>();
 	IIndividualsManager individualsManager;
 	
 	AID statisticDispatcher;
@@ -103,66 +105,65 @@ public class Zone extends Agent {
 	}
 	
 	public void addIndividualToList(Individual individual) {
-		if (!individual.isMature()){
-			immatures.add(individual);
+		if (!individual.isMature())
 			if (individual.getAge()==0)
 				yearlings.add(individual);
-		}
-		else {
+			else
+				otherImmatures.add(individual);
+		else
 			if (individual.isFemale())
 				females.add((Female)individual);
 			else
 				males.add((Male)individual);
-		}
+	}
+	
+	public void createYearlings(ZoneDistribution zoneDistribution) {
+		if (zoneDistribution == null)
+			return;
+		List<GenotypeAgeCountTrio> gants = zoneDistribution.getGenotypeDistributions();
+		for (GenotypeAgeCountTrio gant : gants)
+			createYearlingsByGant(gant);
+	}
+
+	private void createYearlingsByGant(GenotypeAgeCountTrio gant) {
+		for (int i = 0; i < gant.getNumber(); i++)
+			createYearling(gant.getGenotype());
+	}
+
+	private void createYearling(Genotype genotype) {
+		if (genotype.getGender() == Genome.X)
+			yearlings.add(individualsManager.getFemale(genotype, 0, this));
+		else
+			yearlings.add(individualsManager.getMale(genotype, 0, this));
 	}
 	
 	int getIndividualsNumber(){
-		return males.size() + females.size() + immatures.size();
+		return males.size() + females.size() + otherImmatures.size() + yearlings.size();
 	}
 	
 	public double getAttractivness() {
 		return 0.5;			//#Stub
 	}
-	
+
 	List<Individual> getIndividuals(){
 		List<Individual> individuals = new ArrayList<Individual>(getIndividualsNumber());
 		individuals.addAll(males);
 		individuals.addAll(females);
-		individuals.addAll(immatures);
+		individuals.addAll(otherImmatures);
+		individuals.addAll(yearlings);
 		return individuals;
 	}
 	
 	public void killIndividual(Individual individual) {
 		if (!males.remove(individual))
-			if (!females.remove(individual)){
-				immatures.remove(individual);
-				yearlings.remove(individual);
-			}
+			if (!females.remove(individual))
+				if (!otherImmatures.remove(individual))
+					yearlings.remove(individual);
 		if (individual.isFemale())
 			individualsManager.killFemale((Female)individual);
 		else
 			individualsManager.killMale((Male)individual);
 	}
-	
-	public void killMale(Male male) {
-		males.remove(male);
-		individualsManager.killMale(male);
-	}
-	
-	public void killFemale(Female female) {
-		females.remove(female);
-		individualsManager.killFemale(female);
-	}
-	
-	public void killImmature(Individual individual) {
-		immatures.remove(individual);
-		yearlings.remove(individual);
-		if (individual.isFemale())
-			individualsManager.killFemale((Female)individual);
-		else
-			individualsManager.killMale((Male)individual);
-	}
-	
 
 	public int getZoneNumber() {
 		return zoneId;
@@ -177,21 +178,20 @@ public class Zone extends Agent {
 			indiv.updateSettings();
 		for (Individual indiv : females)
 			indiv.updateSettings();
-		ArrayList<Individual> immaturesToDelete = new ArrayList<Individual>();
-		for (Individual indiv : immatures){
+		otherImmatures.addAll(yearlings);
+		yearlings.clear();
+		ListIterator<Individual> iterator = otherImmatures.listIterator();
+		while (iterator.hasNext()) {
+			Individual indiv = iterator.next();
 			indiv.updateSettings();
-			if (indiv.getAge() == 1)
-				yearlings.remove(indiv);
 			if (indiv.isMature()){
-				immaturesToDelete.add(indiv);
+				iterator.remove();
 				if (indiv.isFemale())
 					females.add((Female)indiv);
 				else
 					males.add((Male)indiv);
 			}
 		}
-		for (Individual indiv : immaturesToDelete)
-			immatures.remove(indiv);
 	}
 	
 	public static void setCapacityMultiplier(double multiplier){

@@ -12,17 +12,15 @@ import jade.lang.acl.UnreadableException;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
-import java.util.Set;
 
 import messaging.Messaging;
 import settings.Settings;
 import starter.Shared;
 import statistic.GenotypeAgeDistribution;
 import statistic.StatisticPackage;
-import utils.ProbabilityCollection;
 import experiment.ZoneCommand;
 
 
@@ -78,24 +76,17 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void dieProcessing() {
 		logPopulationSizes("Die         ");
-		ArrayList<Male> malesToKill = new ArrayList<Male>();
-		ArrayList<Female> femalesToKill = new ArrayList<Female>();
-		ArrayList<Individual> immaturesToKill = new ArrayList<Individual>();
-		for (Male indiv : myZone.males)
-			if (indiv.isDead())
-				malesToKill.add(indiv);
-		for (Female indiv : myZone.females)
-			if (indiv.isDead())
-				femalesToKill.add(indiv);
-		for (Individual indiv : myZone.immatures)
-			if (indiv.isDead())
-				immaturesToKill.add(indiv);
-		for (Male indiv : malesToKill)
-			myZone.killMale(indiv);
-		for (Female indiv : femalesToKill)
-			myZone.killFemale(indiv);
-		for (Individual indiv : immaturesToKill)
-			myZone.killImmature(indiv);
+		killDieLoosersIn(myZone.males);
+		killDieLoosersIn(myZone.females);
+		killDieLoosersIn(myZone.otherImmatures);
+		killDieLoosersIn(myZone.yearlings);
+	}
+	
+	private static void killDieLoosersIn(List<? extends Individual> indivs) {
+		ListIterator<? extends Individual> iterator = indivs.listIterator();
+		while (iterator.hasNext())
+			if (iterator.next().isDead())
+				iterator.remove();
 	}
 
 	private void moveProcessing() {
@@ -177,14 +168,40 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void competitionProcessing(){
 		logPopulationSizes("Competition ");
-		List<Individual> individuals = myZone.getIndividuals();
-		float individualsNumber = individuals.size();
+		int individualsNumber = myZone.getIndividualsNumber();
 		if(individualsNumber <= myZone.capacity)
 			return;
-		ProbabilityCollection<Individual> probabilityCollection = new ProbabilityCollection<Individual>(individuals);
-		Set<Individual> individualsToKill = probabilityCollection.getElements(individualsNumber-myZone.capacity);
-		for (Individual indiv : individualsToKill)
-			myZone.killIndividual(indiv);
+		double totalSumOfAntiCompetetiveness = getTotalSumOfAntiCompetetiveness();
+		killCompetitionLoosers(individualsNumber-myZone.capacity, totalSumOfAntiCompetetiveness, individualsNumber);
+	}
+	
+	private double getTotalSumOfAntiCompetetiveness() {
+		double totalSumOfAntiCompetetiveness=0;
+		for (Individual element : myZone.males)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		for (Individual element : myZone.females)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		for (Individual element : myZone.otherImmatures)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		for (Individual element : myZone.yearlings)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		return totalSumOfAntiCompetetiveness;
+	}
+	
+	/** @return random elements according to specified probabilities */
+	private void killCompetitionLoosers(float approximateQuantity, double totalSumOfAntiCompetetiveness, int indivsNumber) {
+		double coeficient = approximateQuantity/indivsNumber/(totalSumOfAntiCompetetiveness/indivsNumber);
+		killCompetitionLoosersIn(myZone.males, coeficient);
+		killCompetitionLoosersIn(myZone.females, coeficient);
+		killCompetitionLoosersIn(myZone.otherImmatures, coeficient);
+		killCompetitionLoosersIn(myZone.yearlings, coeficient);
+	}
+	
+	private static void killCompetitionLoosersIn(List<? extends Individual> indivs, double coeficient) {
+		ListIterator<? extends Individual> iterator = indivs.listIterator();
+		while (iterator.hasNext())
+			if (Math.random() <= iterator.next().getAntiCompetitiveness()*coeficient)
+				iterator.remove();
 	}
 	
 	
@@ -273,9 +290,14 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	 */
 	private GenotypeAgeDistribution createGAD() {
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
-		List<Individual> individuals = myZone.getIndividuals();
-		for (Individual indiv : individuals)
-			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), indiv.isMature());
+		for (Individual indiv : myZone.males)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), true);
+		for (Individual indiv : myZone.females)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), true);
+		for (Individual indiv : myZone.otherImmatures)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), false);
+		for (Individual indiv : myZone.yearlings)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), false);
 		gad.setDifferencesWith(previousIterationGAD);
 		previousIterationGAD = gad;
 		return gad;
@@ -299,7 +321,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private void logPopulationSizes(String beforePhaseName){
 		int	males = myZone.males.size(),
 			females = myZone.females.size(),
-			immatures = myZone.immatures.size(),
+			immatures = myZone.otherImmatures.size(),
 			yearlings = myZone.yearlings.size();
 		Shared.debugLogger.debug(MessageFormat.format(
 				"Before {0}: M-{1,number},\tF-{2,number},\tI-{3,number},\tY-{4,number}", 
