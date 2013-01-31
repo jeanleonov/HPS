@@ -79,9 +79,8 @@ public class StatisticDispatcher extends Agent{
 	private void writeStatistic(File file) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
-			for (StatisticPackage pack : packages) {
+			for (StatisticPackage pack : packages)
 				bw.write(pack.toString());
-			}
 			bw.flush();
 			bw.close();
 		} catch (IOException e) {
@@ -96,9 +95,8 @@ public class StatisticDispatcher extends Agent{
 	 */
 	private File createFile() throws IOException {
 		File file = new File(fileLocation);
-		if (!file.exists()) {
+		if (!file.exists())
 			file.createNewFile();
-		}
 		return file;
 	}
 }

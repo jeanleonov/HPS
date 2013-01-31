@@ -36,6 +36,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private ScenarioExecutor scenarioExecutor = null;
 	private Random rand = new Random();
 	private int movedThisYear;
+	private GenotypeAgeDistribution previousIterationGAD = null;
 	
 	@Override
 	public void onStart(){
@@ -142,11 +143,11 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void firstPhaseProcessing() {
 		refreshStatistic(0);
-		reproductionProcessing();
-		refreshStatistic(1);
-		competitionProcessing();
-		refreshStatistic(2);
 		myZone.updateListsAndIndividualSettings();
+		refreshStatistic(1);
+		reproductionProcessing();
+		refreshStatistic(2);
+		competitionProcessing();
 		refreshStatistic(3);
 		dieProcessing();
 		refreshStatistic(4);
@@ -260,9 +261,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private StatisticPackage createStatisticPackage(int subStepNumber){
 		int experimentId = myZone.experimentId;
 		int zoneId = myZone.zoneId;
-		int iterationId = myZone.iteration*5 + subStepNumber;
+		int iterationId = myZone.iteration;
 		GenotypeAgeDistribution gad = createGAD();
-		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, gad);
+		StatisticPackage statisticPackage = new StatisticPackage(experimentId, zoneId, iterationId, subStepNumber, gad);
 		return statisticPackage;
 	}
 	
@@ -274,8 +275,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
 		List<Individual> individuals = myZone.getIndividuals();
 		for (Individual indiv : individuals)
-			if (indiv.isMature() /*indiv.getAge()>0*/)
-				gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge());
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), indiv.isMature());
+		gad.setDifferencesWith(previousIterationGAD);
+		previousIterationGAD = gad;
 		return gad;
 	}	
 	

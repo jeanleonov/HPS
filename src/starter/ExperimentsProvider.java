@@ -55,7 +55,7 @@ public class ExperimentsProvider extends Behaviour implements Messaging {
 		Logger.getLogger("runningTimeLogger").info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
 		stopStatisticDispatcher();
 		if (starter.shouldDisplayDiagram)
-			new VisualisationFrame(starter.curStatisticFileURL, starter.shouldDisplayDetailedDiagram);
+			new VisualisationFrame(starter.curStatisticFileURL, starter.shouldDisplayDetailedDiagram, starter.shouldDisplayImmatures);
 		starter.doDelete();
 		return super.onEnd();
 	}

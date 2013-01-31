@@ -63,6 +63,7 @@ public class MainClass {
 				(Integer)getArgument("cur_experiment"),
 				(Boolean)getArgument("display_diagram"),
 				(Boolean)getArgument("detailed_diagram"),
+				(Boolean)getArgument("display_immatures"),
 				(Boolean)getArgument("sniffer"),
 				(Boolean)getArgument("introspector")
 		};
@@ -111,6 +112,7 @@ public class MainClass {
 		arguments.put("posterity", new ArgPair(parser.addStringOption('p', "posterity"), Shared.DEFAULT_POSTERITY_FILE));
 		arguments.put("display_diagram", new ArgPair(parser.addBooleanOption('d', "display_diagram"), Boolean.FALSE));
 		arguments.put("detailed_diagram", new ArgPair(parser.addBooleanOption('D', "detailed_diagram"), Boolean.FALSE));
+		arguments.put("display_immatures", new ArgPair(parser.addBooleanOption('I', "display_immatures"), Boolean.FALSE));
 		//QM
 		arguments.put("port", new ArgPair(parser.addIntegerOption('P', "port"), new Integer(0)));
 		arguments.put("movePossibilities", new ArgPair(parser.addStringOption('m', "map"), Shared.DEFAULT_MAP_FILE));

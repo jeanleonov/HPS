@@ -8,7 +8,6 @@ import settings.PosterityResultPair;
 import settings.Settings;
 import settings.ViabilityPair;
 import settings.Vocabulary;
-import settings.Vocabulary.Param;
 import starter.Shared;
 import zone.Zone;
 import distribution.GenotypeAgeCountTrio;
@@ -61,7 +60,7 @@ public class Female extends Individual {
 							pair.getGenotype(),
 							0,
 							(int) (posteritySize*pair.getProbability()
-							*getSetting(Settings.getViabilitySettings(pair.getGenotype()), Param.SurvivalFactorFirst))));
+							/**getSetting(Settings.getViabilitySettings(pair.getGenotype()), Param.SurvivalFactorFirst)*/)));
 		return posterity;
 	}
 	

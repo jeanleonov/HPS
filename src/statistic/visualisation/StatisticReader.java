@@ -16,13 +16,20 @@ public class StatisticReader {
 	private Map<String, Map<Integer, SortedMap<Integer, Integer>>> genotypeQuantityHistory;
 	private BufferedReader reader;
 	private int maxIteration=0;
+	private int minuteness;
 	private int maxQuantity=0;
 	private boolean isReady = false;
 	private boolean shouldReadDetailedStatistic;
+	private boolean shouldDisplayImmatures;
 	// | experiment | zone | year | genotype | age | quantity |
 	
-	public StatisticReader(String statisticFileURL, boolean shouldReadDetailedStatistic) {
+	public StatisticReader(String statisticFileURL, boolean shouldReadDetailedStatistic, boolean shouldDisplayImmatures) {
 		this.shouldReadDetailedStatistic = shouldReadDetailedStatistic;
+		if (shouldReadDetailedStatistic)
+			minuteness = 5;
+		else
+			minuteness = 1;
+		this.shouldDisplayImmatures = shouldDisplayImmatures;
 		try {
 			reader = new BufferedReader(new FileReader(statisticFileURL));
 		} catch (FileNotFoundException e) {
@@ -46,7 +53,7 @@ public class StatisticReader {
 	public int getMaxIteration() throws IOException {
 		if (!isReady)
 			read();
-		return maxIteration;
+		return maxIteration*minuteness;
 	}
 	
 	private void read() throws IOException {
@@ -63,18 +70,19 @@ public class StatisticReader {
 		if (line == null)
 			return true;
 		String[] rowElements = line.split(";");
+		if (!shouldDisplayImmatures && rowElements[7].charAt(0) == '-')
+			return false;
 		int iteration = Integer.parseInt(rowElements[2]);
-		if (!shouldReadDetailedStatistic) {
-			if (iteration%5 != 3)					// 3 - magic number)) it is a number of sub iteration between competition and dying
+		int subiteration = Integer.parseInt(rowElements[3]);
+		if (!shouldReadDetailedStatistic)
+			if (subiteration != 4)					// 3 - magic number)) it is a number of sub iteration between competition and dying
 				return false;						// 5 - magic number)) it is a number of sub iterations in year (see ZoneBehaviour)
-			iteration /= 5;
-		}
 		if (iteration > maxIteration)
 			maxIteration = iteration;
-		String genotype = rowElements[3];
-		int age = Integer.parseInt(rowElements[4]);
-		int quantity = Integer.parseInt(rowElements[5]);
-		addRowToMap(iteration, genotype, age, quantity);
+		String genotype = rowElements[4];
+		int age = Integer.parseInt(rowElements[5]);
+		int quantity = Integer.parseInt(rowElements[6]);
+		addRowToMap(iteration*minuteness + subiteration, genotype, age, quantity);
 		return false;
 	}
 	

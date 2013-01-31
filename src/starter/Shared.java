@@ -25,7 +25,7 @@ public final class Shared {
 						"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
 						"	                              (== -1: for runing on cluster,\n" +
 						"	                              DON'T use this argument whit -e)\n" +
-						"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones" +
+						"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n" +
 						"	[{-z, --zone_multiplier} int]  temporary argument for multipling number of zones | DEFAULT 1\n" +
 						"	[{-f, --project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
 						"	[{-v, --viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
@@ -37,8 +37,9 @@ public final class Shared {
 						"	                                     1 - creation of individuals with using of object pull,\n" +
 						"	                                     2 - creation of individuals with using of object pulls for each zone\n" +
 						"	                                     | DEFAULT 0\n" +
-						"	[{-d, --display_diagram} boolean] display diagrams after modeling process\n" +
-						"	[{-D, --detailed_diagram} boolean] display detailed diagrams after modeling process\n" +
+						"	[{-d, --display_diagram} boolean] display diagrams after modeling process | DEFAULT false\n" +
+						"	[{-D, --detailed_diagram} boolean] display detailed diagrams after modeling process | DEFAULT false\n" +
+						"	[{-D, --detailed_diagram} boolean] display immatures too on diagrams after modeling process | DEFAULT false\n" +
 						"	[{-P, --port} int]";
 	
 	public final static 

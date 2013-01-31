@@ -48,6 +48,7 @@ public class SystemStarter extends Agent {
 	boolean shutdownFlag = false;
 	boolean shouldDisplayDiagram;
 	boolean shouldDisplayDetailedDiagram;
+	boolean shouldDisplayImmatures;
 
 	@Override
 	protected void setup(){
@@ -68,10 +69,11 @@ public class SystemStarter extends Agent {
 		this.zoneMultiplier = (Integer)args[5];
 		container = getContainerController();
 		curExperiment = (Integer)args[6];
-		shouldDisplayDiagram = (Boolean) args[7] || (Boolean) args[8]; 
+		shouldDisplayDiagram = (Boolean) args[7] || (Boolean) args[8] || (Boolean) args[9]; 
 		shouldDisplayDetailedDiagram = (Boolean) args[8];
-		if((Boolean) args[9]) startSniffer();
-		if((Boolean) args[10]) startIntrospector();
+		shouldDisplayImmatures = (Boolean) args[9];
+		if((Boolean) args[10]) startSniffer();
+		if((Boolean) args[11]) startIntrospector();
 		startSystem();
 	}
 	
