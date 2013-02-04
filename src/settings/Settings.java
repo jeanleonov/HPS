@@ -11,14 +11,14 @@ public class Settings implements Vocabulary {
 
 	static private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	static private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
+	static private HashMap<Integer, HashMap<Integer, Double>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Double>>();
 	
 	static private HashMap<Integer, AID> zoneTable = new HashMap<Integer, AID>();
 
 	public static void init(
 				HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viability,
 				HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterity,
-				HashMap<Integer, HashMap<Integer, Float>> movePosibilities) {
+				HashMap<Integer, HashMap<Integer, Double>> movePosibilities) {
 		viabilityTable = viability;
 		posterityTable = posterity;
 		movePosibilitiesTable = movePosibilities;
@@ -46,7 +46,7 @@ public class Settings implements Vocabulary {
 	}
 
 	// it's for Individual
-	static public HashMap<Integer, Float> getMovePosibilitiesFrom(Integer zoneNumber){
+	static public HashMap<Integer, Double> getMovePosibilitiesFrom(Integer zoneNumber){
 		// TODO process NullPointer or implement Singleton
 		return movePosibilitiesTable.get(zoneNumber);
 	}

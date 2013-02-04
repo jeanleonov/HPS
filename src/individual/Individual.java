@@ -63,26 +63,20 @@ public abstract class Individual implements Serializable {
 	}
 	
 	public Integer whereDoGo(){
-		HashMap<Integer, Float> neighboursTravelCost = myZone.getZoneTravelPossibilities();
-		if(neighboursTravelCost != null){
-			double	weightSum = 0, 
-					totalWeight = 0;
-			for(Float movePosibility : neighboursTravelCost.values()){
-				totalWeight += movePosibility;
-			}
-					
-			double point =  Math.random() * totalWeight;
-			Iterator<Integer> zoneNum = neighboursTravelCost.keySet().iterator();
-			while(zoneNum.hasNext()){
-				Integer currentZone = zoneNum.next();
-				weightSum += neighboursTravelCost.get(currentZone);
-				if(point < weightSum){
-					return currentZone;
-				}
-			}
-			return null;
+		HashMap<Integer, Double> neighboursTravelCost = myZone.getZoneTravelPossibilities();
+		if (neighboursTravelCost==null)
+			return -1;
+		double totalWeight = myZone.getSumOfTravelPossibilities();
+		double weightSum = 0;	
+		double point =  Math.random() * totalWeight;
+		Iterator<Integer> zoneNum = neighboursTravelCost.keySet().iterator();
+		while(zoneNum.hasNext()){
+			Integer currentZone = zoneNum.next();
+			weightSum += neighboursTravelCost.get(currentZone);
+			if(point < weightSum)
+				return currentZone;
 		}
-		else return -1;
+		return null;
 	}
 
 	public abstract boolean isFemale();
@@ -117,7 +111,9 @@ public abstract class Individual implements Serializable {
 	
 	protected Float getSetting(Vocabulary.Param param) {
 		for(ViabilityPair pair : viabilitySettings)
-			if(pair.getParam() == param) return pair.getValue();
+			if(pair.getParam() == param)
+				return pair.getValue();
+		assert false : "{"+param.name()+"} wasn't found in viability settings ["+this.getClass().getName()+"]";
 		return 0f;
 	}
 	

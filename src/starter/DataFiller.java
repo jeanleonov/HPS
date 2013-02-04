@@ -28,7 +28,7 @@ public class DataFiller {
 	private ExperimentDistribution experimentDistribution;
 	private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	private HashMap<Integer, HashMap<Integer, Float>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Float>>();
+	private HashMap<Integer, HashMap<Integer, Double>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Double>>();
 	private Vector<Rule> rules;
 	private int zoneMultiplier;
 	
@@ -61,7 +61,7 @@ public class DataFiller {
 		return posterityTable;
 	}
 
-	public HashMap<Integer, HashMap<Integer, Float>> getMovePosibilitiesTable() {
+	public HashMap<Integer, HashMap<Integer, Double>> getMovePosibilitiesTable() {
 		return movePosibilitiesTable;
 	}
 
@@ -158,16 +158,16 @@ public class DataFiller {
 			for(int i = 0; ((zonePossibilities = reader.readLine()) != null) && i < (getExperimentDistribution().getZoneDistributions().size()); i++){
 				
 				String[] travelCostsString = zonePossibilities.split(" ");
-				HashMap<Integer, Float> travelCosts = new HashMap<Integer, Float>();
+				HashMap<Integer, Double> travelCosts = new HashMap<Integer, Double>();
 				
 				// DMY: for possibility to escape
 				if(travelCostsString.length != 0){			
-					float travelCost = Float.parseFloat(travelCostsString[0]);
+					double travelCost = Double.parseDouble(travelCostsString[0]);
 					travelCosts.put(-1, travelCost);
 				}
 			
 				for(int j = 1; j < travelCostsString.length; j++){
-					float travelCost = Float.parseFloat(travelCostsString[j]);
+					double travelCost = Double.parseDouble(travelCostsString[j]);
 					if((travelCost != 0) && (i != (j - 1))){
 						travelCosts.put(j - 1, travelCost);
 					}
@@ -185,9 +185,9 @@ public class DataFiller {
 	
 	private void defaultMovePossibilitiesFill(){
 		for (int i=0; i<experimentDistribution.getZoneDistributions().size(); i++){
-			HashMap<Integer, Float> travelCosts = new HashMap<Integer, Float>();
+			HashMap<Integer, Double> travelCosts = new HashMap<Integer, Double>();
 			for (int j=0; j<experimentDistribution.getZoneDistributions().size(); j++)
-				travelCosts.put(j, 1f);
+				travelCosts.put(j, 1d);
 			movePosibilitiesTable.put(i, travelCosts);
 		}
 	}

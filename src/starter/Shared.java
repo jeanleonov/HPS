@@ -49,9 +49,6 @@ public final class Shared {
 		MAX_NUMBER_OF_REPRODUCTION_CIRCLES = 10;
 	
 	public final static 
-	double POSTERITY_SIZE_MULTUPLIER = 1;
-	
-	public final static 
 	Logger	problemsLogger = Logger.getLogger("problemsLogger"),
 			debugLogger = Logger.getLogger("debugLogger"),
 			infoLogger = Logger.getLogger("infoLogger");

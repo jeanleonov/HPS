@@ -36,6 +36,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private int movedThisYear;
 	private GenotypeAgeDistribution previousIterationGAD = null;
 	
+	private double totalSumOfAntiCompetetiveness=0;
+	private double totalSumOfVoracity=0;
+	
 	@Override
 	public void onStart(){
 		myZone = (Zone)myAgent;
@@ -95,10 +98,7 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		for (Individual indiv : myZone.getIndividuals())
 			if (indiv.isGoingOut()){
 				Integer outZone = indiv.whereDoGo();
-				if(outZone == null){
-					System.out.println("something wrong with whereDoGo function, technical (not idea) bug");
-					break;
-				}
+				assert outZone != null : "Something wrong with whereDoGo function, technical (not idea) bug";
 				if(outZone != new Integer(-1) && outZone != myZone.zoneId){
 					sendIndividualTo(indiv, outZone);
 					myZone.killIndividual(indiv);
@@ -168,15 +168,15 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	
 	private void competitionProcessing(){
 		logPopulationSizes("Competition ");
-		int individualsNumber = myZone.getIndividualsNumber();
-		if(individualsNumber <= myZone.capacity)
+		recalculateTotalSumOfAntiCompetetiveness();
+		recalculateTotalSumOfVoracity();
+		if(totalSumOfVoracity <= myZone.capacity)
 			return;
-		double totalSumOfAntiCompetetiveness = getTotalSumOfAntiCompetetiveness();
-		killCompetitionLoosers(individualsNumber-myZone.capacity, totalSumOfAntiCompetetiveness, individualsNumber);
+		killCompetitionLoosers();
 	}
 	
-	private double getTotalSumOfAntiCompetetiveness() {
-		double totalSumOfAntiCompetetiveness=0;
+	private void recalculateTotalSumOfAntiCompetetiveness() {
+		totalSumOfAntiCompetetiveness = 0;
 		for (Individual element : myZone.males)
 			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
 		for (Individual element : myZone.females)
@@ -185,12 +185,38 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
 		for (Individual element : myZone.yearlings)
 			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
-		return totalSumOfAntiCompetetiveness;
+	}
+	
+	private void recalculateTotalSumOfVoracity() {
+		totalSumOfVoracity = 0;
+		for (Individual element : myZone.males)
+			totalSumOfVoracity += element.getVoracity();
+		for (Individual element : myZone.females)
+			totalSumOfVoracity += element.getVoracity();
+		for (Individual element : myZone.otherImmatures)
+			totalSumOfVoracity += element.getVoracity();
+		for (Individual element : myZone.yearlings)
+			totalSumOfVoracity += element.getVoracity();
+	}
+	
+	private double getWeightedTotalSumOfVoracity() {
+		double weightedTotalSumOfVoracity = 0;
+		for (Individual element : myZone.males)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		for (Individual element : myZone.females)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		for (Individual element : myZone.otherImmatures)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		for (Individual element : myZone.yearlings)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		return weightedTotalSumOfVoracity;
 	}
 	
 	/** @return random elements according to specified probabilities */
-	private void killCompetitionLoosers(float approximateQuantity, double totalSumOfAntiCompetetiveness, int indivsNumber) {
-		double coeficient = approximateQuantity/indivsNumber/(totalSumOfAntiCompetetiveness/indivsNumber);
+	private void killCompetitionLoosers() {
+		double coeficient =  (totalSumOfVoracity-myZone.capacity)/myZone.capacity
+				*myZone.getIndividualsNumber()/totalSumOfAntiCompetetiveness
+				*getWeightedTotalSumOfVoracity()/totalSumOfVoracity;
 		killCompetitionLoosersIn(myZone.males, coeficient);
 		killCompetitionLoosersIn(myZone.females, coeficient);
 		killCompetitionLoosersIn(myZone.otherImmatures, coeficient);
@@ -200,57 +226,9 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 	private static void killCompetitionLoosersIn(List<? extends Individual> indivs, double coeficient) {
 		ListIterator<? extends Individual> iterator = indivs.listIterator();
 		while (iterator.hasNext())
-			if (Math.random() <= iterator.next().getAntiCompetitiveness()*coeficient)
+			if (Math.random() <= 1 - iterator.next().getCompetitiveness()/coeficient)
 				iterator.remove();
 	}
-	
-	
-	/*
-	private void competitionProcessing(){
-		logPopulationSizes("Competition ");
-		List<Individual> individuals = myZone.getIndividuals();
-		double totalVoracity = getTotalVoracity(individuals);
-		if(totalVoracity <= myZone.capacity)
-			return;
-		//#ProbabilityCollection<Individual> probabilityCollection = new ProbabilityCollection<Individual>(individuals);
-		//#Set<Individual> individualsToKill = probabilityCollection.getElements(individualsNumber-myZone.capacity);
-		Set<Individual> individualsToKill = getLoosers(individuals, totalVoracity);
-		//#List<Individual> individualsToKill = probabilityCollection.getElementsForCapacity(myZone.capacity);
-		for (Individual indiv : individualsToKill)
-			myZone.killIndividual(indiv);
-	}
-	
-	private static double stubCoeficient = 1; */
-	
-	/** @return random elements according to specified probabilities */
-	/*public Set<Individual> getLoosers(List<Individual> individuals, double totalVoracity) {
-		double totalSumOfProbabilities = getTotalCompetitiveness(individuals);
-		double voracityOverflow = totalVoracity - myZone.capacity;
-		HashSet<Individual> result = new HashSet<Individual>();
-		double coeficient = voracityOverflow/totalVoracity/(totalSumOfProbabilities/individuals.size())*stubCoeficient;
-		for (Individual element : individuals)
-			if (Math.random() <= element.getProbability() + (1-element.getProbability())*coeficient)
-				result.add(element);
-		double aa = voracityOverflow;								// 
-		double a = getTotalVoracity(result) - voracityOverflow;		// #temporary.. collapse it to one line
-		double correction = -a/aa;									// 
-		//stubCoeficient += correction;
-		return result;
-	}
-	
-	private static double getTotalVoracity(Iterable<Individual> individuals) {
-		float sum = 0;
-		for (Individual indiv : individuals)
-			sum += indiv.getVoracity();
-		return sum;
-	}
-	
-	private static double getTotalCompetitiveness(Iterable<Individual> individuals) {
-		float sum = 0;
-		for (Individual indiv : individuals)
-			sum += indiv.getCompetitiveness();
-		return sum;
-	}*/
 	
 	private void randomFilling(Female[] females){
 		int i=0;

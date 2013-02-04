@@ -39,13 +39,16 @@ public class Zone extends Agent {
 	int zoneId;
 	
 	float capacity;
-	private HashMap<Integer, Float> travelCosts;
+	private HashMap<Integer, Double> travelCosts;
+	private double sumOfTravelPossibilities = 0;
 	int iteration = -1;
 	int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
 	
 	@Override
 	protected void setup() {
 		travelCosts = Settings.getMovePosibilitiesFrom(this.getZoneNumber());
+		for (Integer zoneNumber : travelCosts.keySet())
+			sumOfTravelPossibilities += travelCosts.get(zoneNumber);
 		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
 		experimentId = (Integer)getArguments()[1];
 		zoneId = (Integer)getArguments()[2];
@@ -68,10 +71,14 @@ public class Zone extends Agent {
 		addBehaviour(new ZoneBehaviour());
 	}
 	
-	public HashMap<Integer, Float> getZoneTravelPossibilities(){
+	public HashMap<Integer, Double> getZoneTravelPossibilities(){
 		if(travelCosts != null)
-			return (HashMap<Integer, Float>) travelCosts;
+			return (HashMap<Integer, Double>) travelCosts;
 		else return null;
+	}
+	
+	public double getSumOfTravelPossibilities() {
+		return sumOfTravelPossibilities;
 	}
 	
 	public void createIndividuals(ZoneDistribution zoneDistribution) {
