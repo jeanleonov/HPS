@@ -20,6 +20,7 @@ import jade.wrapper.StaleProxyException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Date;
 
 import settings.Settings;
 import statistic.StatisticDispatcher;
@@ -196,7 +197,9 @@ public class SystemStarter extends Agent {
 	
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
-			curStatisticFileURL = "statistics" + ((curExperiment==-1)?(""):("_"+curExperiment)) + ".csv";
+			Date d = new Date();
+			curStatisticFileURL = "statistics" + " " + String.format("%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
+								  ((curExperiment==-1)?(""):(" e"+curExperiment)) + ".csv";
 			statisticDispatcher	= container.createNewAgent(
 										"statisticDispatcher", 
 										StatisticDispatcher.class.getName(), 
