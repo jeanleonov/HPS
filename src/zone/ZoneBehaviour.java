@@ -85,11 +85,18 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		killDieLoosersIn(myZone.yearlings);
 	}
 	
-	private static void killDieLoosersIn(List<? extends Individual> indivs) {
+	private void killDieLoosersIn(List<? extends Individual> indivs) {
 		ListIterator<? extends Individual> iterator = indivs.listIterator();
-		while (iterator.hasNext())
-			if (iterator.next().isDead())
+		while (iterator.hasNext()) {
+			Individual indiv = iterator.next(); 
+			if (indiv.isDead()) {
+				if (indiv.isFemale())
+					myZone.individualsManager.killFemale((Female) indiv);
+				else
+					myZone.individualsManager.killMale((Male) indiv);
 				iterator.remove();
+			}
+		}
 	}
 
 	private void moveProcessing() {
@@ -223,11 +230,18 @@ public class ZoneBehaviour extends CyclicBehaviour implements Messaging{
 		killCompetitionLoosersIn(myZone.yearlings, coeficient);
 	}
 	
-	private static void killCompetitionLoosersIn(List<? extends Individual> indivs, double coeficient) {
+	private void killCompetitionLoosersIn(List<? extends Individual> indivs, double coeficient) {
 		ListIterator<? extends Individual> iterator = indivs.listIterator();
-		while (iterator.hasNext())
-			if (Math.random() <= 1 - iterator.next().getCompetitiveness()/coeficient)
+		while (iterator.hasNext()) {
+			Individual indiv = iterator.next();
+			if (Math.random() <= 1 - indiv.getCompetitiveness()/coeficient) {
+				if (indiv.isFemale())
+					myZone.individualsManager.killFemale((Female) indiv);
+				else
+					myZone.individualsManager.killMale((Male) indiv);
 				iterator.remove();
+			}
+		}
 	}
 	
 	private void randomFilling(Female[] females){

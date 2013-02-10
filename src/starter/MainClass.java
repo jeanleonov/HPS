@@ -8,6 +8,8 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Hashtable;
 
 import org.apache.log4j.xml.DOMConfigurator;
@@ -31,6 +33,15 @@ public class MainClass {
 		initArgs();
 		parseArgs(args);		
 		MainClass main = new MainClass();
+		try {
+			if ((Boolean)getArgument("redirection_output")) {
+				PrintStream printStream = new PrintStream(new FileOutputStream((String)getArgument("system_output")));
+				System.setOut(printStream);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		main.initContainerController();
 		main.start();
 	}
@@ -113,6 +124,10 @@ public class MainClass {
 		arguments.put("display_diagram", new ArgPair(parser.addBooleanOption('d', "display_diagram"), Boolean.FALSE));
 		arguments.put("detailed_diagram", new ArgPair(parser.addBooleanOption('D', "detailed_diagram"), Boolean.FALSE));
 		arguments.put("display_immatures", new ArgPair(parser.addBooleanOption('I', "display_immatures"), Boolean.FALSE));
+
+		arguments.put("redirection_output", new ArgPair(parser.addBooleanOption('R', "redirectionOutput"), Boolean.FALSE));
+		arguments.put("system_output", new ArgPair(parser.addStringOption('F', "outputFile"), "output.txt"));
+		
 		//QM
 		arguments.put("port", new ArgPair(parser.addIntegerOption('P', "port"), new Integer(0)));
 		arguments.put("movePossibilities", new ArgPair(parser.addStringOption('m', "map"), Shared.DEFAULT_MAP_FILE));

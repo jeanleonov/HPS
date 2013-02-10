@@ -1,0 +1,19 @@
+EVERY 60 FROM 1 TO 1000
+FOR 0
+immigration (xL)yR 3 2, xLyL 2 4;
+
+EVERY 84 FROM 20 TO 1000
+FOR 0
+immigration (xL)(yR) 2 5, (yL)xR 2 1, (yL)(xR) 3 5;
+
+EVERY 40 FROM 40 TO 1000
+FOR 0
+immigration (xL)(xR) 2 2, xLyL 2 3, xL(xR) 3 1;
+
+EVERY 50 FROM 60 TO 1000
+FOR 0
+immigration xLxL 3 3, xRxR 2 1;
+
+EVERY 77 FROM 80 TO 1000
+FOR 0
+immigration (xL)(xR) 2 5, xLyL 2 4, (xL)xR 3 1;

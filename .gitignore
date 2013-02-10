@@ -7,6 +7,7 @@ MTPs-Main-Container.txt
 GalynaPatch.patch
 statisticFile.csv
 statistic*.csv
+statistic*.txt
 *.xls*
 #*.csv
 anti.ind

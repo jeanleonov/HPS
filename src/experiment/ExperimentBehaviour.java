@@ -35,7 +35,6 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 	public void action() {
 		Shared.infoLogger.info("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experiment.experimentNumber);
 		firstPhaseProcessing();
-	//@#	dieProcessing();
 		try {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
@@ -89,13 +88,6 @@ public class ExperimentBehaviour extends Behaviour implements Messaging {
 			experiment.send(command);
 		ignoreNMessages(countOfMessages);
 	}
-
-	/*@# private void dieProcessing(){
-		ACLMessage message = getMessageForMassMailing();
-		message.setLanguage(START_DIE);
-		experiment.send(message);
-		ignoreNMessages(experiment.zonesAIDs.size());
-	}*/
 
 	private void moveProcessing(){
 		ACLMessage message = getMessageForMassMailing();

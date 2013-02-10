@@ -45,17 +45,18 @@ public class VisualisationFrame extends JFrame {
 	}
 	
 	private void initCanvas(String statisticFileURL) {
-		reader = new StatisticReader(statisticFileURL, shouldDisplayDetailedDiagram, shouldDisplayImmatures);
 		try {
-			canvas = new CanvasPanel(width*8, height, reader.getMaxIteration(), reader.getMaxQuantity());
+			reader = new StatisticReader(statisticFileURL, shouldDisplayDetailedDiagram, shouldDisplayImmatures);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		canvas = new CanvasPanel(width*8, height, reader.getMaxIteration(), reader.getMaxQuantity());
 		scr   = new ScrollPane();
 		scr.add(canvas, BorderLayout.CENTER);
 		scr.setMaximumSize(new Dimension(width-50, height-100));
 		add(scr);
 		startDrawing();
+		reader.calculateAndPrintPiramid();
 	}
 	
 	private void initControlPanel() {
@@ -85,17 +86,13 @@ public class VisualisationFrame extends JFrame {
 	}
 	
 	private void startDrawing() {
-		try {
-			genotypesMap = reader.getGenotypeQuantityHistory();
-			Set<String> genotypesKeys = genotypesMap.keySet();
-			for (String genotype : genotypesKeys) {
-				Map<Integer, SortedMap<Integer, Integer>> agesMap = genotypesMap.get(genotype);
-				Set<Integer> agesKeys = agesMap.keySet();
-				for (Integer age : agesKeys)
-					canvas.drawNewHistory(genotype, age, agesMap.get(age));
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		genotypesMap = reader.getGenotypeQuantityHistory();
+		Set<String> genotypesKeys = genotypesMap.keySet();
+		for (String genotype : genotypesKeys) {
+			Map<Integer, SortedMap<Integer, Integer>> agesMap = genotypesMap.get(genotype);
+			Set<Integer> agesKeys = agesMap.keySet();
+			for (Integer age : agesKeys)
+				canvas.drawNewHistory(genotype, age, agesMap.get(age));
 		}
 	}
 	
