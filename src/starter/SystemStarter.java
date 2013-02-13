@@ -198,7 +198,7 @@ public class SystemStarter extends Agent {
 	private void createAndStartStatisticDispatcherAgent(){
 		try {
 			Date d = new Date();
-			curStatisticFileURL = "statistics" + " " + String.format("%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
+			curStatisticFileURL = String.format("statistics/%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
 								  ((curExperiment==-1)?(""):(" e"+curExperiment)) + ".csv";
 			statisticDispatcher	= container.createNewAgent(
 										"statisticDispatcher", 

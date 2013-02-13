@@ -2,6 +2,7 @@
 .classpath
 /bin
 /log
+/statistics
 APDescription.txt
 MTPs-Main-Container.txt
 GalynaPatch.patch

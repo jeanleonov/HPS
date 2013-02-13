@@ -136,16 +136,34 @@ public abstract class Individual implements Serializable {
 			if (age > getSetting(Vocabulary.Param.Lifetime))
 				curSurvival = curCompetitiveness = 0f;
 			else{
-				if (age == 1) {
-					curSurvival = getSetting(Vocabulary.Param.Survival);
-					curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness);
-				}
-				else {
-					curSurvival = curSurvival+(1-curSurvival)*getSetting(Vocabulary.Param.SurvivalFactor);
-					curCompetitiveness = curCompetitiveness+(1-curCompetitiveness)*getSetting(Vocabulary.Param.CompetitivenessFactor);
-				}
+				updateSurvivalForNotYearling();
+				updateCompetitivenessForNotYearling();
 				curVoracity = getCurVoracity();
 			}
+		}
+		
+		private void updateSurvivalForNotYearling() {
+			float aS = getSetting(Vocabulary.Param.SurvivalAchieveAge);
+			float kbS = getSetting(Vocabulary.Param.SurvivalFactorBeforeS);
+			if (age < aS)
+				curSurvival = curSurvival+(getSetting(Vocabulary.Param.Survival)-curSurvival)*kbS;
+			else if (age == aS)
+				curSurvival = getSetting(Vocabulary.Param.Survival);
+			else
+				curSurvival = curSurvival+(1-curSurvival)*getSetting(Vocabulary.Param.SurvivalFactor);
+		}
+		
+		private void updateCompetitivenessForNotYearling() {
+			float aC = getSetting(Vocabulary.Param.CompetitivenessAchieveAge);
+			float kbC = getSetting(Vocabulary.Param.CompetitivenessFactorBeforeC);
+			if (age < aC)
+				curCompetitiveness = curCompetitiveness
+									 +(getSetting(Vocabulary.Param.Competitiveness)-curCompetitiveness)*kbC;
+			else if (age == aC)
+				curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness);
+			else
+				curCompetitiveness = curCompetitiveness+(1-curCompetitiveness)
+									 *getSetting(Vocabulary.Param.CompetitivenessFactor);
 		}
 		
 		private void updateSettingsForMature(){
@@ -155,9 +173,9 @@ public abstract class Individual implements Serializable {
 				curAmplexusRepeat = getSetting(Vocabulary.Param.AmplexusRepeat);
 			}
 			else {
-				curReproduction = curReproduction*(1+getSetting(Vocabulary.Param.ReproductionFactor));
-				curFertility = curFertility*(1+getSetting(Vocabulary.Param.FertilityFactor));
-				curAmplexusRepeat = curAmplexusRepeat*(1+getSetting(Vocabulary.Param.AmplexusRepeatFactor));
+				curReproduction = curReproduction+(1-curReproduction)*getSetting(Vocabulary.Param.ReproductionFactor);
+				curFertility = curFertility+(1-curFertility)*getSetting(Vocabulary.Param.FertilityFactor);
+				curAmplexusRepeat = curAmplexusRepeat+(1-curAmplexusRepeat)*getSetting(Vocabulary.Param.AmplexusRepeatFactor);
 			}
 		}
 		

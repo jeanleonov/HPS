@@ -145,7 +145,7 @@ public class StatisticReader {
 			SortedMap<Integer, Integer> ageCountMap = new TreeMap<Integer, Integer>();
 			Map<Integer, SortedMap<Integer, Integer>> genotypeHistory = genotypeQuantityHistory.get(genotype);
 			Set<Integer> genotypeAges = genotypeHistory.keySet();
-			Integer summeryCount = 0;
+			Integer summeryCountForGenotype = 0;
 			for(Integer age : genotypeAges){
 				if (age == -1) continue;
 				SortedMap<Integer, Integer> history = genotypeHistory.get(age);
@@ -153,9 +153,9 @@ public class StatisticReader {
 				for (Integer i=30; i<=maxIteration; i++)
 					ageCount += history.get(i);
 				ageCountMap.put(age, ageCount);
-				summeryCount += ageCount;
+				summeryCountForGenotype += ageCount;
 			}
-			printGenotypePiramid(genotype, ageCountMap, summeryCount);
+			printGenotypePiramid(genotype, ageCountMap, summeryCountForGenotype);
 		}
 		restoreFields();
 		try {
