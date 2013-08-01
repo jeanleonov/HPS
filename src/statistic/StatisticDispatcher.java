@@ -19,6 +19,7 @@ public class StatisticDispatcher {
 	
 	private Lock packageBufferLock = new ReentrantLock();
 	private Lock currentlyWritingPackagesLock = new ReentrantLock();
+	private Lock startWritingLock = new ReentrantLock();
 
 	public StatisticDispatcher(String curStatisticFileURL) {
 		fileLocation = curStatisticFileURL;
@@ -51,8 +52,9 @@ public class StatisticDispatcher {
 	}
 	
 	private boolean tryToExportStatistic() {
-		if (currentlyWritingPackagesLock.tryLock()) {  // it will be unlocked in startStatisticWritingTo(final File file)
+		if (startWritingLock.tryLock()) {
 			exportStatistic();
+			startWritingLock.unlock();
 			return true;
 		}
 		return false;
@@ -60,7 +62,9 @@ public class StatisticDispatcher {
 	
 	private void exportStatistic() {
 		packageBufferLock.lock();
+		currentlyWritingPackagesLock.lock();
 		currentlyWritingPackages.addAll(packagesBuffer);
+		currentlyWritingPackagesLock.unlock();
 		packagesBuffer.clear();
 		packageBufferLock.unlock();
 		try {
@@ -68,7 +72,6 @@ public class StatisticDispatcher {
 			startStatisticWritingTo(file);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
 		}
 	}
 	
@@ -76,6 +79,7 @@ public class StatisticDispatcher {
 		new Thread( new Runnable() {
 			@Override
 			public void run() {
+				currentlyWritingPackagesLock.lock();
 				writeStatisticTo(file);
 				currentlyWritingPackagesLock.unlock();
 			}
