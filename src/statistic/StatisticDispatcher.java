@@ -1,85 +1,91 @@
 package statistic;
 
-import jade.core.AID;
-import jade.core.Agent;
-import jade.lang.acl.ACLMessage;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import starter.Shared;
 
-public class StatisticDispatcher extends Agent{
-
-	private static final long serialVersionUID = 1L;
+public class StatisticDispatcher {
 	
 	private String fileLocation = Shared.DEFAULT_STATISTIC_FILE;
-	private Vector<StatisticPackage> packages = new Vector<StatisticPackage>() ;
+	private LinkedList<StatisticPackage> packagesBuffer = new LinkedList<StatisticPackage>();
+	private LinkedList<StatisticPackage> currentlyWritingPackages = new LinkedList<StatisticPackage>();
+	private int packageBufferSize = Shared.DEFAULT_PACKAGE_BUFFER;
 	
-	protected boolean busy = false;
+	private Lock packageBufferLock = new ReentrantLock();
+	private Lock currentlyWritingPackagesLock = new ReentrantLock();
 
-	/**
-	 * Обработать аргументы, добавить поведения, отправить подтверждение
-	 */
-	@Override
-	protected void setup(){
-		fileLocation = (String)getArguments()[0];
-		addBehaviour(new StatisticDispatcherBehaviour());
-		confirmation((AID)getArguments()[1]);
+	public StatisticDispatcher(String curStatisticFileURL) {
+		fileLocation = curStatisticFileURL;
 	}
 
-	/**
-	 * Отправить подтверждение о запуске
-	 */
-	private void confirmation(AID systemStarter) {
-		ACLMessage confirm = new ACLMessage(ACLMessage.CONFIRM);
-		confirm.addReceiver(systemStarter);
-		send(confirm);
+	public void addPackage(StatisticPackage statisticPackage) {
+		packageBufferLock.lock();
+		packagesBuffer.add(statisticPackage);
+		packageBufferLock.unlock();
+		if (packagesBuffer.size() == packageBufferSize)
+			tryToExportStatistic();
 	}
-
-	/**
-	 * Добавить пакет статистики {эксперимент, зона, год, распределение}
-	 * @param pack
-	 */
-	void addPackage(StatisticPackage pack) {
-		packages.add(pack);
-	}
-
-	/**
-	 * Сделать запись в файл и очистить коллекцию пакетов
-	 */
-	void exportToFile() {
-		busy = true;
-		try {
-			File file = createFile();
-			writeStatistic(file);
-			packages.clear();
-		} catch (IOException e) {
-			e.printStackTrace();
+	
+	public void flush() {
+		while (!tryToExportStatistic()) {
+			try {
+			    Thread.sleep(200);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
 		}
-		busy = false;
+		while (!currentlyWritingPackagesLock.tryLock()) {	// wait for finish of writing
+			try {
+			    Thread.sleep(200);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
+		}
+		currentlyWritingPackagesLock.unlock();
 	}
 	
-	protected boolean isBusy() {
-		if(busy) return true;
-		if(!packages.isEmpty()) {
-			System.err.println("dafuq?");
+	private boolean tryToExportStatistic() {
+		if (currentlyWritingPackagesLock.tryLock()) {  // it will be unlocked in startStatisticWritingTo(final File file)
+			exportStatistic();
 			return true;
 		}
 		return false;
 	}
 	
-	/**
-	 * Сделать запись в файл
-	 * @param file
-	 */
-	private void writeStatistic(File file) {
+	private void exportStatistic() {
+		packageBufferLock.lock();
+		currentlyWritingPackages.addAll(packagesBuffer);
+		packagesBuffer.clear();
+		packageBufferLock.unlock();
+		try {
+			File file = createFile();
+			startStatisticWritingTo(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+		}
+	}
+	
+	private void startStatisticWritingTo(final File file) {
+		new Thread( new Runnable() {
+			@Override
+			public void run() {
+				writeStatisticTo(file);
+				currentlyWritingPackagesLock.unlock();
+			}
+		}).start();
+	}
+	
+	private void writeStatisticTo(File file) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
-			for (StatisticPackage pack : packages)
+			for (StatisticPackage pack : currentlyWritingPackages)
 				bw.write(pack.toString());
 			bw.flush();
 			bw.close();
@@ -87,12 +93,7 @@ public class StatisticDispatcher extends Agent{
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Создать или открыть существующий файл
-	 * @return
-	 * @throws IOException
-	 */
+	
 	private File createFile() throws IOException {
 		File file = new File(fileLocation);
 		if (!file.exists())

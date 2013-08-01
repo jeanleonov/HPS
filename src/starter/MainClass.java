@@ -1,29 +1,17 @@
 package starter;
 
-import jade.core.NotFoundException;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.Runtime;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
-
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.log4j.xml.DOMConfigurator;
 
 import utils.individuals.allocation.IndividualsManagerDispatcher;
-import zone.Zone;
 
 public class MainClass {
 	
 	private static Hashtable<String, ArgPair> arguments = new Hashtable<String, ArgPair>();
 	private static CmdLineParser parser = new CmdLineParser();
-	static Runtime runtime;
-	static ContainerController container;		
-	static AgentController starter;
 	private static String startArgs="";
 	
 	@SuppressWarnings("static-access")
@@ -34,80 +22,63 @@ public class MainClass {
 		parseArgs(args);		
 		MainClass main = new MainClass();
 		try {
-			if ((Boolean)getArgument("redirection_output")) {
-				PrintStream printStream = new PrintStream(new FileOutputStream((String)getArgument("system_output")));
-				System.setOut(printStream);
-			}
+			main.start();
+		} catch (Exception exception) {
+			StringBuffer stackTrace = new StringBuffer();
+			StackTraceElement[] stack = exception.getStackTrace();
+			for (int i=0; i<stack.length; i++)
+				stackTrace.append(stack[i].toString()+"\n");
+			Shared.problemsLogger.error(exception.getMessage()+"\n"+stackTrace);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		main.initContainerController();
-		main.start();
 	}
 	
-	static void start(){
-		try {
-			Zone.setCapacityMultiplier((Double)getArgument("capacity_multiplier"));
-			Object[] systemStarterArgs = getSystemStarterArgs();
-			IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
-			starter = container.createNewAgent("SystemStarter", SystemStarter.class.getName(), systemStarterArgs);
-			starter.start();
-		}
-		catch (StaleProxyException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		}
-		catch (NotFoundException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		} 
-	}
-	
-	static private Object[] getSystemStarterArgs() throws NotFoundException{
-		String proj_path = (String)getArgument("project_path");
-		Object[] systemStarterArgs = new Object[] {
-				proj_path + '/' + (String)getArgument("viability"),
-				proj_path + '/' + (String)getArgument("posterity"),
-				proj_path + '/' + (String)getArgument("movePossibilities"),
-				proj_path + '/' + (String)getArgument("scenario"),
-				proj_path + '/' + (String)getArgument("initiation"),
+	static void start() throws Exception {
+		IndividualsManagerDispatcher.setDispatchingMode((Integer)getArgument("object_manager"));
+		SystemStarter starter = new SystemStarter(
+				getPathesMap(),
 				(Integer)getArgument("zone_multiplier"),
+				(Double)getArgument("capacity_multiplier"),
 				(Integer)getArgument("cur_experiment"),
+				(Integer)MainClass.getArgument("number_of_experiments"),
+				(Integer)MainClass.getArgument("years"),
 				(Boolean)getArgument("display_diagram"),
 				(Boolean)getArgument("detailed_diagram"),
-				(Boolean)getArgument("display_immatures"),
-				(Boolean)getArgument("sniffer"),
-				(Boolean)getArgument("introspector")
-		};
-		return systemStarterArgs;
+				(Boolean)getArgument("display_immatures"));
+		starter.startSystem();
 	}
 	
-	static void initContainerController(){
-		runtime = Runtime.instance();
-		Profile pf = null;
-		try {		pf = new ProfileImpl(null, (Integer)getArgument("port") + 8899, null);}
-		catch 		(NotFoundException e) { Shared.problemsLogger.error(e.getMessage());}
-		OSInfoOverride osio = new OSInfoOverride();
-		try {		container = runtime.createMainContainer(pf);}
-		finally {	osio.dispose();}
+	static private Map<SourceType,String> getPathesMap() throws Exception {
+		String projectPath = (String)getArgument("project_path");
+		Map<SourceType,String> pathesMap = new HashMap<SourceType,String>();
+		pathesMap.put(SourceType.VIABILITY, getPathOf("viability", projectPath));
+		pathesMap.put(SourceType.POSTERITY, getPathOf("posterity", projectPath));
+		pathesMap.put(SourceType.MOVE_POSSIBILITIES, getPathOf("movePossibilities", projectPath));
+		pathesMap.put(SourceType.SCENARIO, getPathOf("scenario", projectPath));
+		pathesMap.put(SourceType.INITIATION, getPathOf("initiation", projectPath));
+		return pathesMap;
 	}
-	 
 	
+	static private String getPathOf(String argName, String projectPath) throws Exception {
+		return projectPath + '/' + (String)getArgument(argName);
+	}
 	
+	/**
+	 * Saves program arguments for future logging.
+	 */
 	static private void saveStartArgs(String[] args){
 		for (int i=0; i<args.length; i++)
 			startArgs += args[i];
 	}
-	
+	 /**
+	  * Get program arguments which was saved on start.
+	  */
 	public static String getStartArgs(){
 		return startArgs;
 	}
 	
-	private static class ArgPair {
-		public CmdLineParser.Option option;
-		public Object defaultValue;
-		public ArgPair(CmdLineParser.Option opt, Object def) { this.option = opt; this.defaultValue = def; }
-	}
-	
+	/**
+	 * Initialize a set of program arguments. It means "what do we expect to read from console arguments" 
+	 */
 	private static void initArgs(){
 		arguments.put("help", new ArgPair(parser.addBooleanOption("help"), Boolean.FALSE));
 		arguments.put("years", new ArgPair(parser.addIntegerOption('y', "years"), new Integer(1)));
@@ -116,23 +87,28 @@ public class MainClass {
 		arguments.put("capacity_multiplier", new ArgPair(parser.addDoubleOption('M', "capacity_multiplier"), new Double(1)));
 		arguments.put("zone_multiplier", new ArgPair(parser.addIntegerOption('z', "zone_multiplier"), new Integer(1)));
 		arguments.put("object_manager", new ArgPair(parser.addIntegerOption('o', "object_manager"), new Integer(0)));
-		arguments.put("sniffer", new ArgPair(parser.addBooleanOption("sniffer"), Boolean.FALSE));
-		arguments.put("introspector", new ArgPair(parser.addBooleanOption("introspector"), Boolean.FALSE));
 		arguments.put("project_path", new ArgPair(parser.addStringOption('f', "project_path"), Shared.PROJECT_PATH));
 		arguments.put("viability", new ArgPair(parser.addStringOption('v', "viability"), Shared.DEFAULT_VIABILITY_FILE));
 		arguments.put("posterity", new ArgPair(parser.addStringOption('p', "posterity"), Shared.DEFAULT_POSTERITY_FILE));
 		arguments.put("display_diagram", new ArgPair(parser.addBooleanOption('d', "display_diagram"), Boolean.FALSE));
 		arguments.put("detailed_diagram", new ArgPair(parser.addBooleanOption('D', "detailed_diagram"), Boolean.FALSE));
 		arguments.put("display_immatures", new ArgPair(parser.addBooleanOption('I', "display_immatures"), Boolean.FALSE));
-
-		arguments.put("redirection_output", new ArgPair(parser.addBooleanOption('R', "redirectionOutput"), Boolean.FALSE));
-		arguments.put("system_output", new ArgPair(parser.addStringOption('F', "outputFile"), "output.txt"));
-		
-		//QM
-		arguments.put("port", new ArgPair(parser.addIntegerOption('P', "port"), new Integer(0)));
 		arguments.put("movePossibilities", new ArgPair(parser.addStringOption('m', "map"), Shared.DEFAULT_MAP_FILE));
 		arguments.put("scenario", new ArgPair(parser.addStringOption('s', "scenario"), Shared.DEFAULT_SCENARIO_FILE));
 		arguments.put("initiation", new ArgPair(parser.addStringOption('i', "initiation"), Shared.DEFAULT_INITIATION_FILE));
+	}
+	
+	
+	/**
+	 * Ancillary class which helps to simplify creating of console (program) arguments
+	 */
+	private static class ArgPair {
+		public CmdLineParser.Option option;
+		public Object defaultValue;
+		public ArgPair(CmdLineParser.Option opt, Object def) {
+			this.option = opt;
+			this.defaultValue = def;
+		}
 	}
 	
 	private static void parseArgs(String[] args) {
@@ -150,15 +126,10 @@ public class MainClass {
 		}
 	}
 	
-	public static Object getArgument(String name) throws NotFoundException {
-		if(!arguments.containsKey(name)) throw new NotFoundException();
+	public static Object getArgument(String name) throws Exception {
+		if(!arguments.containsKey(name))
+			throw new Exception("An argument with name\""+name+"\"was not found!");
 		ArgPair pair = arguments.get(name);
 		return parser.getOptionValue(pair.option, pair.defaultValue);
-	}
-	
-	static void shutDown(boolean shouldDisplayDiagram) {
-		runtime.shutDown();
-		if (!shouldDisplayDiagram)
-			System.exit(0);
 	}
 }

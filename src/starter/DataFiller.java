@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import settings.PosterityParentsPair;
@@ -241,7 +242,7 @@ public class DataFiller {
 	}
 	
 	private void multiplyZonesInDistribution(){
-		Vector<ZoneDistribution> zoneDistributions = experimentDistribution.getZoneDistributions();
+		List<ZoneDistribution> zoneDistributions = experimentDistribution.getZoneDistributions();
 		int oldNumberOfZones = zoneDistributions.size();
 		if (zoneMultiplier<1)
 			return;					// ignore invalid input

@@ -1,39 +1,25 @@
 package starter;
-import jade.content.lang.Codec;
-import jade.content.lang.Codec.CodecException;
-import jade.content.lang.sl.SLCodec;
-import jade.content.onto.Ontology;
-import jade.content.onto.OntologyException;
-import jade.content.onto.basic.Action;
-import jade.content.onto.basic.Done;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.NotFoundException;
-import jade.domain.JADEAgentManagement.JADEManagementOntology;
-import jade.domain.JADEAgentManagement.ShutdownPlatform;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Date;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import settings.Settings;
 import statistic.StatisticDispatcher;
+import statistic.visualisation.VisualisationFrame;
+import distribution.ExperimentDistribution;
+import experiment.Experiment;
+import experiment.Scenario;
 
-public class SystemStarter extends Agent {
-	
-	private static final long serialVersionUID = 1L;
+public class SystemStarter {
 
-	DataFiller dataFiller;
-	ContainerController container; 
-	private AgentController statisticDispatcher;
-	AID statisticAID;
-	String curStatisticFileURL;
+	private DataFiller dataFiller;
+	private StatisticDispatcher statisticDispatcher;
+	private String curStatisticFileURL;
 	
 	
 	private String	viabilitySettingsPath,
@@ -41,185 +27,99 @@ public class SystemStarter extends Agent {
 					movePossibilitiesPath,
 					experimentInfoPath,
 					scenarioPath;
-	Integer remainingExperiments;
-	int curExperiment;
-	int numberOfModelingYears;
-	int zoneMultiplier;
+	private int numberOfExperints;
+	private int curExperiment;
+	private int numberOfModelingYears;
+	private int zoneMultiplier;
+	private double capacityMultiplier;
 	
-	boolean shutdownFlag = false;
-	boolean shouldDisplayDiagram;
-	boolean shouldDisplayDetailedDiagram;
-	boolean shouldDisplayImmatures;
+	private boolean shouldDisplayDiagram;
+	private boolean shouldDisplayDetailedDiagram;
+	private boolean shouldDisplayImmatures;
+	
+	long timeOfStart;
 
-	@Override
-	protected void setup(){
-		/*
-		 * For AMS communication
-		 */
-		Codec codec = new SLCodec();    
-		Ontology jmo = JADEManagementOntology.getInstance();
-		getContentManager().registerLanguage(codec);
-		getContentManager().registerOntology(jmo);
-		
-		Object[] args = this.getArguments();
-		this.viabilitySettingsPath = (String)args[0];
-		this.posteritySettingPath = (String)args[1];
-		this.movePossibilitiesPath = (String)args[2];
-		this.scenarioPath = (String)args[3];
-		this.experimentInfoPath = (String)args[4];
-		this.zoneMultiplier = (Integer)args[5];
-		container = getContainerController();
-		curExperiment = (Integer)args[6];
-		shouldDisplayDiagram = (Boolean) args[7] || (Boolean) args[8] || (Boolean) args[9]; 
-		shouldDisplayDetailedDiagram = (Boolean) args[8];
-		shouldDisplayImmatures = (Boolean) args[9];
-		if((Boolean) args[10]) startSniffer();
-		if((Boolean) args[11]) startIntrospector();
-		startSystem();
+	public SystemStarter(
+			Map<SourceType,String> pathesMap,
+			int zoneMultiplier,
+			double capacityMultiplier,
+			int curExperiment,
+			int numberOfExperints,
+			int numberOfYears,
+			boolean shouldDisplayDiagram,
+			boolean shouldDisplayDetailedDiagram,
+			boolean shouldDisplayImmatures){
+		this.viabilitySettingsPath = pathesMap.get(SourceType.VIABILITY);
+		this.posteritySettingPath = pathesMap.get(SourceType.POSTERITY);
+		this.movePossibilitiesPath = pathesMap.get(SourceType.MOVE_POSSIBILITIES);
+		this.scenarioPath = pathesMap.get(SourceType.SCENARIO);
+		this.experimentInfoPath = pathesMap.get(SourceType.INITIATION);
+		this.zoneMultiplier = zoneMultiplier;
+		this.capacityMultiplier = capacityMultiplier;
+		this.curExperiment = curExperiment;
+		this.numberOfExperints = numberOfExperints;
+		this.numberOfModelingYears = numberOfYears;
+		this.shouldDisplayDiagram = shouldDisplayDiagram || shouldDisplayDetailedDiagram || shouldDisplayImmatures; 
+		this.shouldDisplayDetailedDiagram = shouldDisplayDetailedDiagram;
+		this.shouldDisplayImmatures = shouldDisplayImmatures;
+		createStatisticDispatcher();
+		timeOfStart = System.currentTimeMillis();
 	}
 	
-	private void startAgent(String name, String className) {
-		AgentController a;
-		try {
-			a = container.createNewAgent(name, className, null);
-			a.start();
-		} catch (StaleProxyException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		}
-	}
-	
-	private void startIntrospector() {
-		startAgent("Introspector", jade.tools.introspector.Introspector.class.getName());
-	}
-	
-	private void startSniffer() {
-		startAgent("Sniffer", jade.tools.sniffer.Sniffer.class.getName());
-	}
-	
-	private void shutdownPlatformQuery() {
-		ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);		
-		msg.addReceiver(getAMS());
-		msg.setLanguage(new SLCodec().getName());
-		msg.setOntology(JADEManagementOntology.getInstance().getName());
-		try {
-			getContentManager().fillContent(msg, new Action(getAID(), new ShutdownPlatform()));
-			send(msg);
-		} catch (CodecException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		} catch (OntologyException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		}
-	}
-	
-	private boolean listenForAMSReply() {
-	    ACLMessage receivedMessage = blockingReceive(MessageTemplate.MatchSender(getAMS()));
-	    Object recMsg;
-		try {
-			recMsg = getContentManager().extractContent(receivedMessage);
-		} catch (Exception e) {
-			Shared.problemsLogger.error(e.getMessage());
-			return false;
-		}
-	    return recMsg.getClass() == Done.class;
-	}
-	
-	private void joinStatisticDispatcher() {
-		while(true) {
-			ACLMessage message = new ACLMessage(ACLMessage.QUERY_IF);
-			message.addReceiver(statisticAID);
-			send(message);
-	
-			ACLMessage ret = blockingReceive();
-			if(ret.getPerformative() == ACLMessage.REFUSE) {
-				try {
-					Thread.sleep(250);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			else break;
-		}
-	}
-	
-	@Override
-	public void doDelete() {
-		if(shutdownFlag) return;
-		shutdownFlag = true;
-		
-		joinStatisticDispatcher();
-		
-		shutdownPlatformQuery();
-		if(listenForAMSReply()) MainClass.shutDown(shouldDisplayDiagram);
-		else System.err.println("Cannot shutdown platform");
-		super.doDelete();
-	}
-	
-	public void startSystem(){
+	public void startSystem() throws Exception {
 		readData();
 		Settings.init(dataFiller.getViabilityTable(), dataFiller.getPosterityTable(), dataFiller.getMovePosibilitiesTable());
-		createAndStartStatisticDispatcherAgent();
-		getConfirmationFromStatisticDispatcherAgent();
-		try {
-			remainingExperiments = (Integer)MainClass.getArgument("number_of_experiments") - curExperiment;
-			numberOfModelingYears = (Integer)MainClass.getArgument("years");
-		} catch (NotFoundException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		}
 		if (curExperiment == -1)
 			curExperiment = 0;
-		if (remainingExperiments < 1)
-			remainingExperiments = 1;
-		startExperimetnProvider();
+		if (numberOfExperints == -1)
+			numberOfExperints = 1;
+		runExperints();
+		finish();
 	}
 	
-	private void readData(){
+	private void readData() throws FileNotFoundException{
 		BufferedReader posteritySettingsReader;
 		BufferedReader viabilitySettingsReader;
 		BufferedReader movePossibilitiesReader;
 		BufferedReader scenarioReader;
 		BufferedReader experimentInfoReader;
-		try {
-			viabilitySettingsReader = new BufferedReader(new FileReader(viabilitySettingsPath));
-			posteritySettingsReader = new BufferedReader(new FileReader(posteritySettingPath));
-			if (movePossibilitiesPath.endsWith(Shared.DEFAULT_MAP_FILE))
-				movePossibilitiesReader = null;
-			else
-				movePossibilitiesReader = new BufferedReader(new FileReader(movePossibilitiesPath));
-			experimentInfoReader = new BufferedReader(new FileReader(experimentInfoPath));
-			scenarioReader = new BufferedReader(new FileReader(scenarioPath));
-			dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader, zoneMultiplier);
-		}
-		catch (FileNotFoundException e) {
-			Shared.problemsLogger.error(e.getMessage());
-		}
-		
+		viabilitySettingsReader = new BufferedReader(new FileReader(viabilitySettingsPath));
+		posteritySettingsReader = new BufferedReader(new FileReader(posteritySettingPath));
+		if (movePossibilitiesPath.endsWith(Shared.DEFAULT_MAP_FILE))
+			movePossibilitiesReader = null;
+		else
+			movePossibilitiesReader = new BufferedReader(new FileReader(movePossibilitiesPath));
+		experimentInfoReader = new BufferedReader(new FileReader(experimentInfoPath));
+		scenarioReader = new BufferedReader(new FileReader(scenarioPath));
+		dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader, zoneMultiplier);
 	}
 	
-	private void createAndStartStatisticDispatcherAgent(){
-		try {
-			Date d = new Date();
-			curStatisticFileURL = String.format("statistics/%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
-								  ((curExperiment==-1)?(""):(" e"+curExperiment)) + ".csv";
-			statisticDispatcher	= container.createNewAgent(
-										"statisticDispatcher", 
-										StatisticDispatcher.class.getName(), 
-										new Object[]{curStatisticFileURL,
-													 getAID()}
-								  );
-			statisticAID = new AID("statisticDispatcher", AID.ISLOCALNAME);
-			statisticDispatcher.start();
-		} catch (StaleProxyException e) {
-			Shared.problemsLogger.error(e.getMessage());
+	private void createStatisticDispatcher() {
+		Date d = new Date();
+		curStatisticFileURL = String.format("statistics/%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
+							  ((curExperiment==-1)?(""):(" e"+curExperiment)) + ".csv";
+		statisticDispatcher	= new StatisticDispatcher(curStatisticFileURL);
+	}
+	
+	private void runExperints() {
+		ExperimentDistribution firstDistribution = dataFiller.getExperimentDistribution();
+		Scenario scenario = dataFiller.getScenario();
+		Experiment experiment = new Experiment(firstDistribution, scenario, numberOfModelingYears, statisticDispatcher, capacityMultiplier);
+		while (curExperiment < numberOfExperints) {
+			experiment.runWitExperimentNumber(curExperiment);
+			curExperiment++;
 		}
 	}
 	
-	private void getConfirmationFromStatisticDispatcherAgent(){
-		ACLMessage confirm = blockingReceive();
-		if (confirm.getPerformative() != ACLMessage.CONFIRM)
-			/*throws new Exception("Problems with StatisticDispather agent")*/;		// TODO
-	}
-	
-	private void startExperimetnProvider(){
-		addBehaviour(new ExperimentsProvider());
+	private void finish() {
+		long executingTime = System.currentTimeMillis()-timeOfStart,
+			 hour = executingTime/1000/60/60,
+			 min = executingTime/1000/60 - hour*60,
+			 sec = executingTime/1000 - min*60 - hour*3600,
+			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
+		Logger.getLogger("runningTimeLogger").info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
+		statisticDispatcher.flush();
+		if (shouldDisplayDiagram)
+			new VisualisationFrame(curStatisticFileURL, shouldDisplayDetailedDiagram, shouldDisplayImmatures);
 	}
 }

@@ -1,17 +1,30 @@
 package experiment;
 
-import java.io.Serializable;
 import java.util.Vector;
 
-public class Action implements Serializable {
+public class Action {
 	
-	private static final long serialVersionUID = 1L;
-	
-	Vector<Integer> zonesNumbers;
-	ZoneCommand command;
+	private Vector<Integer> zonesNumbers;
+	private ZoneCommand command;
 	
 	public Action(Vector<Integer> zonesNumbers, ZoneCommand command){
 		this.zonesNumbers = zonesNumbers;
+		this.command = command;
+	}
+
+	public Vector<Integer> getZonesNumbers() {
+		return zonesNumbers;
+	}
+
+	public void setZonesNumbers(Vector<Integer> zonesNumbers) {
+		this.zonesNumbers = zonesNumbers;
+	}
+
+	public ZoneCommand getCommand() {
+		return command;
+	}
+
+	public void setCommand(ZoneCommand command) {
 		this.command = command;
 	}
 }

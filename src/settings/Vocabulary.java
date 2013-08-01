@@ -3,26 +3,26 @@ package settings;
 public interface Vocabulary {
 
 	public enum Param {
-		Lifetime, 						// Продолжительность жизни
-		Spawning, 						// Возраст первого нереста
-		Survival, 						// Выживаемость
-		SurvivalAchieveAge,				// |- Возраст достижения выживаемости S
-		SurvivalFactor, 				// |- Коэффициент
-		SurvivalFactorFirst, 			// |- Первого года
-		SurvivalFactorBeforeS,			// |- Коэффициент до достижения S
-		Competitiveness, 				// Конкурентоспособность
-		CompetitivenessAchieveAge,		// |- Возраст достижения C
-		CompetitivenessFactor, 			// |- Коэффициент
-		CompetitivenessFactorFirst,		// |- Первого года
-		CompetitivenessFactorBeforeC,	// |- Коэффициент до достижения C
-		Reproduction, 					// Вероятость размножения
-		ReproductionFactor,				// |- Коэффициент
-		Fertility,						// Плодовитость
-		FertilityFactor,				// |- Коэффициент
-		AmplexusRepeat,					// Вероятность повторения аплексусов
-		AmplexusRepeatFactor,			// |- Коэффициент
-		Voracity01,						// прожорливость в первый год жизни
-		Voracity02,						// прожорливость во второй год жизни
+		Lifetime, 						// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+		Spawning, 						// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		Survival, 						// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		SurvivalAchieveAge,				// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ S
+		SurvivalFactor, 				// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		SurvivalFactorFirst, 			// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+		SurvivalFactorBeforeS,			// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ S
+		Competitiveness, 				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		CompetitivenessAchieveAge,		// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ C
+		CompetitivenessFactor, 			// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		CompetitivenessFactorFirst,		// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+		CompetitivenessFactorBeforeC,	// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ C
+		Reproduction, 					// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		ReproductionFactor,				// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		Fertility,						// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		FertilityFactor,				// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		AmplexusRepeat,					// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		AmplexusRepeatFactor,			// |- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		Voracity01,						// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+		Voracity02,						// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		Voracity03,						// ...
 		Voracity04,
 		Voracity05,
@@ -30,11 +30,9 @@ public interface Vocabulary {
 		Voracity07,
 		Voracity08,
 		Voracity09,						// ...
-		Voracity10_N					// прожорливость в 10-м году и позже
+		Voracity10_N					// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ 10-пїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
 	}
 
-	// This is the temporary fix used for Posterity
-	// Maybe in future it will be unnecessary
 	public class Convertor {
 		public static Param keyToParam(int key) throws Exception {
 			switch (key) {

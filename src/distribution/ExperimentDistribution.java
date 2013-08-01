@@ -1,43 +1,31 @@
 package distribution;
 
-import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ExperimentDistribution implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class ExperimentDistribution {
 	
-	Vector <ZoneDistribution> zoneDistributions;
+	private List<ZoneDistribution> zoneDistributions;
 	
 	public ExperimentDistribution() {
-		zoneDistributions = new Vector<ZoneDistribution>();
+		zoneDistributions = new ArrayList<ZoneDistribution>();
 	}
 	
 	public void addZoneDistribution (ZoneDistribution distribution) {
 		zoneDistributions.add(distribution);
 	}
 	
-	public Vector <ZoneDistribution> getZoneDistributions(){
+	public List<ZoneDistribution> getZoneDistributions() {
 		return zoneDistributions;
 	}
 	
-	// by DMY
-	public static ExperimentDistribution parseExperiment(String resource) throws NumberFormatException{
-		// Later I'm plan to throw my own exception, if it will be necessary 
-		
-		ExperimentDistribution experiment = new ExperimentDistribution();
-		
+	public static ExperimentDistribution parseExperiment(String resource) throws NumberFormatException {
+		ExperimentDistribution experimentDistribution = new ExperimentDistribution();
 		String[] t = resource.split(";");
-		for(int i = 0; i < t.length; i++){
-			try{
-				if((t[i] != null) && !(t[i].equals("")))
-					experiment.addZoneDistribution(ZoneDistribution.parseZone(t[i]));
-			}
-			catch(NumberFormatException e){
-				throw e;
-			}
+		for(int i = 0; i < t.length; i++) {
+			if(t[i] != null && !t[i].equals(""))
+				experimentDistribution.addZoneDistribution(ZoneDistribution.parseZone(t[i]));
 		}
-		
-		return experiment;
+		return experimentDistribution;
 	}
 }

@@ -5,70 +5,168 @@ import genotype.Genotype;
 import individual.Female;
 import individual.Individual;
 import individual.Male;
-import jade.core.AID;
-import jade.core.Agent;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Vector;
+import java.util.Random;
 
 import settings.Settings;
 import starter.Shared;
+import statistic.GenotypeAgeDistribution;
+import statistic.StatisticDispatcher;
+import statistic.StatisticPackage;
 import utils.individuals.allocation.IIndividualsManager;
 import utils.individuals.allocation.IndividualsManagerDispatcher;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
+import experiment.Experiment;
+import experiment.ZoneCommand;
 
-public class Zone extends Agent {
-
-	private static final long serialVersionUID = 1L;
+public class Zone {
 	
-	private static double capacityMultiplier;
-	List<Male> males = new LinkedList<Male>();
-	List<Female> females = new LinkedList<Female>();
-	List<Individual> otherImmatures = new LinkedList<Individual>();
-	List<Individual> yearlings = new LinkedList<Individual>();
-	IIndividualsManager individualsManager;
+	private List<Male> males = new LinkedList<Male>();
+	private List<Female> females = new LinkedList<Female>();
+	private List<Individual> otherImmatures = new LinkedList<Individual>();
+	private List<Individual> yearlings = new LinkedList<Individual>();
+	private IIndividualsManager individualsManager;
 	
-	AID statisticDispatcher;
+	private StatisticDispatcher statisticDispatcher;
+	private ZoneDistribution initialDistribution;
+	private int experimentNumber;
+	private Experiment experiment;
+	private int zoneNumber;
 	
-	int experimentId;
-	int zoneId;
-	
-	float capacity;
+	private double capacity;
 	private HashMap<Integer, Double> travelCosts;
 	private double sumOfTravelPossibilities = 0;
-	int iteration = -1;
-	int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
+	private int iteration;
+	private int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
 	
-	@Override
-	protected void setup() {
-		travelCosts = Settings.getMovePosibilitiesFrom(this.getZoneNumber());
+	private ScenarioExecutor scenarioExecutor;
+	private Random rand = new Random();
+	private GenotypeAgeDistribution previousIterationGAD = null;
+	
+	private double totalSumOfAntiCompetetiveness=0;
+	private double totalSumOfVoracity=0;
+	
+	public Zone(
+			ZoneDistribution firstZoneDistr,
+			int myNumber,
+			StatisticDispatcher statisticDispatcher,
+			double capacityMultiplier,
+			Experiment experiment) {
+		travelCosts = Settings.getMovePosibilitiesFrom(zoneNumber);
 		for (Integer zoneNumber : travelCosts.keySet())
 			sumOfTravelPossibilities += travelCosts.get(zoneNumber);
-		ZoneDistribution zoneDistribution = (ZoneDistribution)getArguments()[0];
-		experimentId = (Integer)getArguments()[1];
-		zoneId = (Integer)getArguments()[2];
-		individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneId);
-		statisticDispatcher = (AID)getArguments()[3];
-		if (getArguments().length>4)
-			maxSizeOfListOfFemales = (Integer)getArguments()[4];
-		else
-			maxSizeOfListOfFemales = Shared.DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
-		if (getArguments().length>5)
-			minNumberOfMalesForContinue = (Integer)getArguments()[5];
-		else
-			minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
-		if (getArguments().length>6)
-			minNumberOfMalesForContinue = (Integer)getArguments()[6];
-		else
-			minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
-		createIndividuals(zoneDistribution);
-		capacity = (float) (zoneDistribution.getCapacity()*capacityMultiplier);
-		addBehaviour(new ZoneBehaviour());
+		this.initialDistribution = firstZoneDistr;
+		this.zoneNumber = myNumber;
+		this.individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneNumber);
+		this.statisticDispatcher = statisticDispatcher;
+		this.experiment = experiment;
+		this.maxSizeOfListOfFemales = Shared.DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
+		this.minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
+		capacity = firstZoneDistr.getCapacity()*capacityMultiplier;
+		scenarioExecutor = new ScenarioExecutor(this);
+	}
+	
+	public void resetTo(int experimentNumber) {
+		males.clear();
+		females.clear();
+		otherImmatures.clear();
+		yearlings.clear();
+		createIndividuals(initialDistribution);
+		this.experimentNumber = experimentNumber;
+		iteration = -1;
+	}
+
+	public void scenarioCommand(ZoneCommand command) throws IOException {
+		scenarioExecutor.action(command);
+	}
+	
+	private void dieProcessing() {
+		logPopulationSizes("Die         ");
+		killDieLoosersIn(males);
+		killDieLoosersIn(females);
+		killDieLoosersIn(otherImmatures);
+		killDieLoosersIn(yearlings);
+	}
+	
+	private void killDieLoosersIn(List<? extends Individual> indivs) {
+		ListIterator<? extends Individual> iterator = indivs.listIterator();
+		while (iterator.hasNext()) {
+			Individual indiv = iterator.next(); 
+			if (indiv.isDead()) {
+				if (indiv.isFemale())
+					individualsManager.killFemale((Female) indiv);
+				else
+					individualsManager.killMale((Male) indiv);
+				iterator.remove();
+			}
+		}
+	}
+
+	public void movePhase() {
+		logPopulationSizes("Move        ");
+		for (Individual indiv : getIndividuals())
+			if (indiv.isGoingOut()){
+				Integer outZone = indiv.whereDoGo();
+				assert outZone != null : "Something wrong with whereDoGo function, technical (not idea) bug";
+				if(outZone != new Integer(-1) && outZone != zoneNumber){
+					sendIndividualTo(indiv, outZone);
+					killIndividual(indiv);
+				}
+			}
+	}
+	
+	private void sendIndividualTo(Individual indiv, int zoneNumber){
+		Zone newZone = experiment.getZone(zoneNumber);
+		if (newZone != null)
+			newZone.createIndividual(indiv.getGenotype(), indiv.getAge());
+	}
+	
+	public void firstPhase() {
+		iteration++;
+		refreshStatistic(0);
+		updateListsAndIndividualSettings();
+		refreshStatistic(1);
+		reproductionProcessing();
+		refreshStatistic(2);
+		competitionProcessing();
+		refreshStatistic(3);
+		dieProcessing();
+		refreshStatistic(4);
+	}
+	
+	private void reproductionProcessing() {
+		logPopulationSizes("Reproduction");
+		int readyMales, cicles=0;
+		do{
+			readyMales=0;
+			for (Male male : males){
+				if (male.isReadyToReproduction()){
+					Female[] femaleList = male.getFemaleListForUpdating();
+					randomFilling(femaleList);
+					male.chooseFemale();
+					readyMales++;
+				}
+			}
+			for (Female female : females)
+				createIndividuals(female.getPosterity());
+		}while (readyMales>minNumberOfMalesForContinue && cicles++<Shared.MAX_NUMBER_OF_REPRODUCTION_CIRCLES);
+	}
+	
+	private void competitionProcessing(){
+		logPopulationSizes("Competition ");
+		recalculateTotalSumOfAntiCompetetiveness();
+		recalculateTotalSumOfVoracity();
+		if(totalSumOfVoracity <= capacity)
+			return;
+		killCompetitionLoosers();
 	}
 	
 	public HashMap<Integer, Double> getZoneTravelPossibilities(){
@@ -84,7 +182,7 @@ public class Zone extends Agent {
 	public void createIndividuals(ZoneDistribution zoneDistribution) {
 		if (zoneDistribution == null)
 			return;
-		Vector<GenotypeAgeCountTrio> gants = zoneDistribution.getGenotypeDistributions();
+		List<GenotypeAgeCountTrio> gants = zoneDistribution.getGenotypeDistributions();
 		for (GenotypeAgeCountTrio gant : gants)
 			createIndividualsByGant(gant);
 	}
@@ -100,18 +198,8 @@ public class Zone extends Agent {
 		else
 			addIndividualToList(individualsManager.getMale(genotype, age, this));
 	}
-
-	void createIndividual(String str) {
-		String[] strs = str.split(" ");
-		Genotype genotype = Genotype.getGenotype(strs[0]);
-		int age = Integer.parseInt(strs[1]);
-		if (genotype.getGender() == Genome.X)
-			addIndividualToList(individualsManager.getFemale(genotype, age, this));
-		else
-			addIndividualToList(individualsManager.getMale(genotype, age, this));
-	}
 	
-	public void addIndividualToList(Individual individual) {
+	private void addIndividualToList(Individual individual) {
 		if (!individual.isMature())
 			if (individual.getAge()==0)
 				yearlings.add(individual);
@@ -144,7 +232,7 @@ public class Zone extends Agent {
 			yearlings.add(individualsManager.getMale(genotype, 0, this));
 	}
 	
-	int getIndividualsNumber(){
+	private int getIndividualsNumber(){
 		return males.size() + females.size() + otherImmatures.size() + yearlings.size();
 	}
 	
@@ -152,7 +240,7 @@ public class Zone extends Agent {
 		return 0.5;			//#Stub
 	}
 
-	List<Individual> getIndividuals(){
+	private List<Individual> getIndividuals(){
 		List<Individual> individuals = new ArrayList<Individual>(getIndividualsNumber());
 		individuals.addAll(males);
 		individuals.addAll(females);
@@ -161,7 +249,7 @@ public class Zone extends Agent {
 		return individuals;
 	}
 	
-	public void killIndividual(Individual individual) {
+	private void killIndividual(Individual individual) {
 		if (!males.remove(individual))
 			if (!females.remove(individual))
 				if (!otherImmatures.remove(individual))
@@ -171,16 +259,12 @@ public class Zone extends Agent {
 		else
 			individualsManager.killMale((Male)individual);
 	}
-
-	public int getZoneNumber() {
-		return zoneId;
-	}
 	
 	public int getMaxSizeOfListOfFemales(){
 		return maxSizeOfListOfFemales;
 	}
 	
-	void updateListsAndIndividualSettings(){
+	private void updateListsAndIndividualSettings(){
 		for (Individual indiv : males)
 			indiv.updateSettings();
 		for (Individual indiv : females)
@@ -201,8 +285,116 @@ public class Zone extends Agent {
 		}
 	}
 	
-	public static void setCapacityMultiplier(double multiplier){
-		capacityMultiplier = multiplier;
+	private void recalculateTotalSumOfAntiCompetetiveness() {
+		totalSumOfAntiCompetetiveness = 0;
+		for (Individual element : males)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		for (Individual element : females)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		for (Individual element : otherImmatures)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
+		for (Individual element : yearlings)
+			totalSumOfAntiCompetetiveness += element.getAntiCompetitiveness();
 	}
 	
+	private void recalculateTotalSumOfVoracity() {
+		totalSumOfVoracity = 0;
+		for (Individual element : males)
+			totalSumOfVoracity += element.getVoracity();
+		for (Individual element : females)
+			totalSumOfVoracity += element.getVoracity();
+		for (Individual element : otherImmatures)
+			totalSumOfVoracity += element.getVoracity();
+		for (Individual element : yearlings)
+			totalSumOfVoracity += element.getVoracity();
+	}
+	
+	private double getWeightedTotalSumOfVoracity() {
+		double weightedTotalSumOfVoracity = 0;
+		for (Individual element : males)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		for (Individual element : females)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		for (Individual element : otherImmatures)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		for (Individual element : yearlings)
+			weightedTotalSumOfVoracity += element.getVoracity()*element.getCompetitiveness();
+		return weightedTotalSumOfVoracity;
+	}
+	
+	/** @return random elements according to specified probabilities */
+	private void killCompetitionLoosers() {
+		double coeficient =  (totalSumOfVoracity-capacity)/capacity
+				*getIndividualsNumber()/totalSumOfAntiCompetetiveness
+				*getWeightedTotalSumOfVoracity()/totalSumOfVoracity;
+		killCompetitionLoosersIn(males, coeficient);
+		killCompetitionLoosersIn(females, coeficient);
+		killCompetitionLoosersIn(otherImmatures, coeficient);
+		killCompetitionLoosersIn(yearlings, coeficient);
+	}
+	
+	private void killCompetitionLoosersIn(List<? extends Individual> indivs, double coeficient) {
+		ListIterator<? extends Individual> iterator = indivs.listIterator();
+		while (iterator.hasNext()) {
+			Individual indiv = iterator.next();
+			if (Math.random() <= 1 - indiv.getCompetitiveness()/coeficient) {
+				if (indiv.isFemale())
+					individualsManager.killFemale((Female) indiv);
+				else
+					individualsManager.killMale((Male) indiv);
+				iterator.remove();
+			}
+		}
+	}
+	
+	private void randomFilling(Female[] femalesArray){
+		int i=0;
+		if (females.size()!=0){
+			int numberOfFemales = Math.abs(rand.nextInt()%(maxSizeOfListOfFemales+1));
+			for (i=0; i<numberOfFemales; i++)
+				femalesArray[i] = females.get(Math.abs(rand.nextInt()%females.size()));
+		}
+		for (; i<maxSizeOfListOfFemales; i++)
+			femalesArray[i] = null;
+	}
+	
+	
+	
+	//=============================== Statistic sending: =====
+
+	private void refreshStatistic(int subStepNumber) {
+		StatisticPackage currentPackage  = createStatisticPackage(subStepNumber);
+		statisticDispatcher.addPackage(currentPackage);
+	}
+	
+	private StatisticPackage createStatisticPackage(int subStepNumber){
+		GenotypeAgeDistribution gad = createGAD();
+		StatisticPackage statisticPackage = new StatisticPackage(experimentNumber, zoneNumber, iteration, subStepNumber, gad);
+		return statisticPackage;
+	}
+	
+	private GenotypeAgeDistribution createGAD() {
+		GenotypeAgeDistribution gad = new GenotypeAgeDistribution();
+		for (Individual indiv : males)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), true);
+		for (Individual indiv : females)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), true);
+		for (Individual indiv : otherImmatures)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), false);
+		for (Individual indiv : yearlings)
+			gad.addToGant(Genotype.getIdOf(indiv.getGenotype()), indiv.getAge(), false);
+		gad.setDifferencesWith(previousIterationGAD);
+		previousIterationGAD = gad;
+		return gad;
+	}
+	
+	private void logPopulationSizes(String beforePhaseName){
+		int	malesNumber = males.size(),
+			femalesNumber = females.size(),
+			immaturesNumber = otherImmatures.size(),
+			yearlingsNumber = yearlings.size();
+		Shared.debugLogger.debug(MessageFormat.format(
+				"Before {0}: M-{1,number},\tF-{2,number},\tI-{3,number},\tY-{4,number}", 
+				beforePhaseName, malesNumber, femalesNumber, immaturesNumber, yearlingsNumber));
+	}
 }

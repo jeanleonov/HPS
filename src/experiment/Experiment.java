@@ -1,80 +1,85 @@
 package experiment;
 
-import jade.core.AID;
-import jade.core.Agent;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.Vector;
-
-import settings.Settings;
+import starter.Shared;
+import statistic.StatisticDispatcher;
 import zone.Zone;
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
 
-public class Experiment extends Agent {
+public class Experiment {
+	
+	private final Scenario scenario;
+	private final Integer numberOfModelingYears;
+	
+	private List<Zone> zones;
+	private int yearCursore;
+	
+	public Experiment(
+			ExperimentDistribution firstDistribution,
+			Scenario scenario,
+			int numberOfModelingYears,
+			StatisticDispatcher statisticDispatcher,
+			double capacityMultiplier) {
+		this.scenario = scenario;
+		this.numberOfModelingYears = numberOfModelingYears;
+		createZones(statisticDispatcher, firstDistribution, capacityMultiplier);
+	}
+	
+	private void createZones(
+			StatisticDispatcher statisticDispatcher,
+			ExperimentDistribution firstDistribution,
+			double capacityMultiplier) {
+		zones = new ArrayList<Zone>();
+		int zoneNumber=0;
+		for (ZoneDistribution firstZoneDistr : firstDistribution.getZoneDistributions()) {
+			Zone zone = new Zone(firstZoneDistr, zoneNumber, statisticDispatcher, capacityMultiplier, this);
+			zones.add(zone);
+			zoneNumber++;
+		}
+	}
+	
+	public void runWitExperimentNumber(int experimentNumber) {
+		resetZonesTo(experimentNumber);
+		scenario.start();
+		yearCursore = 0;
+		while (yearCursore < numberOfModelingYears) {
+			Shared.infoLogger.info("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
+			firstPhaseProcessing();
+			try {
+				scenarioCommandsProcessing();
+			} catch (IOException e) {e.printStackTrace();}
+			movePhaseProcessing();
+			yearCursore++;
+		}
+	}
+	
+	private void resetZonesTo(int experimentNumber) {
+		for (Zone zone : zones)
+			zone.resetTo(experimentNumber);
+	}
+	
+	private void scenarioCommandsProcessing() throws IOException{
+		ArrayList<Action> actions = scenario.getCommandsForNextYear(yearCursore);
+		for (Action action : actions)
+			for (Integer zoneNumber : action.getZonesNumbers())
+				zones.get(zoneNumber).scenarioCommand(action.getCommand());
+	}
 
-	private static final long serialVersionUID = 1L;
-	
-	Vector<AID> zonesAIDs;
-	Integer numberOfModelingYears;
-	Integer experimentNumber;
-	Scenario scenario;
-	AID myProvider;
-	
-	@Override
-	protected void setup(){
-		zonesAIDs = new Vector<AID>();
-		scenario = (Scenario)getArguments()[1];
-		numberOfModelingYears = (Integer)getArguments()[2];
-		experimentNumber = (Integer)getArguments()[3];
-		AID statisticAID = (AID)getArguments()[4];
-		myProvider = (AID)getArguments()[5];
-		startZones(createZones(statisticAID));
-		Settings.updateZoneTable(zonesAIDs);
-		addBehaviour(new ExperimentBehaviour());
+	private void firstPhaseProcessing(){
+		for (Zone zone : zones)
+			zone.firstPhase();
+	}
+
+	private void movePhaseProcessing(){
+		for (Zone zone : zones)
+			zone.movePhase();
 	}
 	
-	private Vector<AgentController> createZones(AID statisticAID){
-		ContainerController controller = this.getContainerController();
-		Vector<AgentController> zoneAgents = new Vector<AgentController>();
-		ExperimentDistribution distribution = (ExperimentDistribution)getArguments()[0];
-		int i=0;
-		for (ZoneDistribution zoneDistr : distribution.getZoneDistributions()) {
-			try {
-				zoneAgents.add(
-						controller.createNewAgent(
-								getZoneName(i),
-								Zone.class.getName(), 
-								new Object[]{
-											 zoneDistr,
-											 experimentNumber,
-									  		 i,
-									  		 statisticAID
-									        }
-								));											// agent created
-			}catch (StaleProxyException e)		{e.printStackTrace();}
-			zonesAIDs.add(new AID(getZoneName(i), AID.ISLOCALNAME));		// agent ID saved to private list
-			i++;
-		}
-		return zoneAgents;
+	public Zone getZone(int number) {
+		return zones.get(number);
 	}
-	
-	private void startZones(Vector<AgentController> zoneAgents){
-		for (AgentController agent : zoneAgents){
-			try {
-				agent.start();									// agent behaviors started
-			} catch (StaleProxyException e)		{e.printStackTrace();}
-		}
-	}
-	
-	AID getZoneAID(int zoneNumber){
-		return zonesAIDs.get(zoneNumber);					// if invalid zoneNumber, then ignore it.		
-	}
-	
-	private String getZoneName(int i){
-		return "" + getLocalName() + "_Zone_" + i;
-	}
-	
 }

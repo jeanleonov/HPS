@@ -28,8 +28,7 @@ public class ScenarioExecutor implements Messaging {
 				break;
 			}
 			default:{
-				IOException e = new IOException("Reading command error: unknown type");
-				throw e;
+				throw new IOException("Reading command error: unknown type");
 			}
 		}
 	}

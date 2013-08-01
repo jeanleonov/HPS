@@ -1,24 +1,22 @@
 package distribution;
 
-import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ZoneDistribution implements Serializable, Cloneable {
-
-	private static final long serialVersionUID = 1L;
+public class ZoneDistribution {
 	
 	private float capacity = 0;
-	Vector<GenotypeAgeCountTrio> genotypeAgeNumberTrio;
+	private List<GenotypeAgeCountTrio> genotypeAgeNumberTrio;
 	
 	public ZoneDistribution() {
-		genotypeAgeNumberTrio = new Vector<GenotypeAgeCountTrio>();
+		genotypeAgeNumberTrio = new ArrayList<GenotypeAgeCountTrio>();
 	}
 	
 	public void addGenotypeDistribution (GenotypeAgeCountTrio trio) {
 		genotypeAgeNumberTrio.add(trio);
 	}
 	
-	public Vector<GenotypeAgeCountTrio> getGenotypeDistributions(){
+	public List<GenotypeAgeCountTrio> getGenotypeDistributions() {
 		return genotypeAgeNumberTrio;
 	}
 	
@@ -26,26 +24,15 @@ public class ZoneDistribution implements Serializable, Cloneable {
 		return capacity;
 	}
 	
-	// by DMY
-	public static ZoneDistribution parseZone(String resource) throws NumberFormatException{
-		// Later I'm plan to throw my own exception, if it will be necessary 
-		
-		ZoneDistribution zone = new ZoneDistribution();
+	public static ZoneDistribution parseZone(String resource) throws NumberFormatException {
+		ZoneDistribution zoneDistribution = new ZoneDistribution();
 		String[] t = resource.split("\\|");
-		
-		zone.capacity = Integer.parseInt(t[0]);
-		
+		zoneDistribution.capacity = Integer.parseInt(t[0]);
 		for(int i = 1; i < t.length; i++){
-			try{
-				if((t[i] != null) && !(t[i].equals("")))
-					zone.addGenotypeDistribution(GenotypeAgeCountTrio.parseGenotype(t[i]));
-			}
-			catch(NumberFormatException e){
-				throw e;
-			}
+			if((t[i] != null) && !(t[i].equals("")))
+				zoneDistribution.addGenotypeDistribution(GenotypeAgeCountTrio.parseGenotype(t[i]));
 		}
-		
-		return zone;
+		return zoneDistribution;
 	}
 	
 	public String toString(){
