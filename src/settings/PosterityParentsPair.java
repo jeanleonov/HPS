@@ -1,30 +1,30 @@
 package settings;
 
-public class PosterityParentsPair implements java.io.Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private genotype.Genotype male;
-	private genotype.Genotype female;
+import experiment.individual.genotype.Genotype;
 
-	public PosterityParentsPair(genotype.Genotype female, genotype.Genotype male) {
+public class PosterityParentsPair {
+	
+	private Genotype male;
+	private Genotype female;
+
+	public PosterityParentsPair(Genotype female, Genotype male) {
 		this.male = male;
 		this.female = female;
 	}
 
-	public void setMale(genotype.Genotype genome) {
+	public void setMale(Genotype genome) {
 		male = genome;
 	}
 
-	public void setFemale(genotype.Genotype param) {
+	public void setFemale(Genotype param) {
 		female = param;
 	}
 
-	public genotype.Genotype getMale() {
+	public Genotype getMale() {
 		return male;
 	}
 
-	public genotype.Genotype getFemale() {
+	public Genotype getFemale() {
 		return female;
 	}
 

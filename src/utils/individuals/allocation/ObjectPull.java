@@ -1,9 +1,9 @@
 package utils.individuals.allocation;
 
-import individual.Female;
-import individual.Male;
-import genotype.Genotype;
-import zone.Zone;
+import experiment.individual.Female;
+import experiment.individual.Male;
+import experiment.individual.genotype.Genotype;
+import experiment.zone.Zone;
 
 public class ObjectPull implements IIndividualsManager{
 

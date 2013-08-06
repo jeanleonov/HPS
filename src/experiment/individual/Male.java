@@ -1,8 +1,8 @@
-package individual;
+package experiment.individual;
 
-import genotype.Genotype;
+import experiment.individual.genotype.Genotype;
+import experiment.zone.Zone;
 import settings.Settings;
-import zone.Zone;
 
 public class Male extends Individual {
 
@@ -17,10 +17,11 @@ public class Male extends Individual {
 	
 	public Male reset(Genotype myGenotype, int age, Zone myZone){
 		this.myGenotype = myGenotype;
-		this.age = age;
 		this.myZone = myZone;
 		viabilitySettings = Settings.getViabilitySettings(getGenotype());
-		updater.updateSettings();
+		for (this.age = 0; this.age <= age; this.age++)
+			updater.updateSettings();
+		this.age = age;
 		return this;
 	}
 	

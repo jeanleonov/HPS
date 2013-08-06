@@ -1,4 +1,4 @@
-package genotype;
+package experiment.individual.genotype;
 
 import java.io.Serializable;
 

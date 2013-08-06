@@ -25,7 +25,7 @@ public class IndividualsManagerDispatcher {
 	static public IIndividualsManager getIndividualsManager(int zoneNumber){
 		switch (mode){
 		case SINGLE_OBJECT_PULL:
-			return (objectPull==null)?(objectPull=new SynchronizedObjectPull()):objectPull;
+			return (objectPull==null)?(objectPull=new ObjectPull()):objectPull;
 		case MULTIPROC_OBJECT_PULL:
 			if (objectPulls == null){
 				objectPulls = new HashMap<Integer, ObjectPull>();

@@ -38,9 +38,7 @@ public final class Shared {
 						"	                                     2 - creation of individuals with using of object pulls for each zone\n" +
 						"	                                     | DEFAULT 0\n" +
 						"	[{-d, --display_diagram} boolean] display diagrams after modeling process | DEFAULT false\n" +
-						"	[{-D, --detailed_diagram} boolean] display detailed diagrams after modeling process | DEFAULT false\n" +
-						"	[{-D, --detailed_diagram} boolean] display immatures too on diagrams after modeling process | DEFAULT false\n" +
-						"	[{-P, --port} int]";
+						"	[{-D, --detailed_diagram} boolean] display immatures too on diagrams after modeling process | DEFAULT false";
 	
 	public final static 
 	int	DEFAULT_PACKAGE_BUFFER = 100,
@@ -52,6 +50,16 @@ public final class Shared {
 	Logger	problemsLogger = Logger.getLogger("problemsLogger"),
 			debugLogger = Logger.getLogger("debugLogger"),
 			infoLogger = Logger.getLogger("infoLogger");
+	
+	public static String printStack(Throwable throwable) {
+		StringBuffer stackTrace = new StringBuffer();
+		stackTrace.append(throwable.getMessage());
+		stackTrace.append('\n');
+		StackTraceElement[] stack = throwable.getStackTrace();
+		for (int i=0; i<stack.length; i++)
+			stackTrace.append(stack[i].toString()+"\n");
+		return stackTrace.toString();
+	}
 		
 	private final static
 	String getProjectPath(){

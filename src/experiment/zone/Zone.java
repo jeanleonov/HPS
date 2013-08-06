@@ -1,10 +1,4 @@
-package zone;
-
-import genotype.Genome;
-import genotype.Genotype;
-import individual.Female;
-import individual.Individual;
-import individual.Male;
+package experiment.zone;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -25,7 +19,13 @@ import utils.individuals.allocation.IndividualsManagerDispatcher;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 import experiment.Experiment;
-import experiment.ZoneCommand;
+import experiment.individual.Female;
+import experiment.individual.Individual;
+import experiment.individual.Male;
+import experiment.individual.genotype.Genome;
+import experiment.individual.genotype.Genotype;
+import experiment.scenario.ScenarioExecutor;
+import experiment.scenario.ZoneCommand;
 
 public class Zone {
 	
@@ -75,9 +75,25 @@ public class Zone {
 	}
 	
 	public void resetTo(int experimentNumber) {
+		for (Male male : males)
+			individualsManager.killMale(male);
 		males.clear();
+		for (Female female : females)
+			individualsManager.killFemale(female);
 		females.clear();
-		otherImmatures.clear();
+		for (Individual individual : otherImmatures) {
+			if (individual.isFemale())
+				individualsManager.killFemale((Female)individual);
+			else
+				individualsManager.killMale((Male)individual);
+		}
+		otherImmatures.clear(); {
+		for (Individual individual : yearlings)
+			if (individual.isFemale())
+				individualsManager.killFemale((Female)individual);
+			else
+				individualsManager.killMale((Male)individual);
+		}
 		yearlings.clear();
 		createIndividuals(initialDistribution);
 		this.experimentNumber = experimentNumber;

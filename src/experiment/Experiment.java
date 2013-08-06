@@ -6,9 +6,11 @@ import java.util.List;
 
 import starter.Shared;
 import statistic.StatisticDispatcher;
-import zone.Zone;
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
+import experiment.scenario.Action;
+import experiment.scenario.Scenario;
+import experiment.zone.Zone;
 
 public class Experiment {
 	

@@ -19,7 +19,7 @@ public class ExperimentDistribution {
 		return zoneDistributions;
 	}
 	
-	public static ExperimentDistribution parseExperiment(String resource) throws NumberFormatException {
+	public static ExperimentDistribution parseExperiment(String resource) throws Exception {
 		ExperimentDistribution experimentDistribution = new ExperimentDistribution();
 		String[] t = resource.split(";");
 		for(int i = 0; i < t.length; i++) {

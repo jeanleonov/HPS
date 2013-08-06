@@ -24,11 +24,7 @@ public class MainClass {
 		try {
 			main.start();
 		} catch (Exception exception) {
-			StringBuffer stackTrace = new StringBuffer();
-			StackTraceElement[] stack = exception.getStackTrace();
-			for (int i=0; i<stack.length; i++)
-				stackTrace.append(stack[i].toString()+"\n");
-			Shared.problemsLogger.error(exception.getMessage()+"\n"+stackTrace);
+			Shared.problemsLogger.error(Shared.printStack(exception));
 		}
 	}
 	

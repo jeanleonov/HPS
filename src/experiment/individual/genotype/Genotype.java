@@ -1,4 +1,4 @@
-package genotype;
+package experiment.individual.genotype;
 
 import java.io.Serializable;
 import java.util.Vector;
@@ -108,53 +108,54 @@ public class Genotype implements Serializable {
 	/* It serves as a constructor by String as "xRyL", or "xRxR", or "(yL)xL" ...
 	 *
 	 */
-	static public Genotype getGenotype(String str){
+	static public Genotype getGenotype(String str) throws Exception{
 		int shift = 0;
 		Genome[] genomes = new Genome[2];
 		boolean[] clonalities = new boolean[2];
 		if (str.charAt(0)=='('){
 			if (str.charAt(3)!=')')
-				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+				throw new Exception("Can not parse genotype: \'"+str+"\'");
 			clonalities[0] = true;
 			if ((genomes[0] = parseGenome(str.charAt(1), str.charAt(2))) == null)
-				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+				throw new Exception("Can not parse genotype: \'"+str+"\'");
 			shift = 2;
 		}
 		else{
 			if ((genomes[0] = parseGenome(str.charAt(0), str.charAt(1))) == null)
-				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+				throw new Exception("Can not parse genotype: \'"+str+"\'");
 		}
 		if (str.charAt(2+shift)=='('){
 			if (str.charAt(5+shift)!=')')
-				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+				throw new Exception("Can not parse genotype: \'"+str+"\'");
 			clonalities[1] = true;
 			if ((genomes[1] = parseGenome(str.charAt(3+shift), str.charAt(4+shift))) == null)
-				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+				throw new Exception("Can not parse genotype: \'"+str+"\'");
 		}
 		else{
 			if ((genomes[1] = parseGenome(str.charAt(2+shift), str.charAt(3+shift))) == null)
-				return null;						// "return null;" is bad, throws new ...Exception(..) will be better
+				throw new Exception("Can not parse genotype: \'"+str+"\'");
 		}
-		Genotype genotype = getGenotype(genomes, clonalities);
-		return genotype;
+		return getGenotype(genomes, clonalities);
 	}
 
-		// only for 2 Genomes in Genotype!!!
-		static private Genome parseGenome(char gender, char name){
-			byte genderByte;
-			Genome.GenomeName nameByte;
-			if (gender == 'x' || gender == 'X')
-				genderByte = Genome.X;
-			else if (gender == 'y' || gender == 'Y')
-				genderByte = Genome.Y;
-			else return null;						// "return null;" is bad, throws new ...Exception(..) will be better
-			if (name == 'l' || name == 'L')
-				nameByte = Genome.GenomeName.L;
-			else if (name == 'r' || name == 'R')
-				nameByte = Genome.GenomeName.R;
-			else return null;						// "return null;" is bad, throws new ...Exception(..) will be better
-			return new Genome(genderByte, nameByte);
-		}
+	// only for 2 Genomes in Genotype!!!
+	static private Genome parseGenome(char gender, char name) throws Exception{
+		byte genderByte;
+		Genome.GenomeName nameByte;
+		if (gender == 'x' || gender == 'X')
+			genderByte = Genome.X;
+		else if (gender == 'y' || gender == 'Y')
+			genderByte = Genome.Y;
+		else
+			throw new Exception("Can not parse genome: \'"+name+gender+"\'");
+		if (name == 'l' || name == 'L')
+			nameByte = Genome.GenomeName.L;
+		else if (name == 'r' || name == 'R')
+			nameByte = Genome.GenomeName.R;
+		else
+			throw new Exception("Can not parse genome: \'"+name+gender+"\'");
+		return new Genome(genderByte, nameByte);
+	}
 
 	/* It serves as a constructor
 	 * but return ID
@@ -180,31 +181,6 @@ public class Genotype implements Serializable {
 		Genotype genotype = new Genotype(genomes, clonalities);
 		genotypes.add(genotype);
 		return genotypes.size()-1;
-	}
-
-	/* It serves as a constructor by String as "xRyL", or "xRxR", or "(yL)xL" ...
-	 * but return ID
-	 */
-	static public int getGenotypeId(String str){
-		int shift = 0;
-		Genome[] genomes = new Genome[2];
-		boolean[] clonalities = new boolean[2];
-		if (str.charAt(0)=='('){
-			if (str.charAt(3)!=')')
-				return UNDEF;						// "return UNDEF;" is bad, throws new ...Exception(..) will be better
-			clonalities[0] = true;
-			if ((genomes[0] = parseGenome(str.charAt(1), str.charAt(2))) == null)
-				return UNDEF;						// "return UNDEF;" is bad, throws new ...Exception(..) will be better
-			shift = 2;
-		}
-		if (str.charAt(2+shift)=='('){
-			if (str.charAt(5+shift)!=')')
-				return UNDEF;						// "return UNDEF;" is bad, throws new ...Exception(..) will be better
-			clonalities[1] = true;
-			if ((genomes[1] = parseGenome(str.charAt(3+shift), str.charAt(4+shift))) == null)
-				return UNDEF;						// "return UNDEF;" is bad, throws new ...Exception(..) will be better
-		}
-		return getGenotypeId(genomes, clonalities);
 	}
 
 	// get existed genotype

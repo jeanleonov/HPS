@@ -1,12 +1,10 @@
-package experiment;
+package experiment.scenario.repeaters;
 
-public class SingleAppearance extends ActionAppearance {
-	
-	private static final long serialVersionUID = 1L;
+public class SingleRepeat extends ActionRepeat {
 	
 	private int iterationNumber;
 	
-	public SingleAppearance(int iterationNumber) {
+	public SingleRepeat(int iterationNumber) {
 		this.iterationNumber = iterationNumber;
 	}
 

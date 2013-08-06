@@ -1,12 +1,10 @@
-package experiment;
+package experiment.scenario.repeaters;
 
-public class CyclicAppearance extends ActionAppearance {
-
-	private static final long serialVersionUID = 1L;
+public class CyclicRepeat extends ActionRepeat {
 	
 	private float cycleLength;
 	
-	public CyclicAppearance(float cycleLength) {
+	public CyclicRepeat(float cycleLength) {
 		this.cycleLength = cycleLength;
 	}
 

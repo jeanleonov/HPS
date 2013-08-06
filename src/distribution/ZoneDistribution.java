@@ -24,7 +24,7 @@ public class ZoneDistribution {
 		return capacity;
 	}
 	
-	public static ZoneDistribution parseZone(String resource) throws NumberFormatException {
+	public static ZoneDistribution parseZone(String resource) throws Exception {
 		ZoneDistribution zoneDistribution = new ZoneDistribution();
 		String[] t = resource.split("\\|");
 		zoneDistribution.capacity = Integer.parseInt(t[0]);

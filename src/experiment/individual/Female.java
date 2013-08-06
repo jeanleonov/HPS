@@ -1,14 +1,13 @@
-package individual;
-
-import genotype.Genotype;
+package experiment.individual;
 
 import java.util.ArrayList;
 
 import settings.PosterityResultPair;
 import settings.Settings;
-import zone.Zone;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
+import experiment.individual.genotype.Genotype;
+import experiment.zone.Zone;
 
 public class Female extends Individual {
 
@@ -26,7 +25,9 @@ public class Female extends Individual {
 		this.age = age;
 		this.myZone = myZone;
 		viabilitySettings = Settings.getViabilitySettings(getGenotype());
-		updater.updateSettings();
+		for (this.age = 0; this.age <= age; this.age++)
+			updater.updateSettings();
+		this.age = age;
 		return this;
 	}
 

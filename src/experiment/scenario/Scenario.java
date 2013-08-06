@@ -1,33 +1,31 @@
-package experiment;
+package experiment.scenario;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
-public class Scenario implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
+public class Scenario {
 
 	final static public byte UNSTARTED = -1;
 	
 	private int yearCursor=UNSTARTED;
 
-	private Vector<Rule> unstartedRules;
-	private Vector<Rule> activeRules;
-	private Vector<Rule> finishedRules;
+	private List<Rule> unstartedRules;
+	private List<Rule> activeRules;
+	private List<Rule> finishedRules;
 	
-	public Scenario(){
-		unstartedRules = new Vector<Rule>();
-		activeRules = new Vector<Rule>();
-		finishedRules = new Vector<Rule>();
+	public Scenario() {
+		unstartedRules = new LinkedList<Rule>();
+		activeRules = new LinkedList<Rule>();
+		finishedRules = new LinkedList<Rule>();
 	}
 	
-	public Scenario(Vector<Rule> rules){
-		unstartedRules = new Vector<Rule>();
-		activeRules = new Vector<Rule>();
-		finishedRules = new Vector<Rule>();
-		for (Rule rule : rules){
+	public Scenario(List<Rule> rules) {
+		unstartedRules = new LinkedList<Rule>();
+		activeRules = new LinkedList<Rule>();
+		finishedRules = new LinkedList<Rule>();
+		for (Rule rule : rules) {
 			if (rule.getState(0) == Rule.ACTIVE)
 				activeRules.add(rule);
 			if (rule.getState(0) == Rule.UNSTARTED)
@@ -35,24 +33,24 @@ public class Scenario implements Serializable{
 		}
 	}
 	
-	void start(){
+	public void start() {
 		yearCursor = 0;
 		updateRuleLists();
 	}
 	
 	private void updateRuleLists(){
-		for (Iterator<Rule> iterator=unstartedRules.iterator(); iterator.hasNext(); /*iterator.next()*/){
+		for (Iterator<Rule> iterator=unstartedRules.iterator(); iterator.hasNext(); ) {
 			Rule rule = iterator.next();
 			byte ruleState = rule.getState(yearCursor);
-			if (ruleState == Rule.ACTIVE){
+			if (ruleState == Rule.ACTIVE) {
 				activeRules.add(rule);
 				iterator.remove();
 			}
 		}
-		for (Iterator<Rule> iterator=activeRules.iterator(); iterator.hasNext(); /*#iterator.next()*/){
+		for (Iterator<Rule> iterator=activeRules.iterator(); iterator.hasNext(); ) {
 			Rule rule = iterator.next();
 			byte ruleState = rule.getState(yearCursor);
-			if (ruleState == Rule.FINISHED){
+			if (ruleState == Rule.FINISHED) {
 				finishedRules.add(rule);
 				iterator.remove();
 			}

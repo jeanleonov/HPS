@@ -57,7 +57,7 @@ public interface ParserConstants {
     "\"from\"",
     "\"to\"",
     "\"in\"",
-    "\"with possibility\"",
+    "\"with-possibility\"",
     "\"for\"",
     "\"each\"",
     "\"immigration\"",

@@ -1,12 +1,11 @@
-package experiment;
+package experiment.scenario;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.List;
 
-public class Rule implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+import experiment.scenario.repeaters.ActionRepeat;
+
+public class Rule {
 
 	final static public byte	FINISHED = 1,
 								ACTIVE = 2,
@@ -14,20 +13,19 @@ public class Rule implements Serializable {
 								FOREVER_BEFORE = -2,
 								FOREVER_AFTER = -3;
 	
-	private ActionAppearance actionAppearance;
-	private Vector<Action> actions;
+	private ActionRepeat actionRepeat;
+	private List<Action> actions;
 	private int startYear, endYear;
 	
-	public Rule(ActionAppearance actionAppearance, Vector<Action> actions,
+	public Rule(ActionRepeat actionRepeat, List<Action> actions,
 			int startYear, int endYear) {
-		this.actionAppearance = actionAppearance;
+		this.actionRepeat = actionRepeat;
 		this.actions = actions;
 		this.startYear = startYear;
 		this.endYear = endYear;
 	}
 
-
-	public byte getState(int yearNumber){
+	public byte getState(int yearNumber) {
 		if (	(yearNumber>=startYear || yearNumber==FOREVER_BEFORE)
 			&&	(yearNumber<=endYear || yearNumber==FOREVER_AFTER))
 			return ACTIVE;
@@ -36,9 +34,9 @@ public class Rule implements Serializable {
 		return FINISHED;
 	}
 	
-	public ArrayList<Action> getCommandsForIteration(int iterationNumber){
+	public ArrayList<Action> getCommandsForIteration(int iterationNumber) {
 		ArrayList<Action> commands = null;
-		if (actionAppearance.shouldDoAction(iterationNumber-startYear)){
+		if (actionRepeat.shouldDoAction(iterationNumber-startYear)) {
 			commands = new ArrayList<Action>();
 			for (Action action : actions)
 				commands.add(action);

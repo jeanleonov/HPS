@@ -1,7 +1,6 @@
 package starter;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Date;
 import java.util.Map;
@@ -13,7 +12,7 @@ import statistic.StatisticDispatcher;
 import statistic.visualisation.VisualisationFrame;
 import distribution.ExperimentDistribution;
 import experiment.Experiment;
-import experiment.Scenario;
+import experiment.scenario.Scenario;
 
 public class SystemStarter {
 
@@ -77,7 +76,7 @@ public class SystemStarter {
 		finish();
 	}
 	
-	private void readData() throws FileNotFoundException{
+	private void readData() throws Exception {
 		BufferedReader posteritySettingsReader;
 		BufferedReader viabilitySettingsReader;
 		BufferedReader movePossibilitiesReader;

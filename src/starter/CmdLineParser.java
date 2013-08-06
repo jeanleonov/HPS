@@ -22,7 +22,8 @@ public class CmdLineParser {
      * Base class for exceptions that may be thrown when options are parsed
      */
     public static abstract class OptionException extends Exception {
-        OptionException(String msg) { super(msg); }
+		private static final long serialVersionUID = 1329956213980778631L;
+		OptionException(String msg) { super(msg); }
     }
 
     /**
@@ -32,7 +33,8 @@ public class CmdLineParser {
      * English).
      */
     public static class UnknownOptionException extends OptionException {
-        UnknownOptionException( String optionName ) {
+		private static final long serialVersionUID = 6692863753646959733L;
+		UnknownOptionException( String optionName ) {
             this(optionName, "Unknown option '" + optionName + "'");
         }
 

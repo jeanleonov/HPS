@@ -1,8 +1,5 @@
-package individual;
+package experiment.individual;
 
-import genotype.Genotype;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,11 +7,10 @@ import java.util.Iterator;
 import settings.Settings;
 import settings.ViabilityPair;
 import settings.Vocabulary;
-import zone.Zone;
+import experiment.individual.genotype.Genotype;
+import experiment.zone.Zone;
 
-public abstract class Individual implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public abstract class Individual {
 
 	protected Genotype myGenotype;
 	protected int age;

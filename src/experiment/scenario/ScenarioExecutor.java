@@ -1,12 +1,11 @@
-package zone;
+package experiment.scenario;
 
 import java.io.IOException;
 
 import distribution.ZoneDistribution;
-import experiment.ZoneCommand;
-import messaging.Messaging;
+import experiment.zone.Zone;
 
-public class ScenarioExecutor implements Messaging {
+public class ScenarioExecutor {
 	Zone myZone = null;
 	
 	public ScenarioExecutor(Zone myZone){
@@ -15,16 +14,20 @@ public class ScenarioExecutor implements Messaging {
 	
 	public void action(ZoneCommand command) throws IOException{
 		switch(command.getType()){
-			case ADD_RESOURCES:{
+			case ADD_CAPACITY:{
 				// TODO
 				break;
 			}
-			case MULTIPLY_RESOURCES:{
+			case MULTIPLY_CAPACITY:{
 				// TODO
 				break;
 			}
 			case ADD_INDIVIDUALS:{
 				myZone.createIndividuals((ZoneDistribution)command.getCommandContent());
+				break;
+			}
+			case MULTIPLY_INDIVIDUALS:{
+				// TODO
 				break;
 			}
 			default:{

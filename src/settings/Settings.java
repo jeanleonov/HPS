@@ -1,18 +1,18 @@
 package settings;
 
-import genotype.Genotype;
+import experiment.individual.genotype.Genotype;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Settings implements Vocabulary {
 
-	static private HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<genotype.Genotype, ArrayList<ViabilityPair>>();
-	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>>();
-	static private HashMap<Integer, HashMap<Integer, Double>> movePosibilitiesTable = new HashMap<Integer, HashMap<Integer, Double>>();
+	static private HashMap<Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<>();
+	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<>();
+	static private HashMap<Integer, HashMap<Integer, Double>> movePosibilitiesTable = new HashMap<>();
 
 	public static void init(
-				HashMap<genotype.Genotype, ArrayList<ViabilityPair>> viability,
+				HashMap<Genotype, ArrayList<ViabilityPair>> viability,
 				HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterity,
 				HashMap<Integer, HashMap<Integer, Double>> movePosibilities) {
 		viabilityTable = viability;

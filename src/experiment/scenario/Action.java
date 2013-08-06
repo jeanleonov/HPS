@@ -1,22 +1,22 @@
-package experiment;
+package experiment.scenario;
 
-import java.util.Vector;
+import java.util.List;
 
 public class Action {
 	
-	private Vector<Integer> zonesNumbers;
+	private List<Integer> zonesNumbers;
 	private ZoneCommand command;
 	
-	public Action(Vector<Integer> zonesNumbers, ZoneCommand command){
+	public Action(List<Integer> zonesNumbers, ZoneCommand command){
 		this.zonesNumbers = zonesNumbers;
 		this.command = command;
 	}
 
-	public Vector<Integer> getZonesNumbers() {
+	public List<Integer> getZonesNumbers() {
 		return zonesNumbers;
 	}
 
-	public void setZonesNumbers(Vector<Integer> zonesNumbers) {
+	public void setZonesNumbers(List<Integer> zonesNumbers) {
 		this.zonesNumbers = zonesNumbers;
 	}
 

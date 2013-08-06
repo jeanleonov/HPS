@@ -1,12 +1,10 @@
-package experiment;
+package experiment.scenario.repeaters;
 
-public class ProbabilisticAppearance extends ActionAppearance {
-	
-	private static final long serialVersionUID = 1L;
+public class ProbabilisticRepeat extends ActionRepeat {
 	
 	private float possibility;
 
-	public ProbabilisticAppearance(float possibility) {
+	public ProbabilisticRepeat(float possibility) {
 		this.possibility = possibility;
 	}
 

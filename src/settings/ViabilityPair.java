@@ -1,8 +1,6 @@
 package settings;
 
-public class ViabilityPair implements java.io.Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class ViabilityPair {
 	
 	private float value;
 	private Vocabulary.Param param;

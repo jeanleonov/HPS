@@ -1,6 +1,6 @@
 package statistic.visualisation;
-import genotype.Genome;
-import genotype.Genotype;
+import experiment.individual.genotype.Genome;
+import experiment.individual.genotype.Genotype;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.SortedMap;
 
 import javax.swing.JPanel;
+
+import starter.Shared;
 
 public class CanvasPanel extends JPanel {
 	
@@ -39,7 +41,12 @@ public class CanvasPanel extends JPanel {
 	}
 	
 	public void drawNewHistory(String genotypeString, Integer age, SortedMap<Integer, Integer> history) {
-		Genotype genotype = Genotype.getGenotype(genotypeString);
+		Genotype genotype = null;
+		try {
+			genotype = Genotype.getGenotype(genotypeString);
+		} catch (Exception e) {
+			Shared.problemsLogger.error(Shared.printStack(e));
+		}
 		BasicStroke pen = getPenFor(genotype, age);
 		Color color = getColorFor(genotype, age);
 		Collection<Integer> quantityHistory = history.values();

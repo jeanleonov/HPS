@@ -1,23 +1,25 @@
 package settings;
 
+import experiment.individual.genotype.Genotype;
+
 public class PosterityResultPair {
-	private genotype.Genotype genotype;
+	private Genotype genotype;
 	private float probability;
 
-	public PosterityResultPair(genotype.Genotype genome, float probability) {
+	public PosterityResultPair(Genotype genome, float probability) {
 		this.genotype = genome;
 		this.probability = probability;
 	}
 
-	public void setGenome(genotype.Genotype genome) {
-		this.genotype = genome;
+	public void setGenome(Genotype genotype) {
+		this.genotype = genotype;
 	}
 
 	public void setProbability(float probability) {
 		this.probability = probability;
 	}
 
-	public genotype.Genotype getGenotype() {
+	public Genotype getGenotype() {
 		return genotype;
 	}
 

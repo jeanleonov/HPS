@@ -1,7 +1,8 @@
 package statistic;
 
 import java.io.Serializable;
-import genotype.Genotype;
+
+import experiment.individual.genotype.Genotype;
 
 public class GenotypeAgeCountTrioStat implements Serializable{
 

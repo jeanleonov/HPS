@@ -1,9 +1,9 @@
 package utils.individuals.allocation;
 
-import genotype.Genotype;
-import individual.Female;
-import individual.Male;
-import zone.Zone;
+import experiment.individual.Female;
+import experiment.individual.Male;
+import experiment.individual.genotype.Genotype;
+import experiment.zone.Zone;
 
 public class SynchronizedObjectPull implements IIndividualsManager {
 
