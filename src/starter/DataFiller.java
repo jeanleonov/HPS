@@ -179,8 +179,8 @@ public class DataFiller {
 	}
 	
 	private void scenarioFill() throws Exception {
-		Parser parser = new Parser(scenarioReader);
-		rules = parser.readRules();
+		Parser.ReInit(scenarioReader);
+		rules = Parser.ruleList();
 	}
 	
 	private void experimentFill() throws Exception {

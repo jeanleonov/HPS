@@ -50,11 +50,11 @@ public class Zone {
 			ZoneDistribution firstZoneDistr,
 			int myNumber,
 			double capacityMultiplier) {
+		this.zoneNumber = myNumber;
 		travelCosts = Settings.getMovePosibilitiesFrom(zoneNumber);
 		for (Integer zoneNumber : travelCosts.keySet())
 			sumOfTravelPossibilities += travelCosts.get(zoneNumber);
 		this.initialDistribution = firstZoneDistr;
-		this.zoneNumber = myNumber;
 		this.individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneNumber);
 		this.maxSizeOfListOfFemales = Shared.DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
 		this.minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;

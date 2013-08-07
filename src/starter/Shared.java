@@ -32,13 +32,19 @@ public final class Shared {
 						"	[{-m, --map} string]  name of file with map settings | DEFAULT \'DEFAULT_MAP\'\n" +
 						"	[{-p, --posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
 						"	[{-s, --scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
-						"	[{-i, --initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n" +
-						"	[{-o, --object_manager} int(0|1|2)]  0 - simple creation of individuals,\n" +
-						"	                                     1 - creation of individuals with using of object pull,\n" +
-						"	                                     2 - creation of individuals with using of object pulls for each zone\n" +
-						"	                                     | DEFAULT 0\n" +
-						"	[{-d, --display_diagram} boolean] display diagrams after modeling process | DEFAULT false\n" +
-						"	[{-D, --detailed_diagram} boolean] display immatures too on diagrams after modeling process | DEFAULT false";
+						"	[{-i, --initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
+						"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
+						"                              ( ages\n"+
+						"                               |genotypes\n"+
+						"                               |with_immatures\n"+
+						"                               |without_immatures\n"+
+						"                               |after_each\n"+
+						"                               |after_move_and_scenario\n"+
+						"                               |after_evolution\n"+
+						"                               |after_reprodaction\n"+
+						"                               |after_competition\n"+
+						"                               |after_dieing\n"+
+						"                              )*";
 	
 	public final static 
 	int	DEFAULT_PACKAGE_BUFFER = 100,

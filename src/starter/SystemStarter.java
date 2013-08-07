@@ -57,6 +57,7 @@ public class SystemStarter {
 		this.numberOfExperints = numberOfExperints;
 		this.numberOfModelingYears = numberOfYears;
 		this.statisticSettingsString = statisticSettings;
+		new Parser(new StringReader(statisticSettingsString));
 	}
 	
 	public void startSystem() throws Exception {
@@ -93,8 +94,8 @@ public class SystemStarter {
 		Date d = new Date();
 		curStatisticFileURL = String.format("statistics/%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
 							  ((curExperiment==-1)?(""):(" e"+curExperiment)) + ".csv";
-		Parser parser = new Parser(new StringReader(statisticSettings));
-		StatisticSettings settings = parser.statisticSettings();
+		Parser.ReInit(new StringReader(statisticSettings));
+		StatisticSettings settings = Parser.statisticSettings();
 		statisticDispatcher	= new StatisticDispatcher(curStatisticFileURL, settings);
 	}
 	

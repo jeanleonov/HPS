@@ -6,23 +6,30 @@ import java.util.Set;
 public class StatisticSettings {
 
 	public enum Subiteration {
-		AFTER_MOVE_AND_SCENARIO,
-		AFTER_EVOLUTION,
-		AFTER_REPRODACTION,
-		AFTER_COMPETITION,
-		AFTER_DIEING;
+		AFTER_MOVE_AND_SCENARIO ("move"),
+		AFTER_EVOLUTION ("evol"),
+		AFTER_REPRODACTION ("repr"),
+		AFTER_COMPETITION ("comp"),
+		AFTER_DIEING ("die_");
+		private String shortName;
+		private Subiteration(String shortName) {
+			this.shortName = shortName;
+		}
+		public String getShortName() {
+			return shortName;
+		}
 	}
 	
 	private boolean shouldDisplayImmatures;
 	private boolean shouldDistinguishAges;
-	private Set<Subiteration> reportingSubiterations;
+	private Set<Integer> reportingSubiterationsOrdinals;
 	
-	private final static Subiteration defaultReportingSubiteration = Subiteration.AFTER_DIEING;
+	private final static Integer defaultReportingSubiteration = Subiteration.AFTER_DIEING.ordinal();
 	
 	public StatisticSettings() {
 		shouldDisplayImmatures = true;
 		shouldDistinguishAges = true;
-		reportingSubiterations = new HashSet<>();
+		reportingSubiterationsOrdinals = new HashSet<>();
 	}
 	
 	public boolean shouldDisplayImmatures() {
@@ -41,25 +48,25 @@ public class StatisticSettings {
 		this.shouldDistinguishAges = shouldDistinguishAges;
 	}
 	
-	public Set<Subiteration> getReportingSubiterations() {
-		if (reportingSubiterations.size() == 0) {
-			Set<Subiteration> defaultSubiteration = new HashSet<>();
+	public Set<Integer> getReportingSubiterations() {
+		if (reportingSubiterationsOrdinals.size() == 0) {
+			Set<Integer> defaultSubiteration = new HashSet<>();
 			defaultSubiteration.add(defaultReportingSubiteration);
 			return defaultSubiteration;
 		}
-		return reportingSubiterations;
+		return reportingSubiterationsOrdinals;
 	}
 	
-	public void setReportingSubiterations(Set<Subiteration> reportingSubiterations) {
-		this.reportingSubiterations = reportingSubiterations;
+	public void setReportingSubiterations(Set<Integer> reportingSubiterations) {
+		this.reportingSubiterationsOrdinals = reportingSubiterations;
 	}
 	
-	public void addReportingSubiteration(Subiteration subiteration) {
-		reportingSubiterations.add(subiteration);
+	public void addReportingSubiteration(Integer subiterationOrdinal) {
+		reportingSubiterationsOrdinals.add(subiterationOrdinal);
 	}
 	
 	public void reportAfterEachSubiteration() {
 		for (Subiteration subiteration : Subiteration.values())
-			reportingSubiterations.add(subiteration);
+			reportingSubiterationsOrdinals.add(subiteration.ordinal());
 	}
 }

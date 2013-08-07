@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,6 +14,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import settings.Settings;
 import settings.Vocabulary.Param;
 import starter.Shared;
+import statistic.StatisticSettings.Subiteration;
+import experiment.YearStatisticCollector;
 import experiment.individual.genotype.Genotype;
 
 public class StatisticDispatcher {
@@ -24,6 +28,13 @@ public class StatisticDispatcher {
 	private boolean finished = false;
 	private BufferedWriter writer = null;
 	private Lock queueLock = new ReentrantLock();
+	private ArrayList<Genotype> columnGenotypes = new ArrayList<>();
+	private ArrayList<Integer> columnAges = new ArrayList<>();
+	
+	private int curExperiment;
+	private int curYear;
+	private int curSubiteration;
+	private int curZone;
 
 	public StatisticDispatcher(String curStatisticFileURL, StatisticSettings settings) {
 		fileLocation = curStatisticFileURL;
@@ -62,8 +73,8 @@ public class StatisticDispatcher {
 		public void run() {
 			try {
 				while (!hasToFinish) {
-						flushQueue();
-						Thread.sleep(200);
+					flushQueue();
+					Thread.sleep(200);
 				}
 				flushWriter();
 			} catch (Exception e) {
@@ -76,6 +87,7 @@ public class StatisticDispatcher {
 					Shared.problemsLogger.error(Shared.printStack(e));
 					System.exit(1);
 				}
+				finished = true;
 			}
 		}
 	}
@@ -99,14 +111,18 @@ public class StatisticDispatcher {
 	
 	private File createFile() throws IOException {
 		File file = new File(fileLocation);
-		if (!file.exists())
+		if (!file.exists()) {
+			String folderPath = fileLocation.substring(0, fileLocation.lastIndexOf('/'));
+			File parentFolder = new File(folderPath);
+			parentFolder.mkdir();
 			file.createNewFile();
+		}
 		return file;
 	}
 	
 	private String getTableHeader() {
 		StringBuilder header = new StringBuilder();
-		header.append("Experiment#;Zone#;Year;Subiteration;");
+		header.append("Experiment#;Year#;AfterSubiteration;Zone#;");
 		if (settings.shouldDistinguishAges())
 			if (settings.shouldDisplayImmatures())
 				header.append(getAllAgesColumns());
@@ -122,7 +138,8 @@ public class StatisticDispatcher {
 		for (Genotype genotype : Genotype.getAll())
 			for (int age=0; age<getMaxAgeFor(genotype); age++) {
 				columns.append(genotype.toString()).append('-').append(age).append(';');
-				// TODO fill columns map
+				columnGenotypes.add(genotype);
+				columnAges.add(age);
 			}
 		columns.deleteCharAt(columns.length()-1);
 		return columns.toString();
@@ -137,7 +154,8 @@ public class StatisticDispatcher {
 		for (Genotype genotype : Genotype.getAll())
 			for (int age=getMatureAge(genotype); age<getMaxAgeFor(genotype); age++) {
 				columns.append(genotype.toString()).append('-').append(age).append(';');
-				// TODO fill columns map
+				columnGenotypes.add(genotype);
+				columnAges.add(age);
 			}
 		columns.deleteCharAt(columns.length()-1);
 		return columns.toString();
@@ -151,17 +169,99 @@ public class StatisticDispatcher {
 		StringBuilder columns = new StringBuilder();
 		for (Genotype genotype : Genotype.getAll()) {
 			columns.append(genotype.toString()).append(';');
-			// TODO fill columns map
+			columnGenotypes.add(genotype);
+			columnAges.add(YearStatisticCollector.TOTAL_AGE);
 		}
 		columns.deleteCharAt(columns.length()-1);
 		return columns.toString();
 	}
 	
-	private void writeYearStatistic(YearStatistic yearStatistic) {
-		// TODO
+	private void writeYearStatistic(YearStatistic yearStatistic) throws IOException {
+		String yearStat = renderYear(yearStatistic);
+		writer.write(yearStat);
+	}
+	
+	private String renderYear(YearStatistic statistic) {
+		StringBuilder buffer = new StringBuilder();
+		curExperiment = statistic.getExperimentNumber();
+		curYear = statistic.getYear();
+		for (Integer subiteration : statistic.getYearStatistic().keySet()) {
+			curSubiteration = subiteration;
+			buffer.append(renderSubiteration(statistic.getYearStatistic().get(subiteration)));
+		}
+		return buffer.toString();
+	}
+	
+	private StringBuilder renderSubiteration(Map<Integer, Map<Integer, Map<Integer, Integer>>> subiterationStat) {
+		StringBuilder buffer = new StringBuilder();
+		for (Integer zone : subiterationStat.keySet()) {
+			buffer.append('\n').append(curExperiment).append(';');
+			buffer.append(curYear).append(';');
+			buffer.append(Subiteration.values()[curSubiteration].getShortName()).append(';');
+			buffer.append(curZone).append(';');
+			buffer.append(renderZone(subiterationStat.get(zone)));
+			buffer.deleteCharAt(buffer.length()-1);
+		}
+		return buffer;
+	}
+	
+	private StringBuilder renderZone(Map<Integer, Map<Integer, Integer>> zoneStat) {
+		StringBuilder buffer = new StringBuilder();
+		for (int i=0; i<columnGenotypes.size(); i++) {
+			int genotypeId = columnGenotypes.get(i).getId();
+			Map<Integer, Integer> genotypeStat = zoneStat.remove(genotypeId);
+			if (genotypeStat == null)
+				buffer.append("0;");
+			else {
+				int age = columnAges.get(i);
+				Integer indivsNumber = genotypeStat.remove(age);
+				if (indivsNumber == null)
+					buffer.append("0;");
+				else
+					buffer.append(indivsNumber).append(';');
+			}
+		}
+		return buffer;
 	}
 	
 	private void flushWriter() throws IOException {
 		writer.flush();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

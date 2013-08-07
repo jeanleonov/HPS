@@ -19,7 +19,7 @@ public class YearStatisticCollector {
 	private Integer year;
 	private Integer subiteration;
 	private Integer zoneNumber;
-	private final static int TOTAL_AGE = -1;
+	public final static Integer TOTAL_AGE = 999;
 	
 	public YearStatisticCollector(StatisticDispatcher dispatcher, List<Zone> zones) {
 		this.dispatcher = dispatcher;
@@ -68,6 +68,7 @@ public class YearStatisticCollector {
 	
 	private void sumWithImmatures() {
 		for (Zone zone : zones) {
+			zoneNumber = zone.getZoneNumber();
 			for (Individual indiv : zone.getMales())
 				addToTotal(indiv);
 			for (Individual indiv : zone.getFemales())
@@ -81,6 +82,7 @@ public class YearStatisticCollector {
 	
 	private void collectWithoutImmatures() {
 		for (Zone zone : zones) {
+			zoneNumber = zone.getZoneNumber();
 			for (Individual indiv : zone.getMales())
 				add(indiv);
 			for (Individual indiv : zone.getFemales())
@@ -90,6 +92,7 @@ public class YearStatisticCollector {
 	
 	private void sumWithoutImmatures() {
 		for (Zone zone : zones) {
+			zoneNumber = zone.getZoneNumber();
 			for (Individual indiv : zone.getMales())
 				addToTotal(indiv);
 			for (Individual indiv : zone.getFemales())
