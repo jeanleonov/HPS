@@ -5,8 +5,6 @@ import experiment.zone.Zone;
 import settings.Settings;
 
 public class Male extends Individual {
-
-	private static final long serialVersionUID = 1L;
 	
 	private Female[] femalesList;
 

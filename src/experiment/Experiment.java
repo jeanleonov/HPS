@@ -6,6 +6,7 @@ import java.util.List;
 
 import starter.Shared;
 import statistic.StatisticDispatcher;
+import statistic.StatisticSettings.Subiteration;
 import distribution.ExperimentDistribution;
 import distribution.ZoneDistribution;
 import experiment.scenario.Action;
@@ -18,7 +19,8 @@ public class Experiment {
 	private final Integer numberOfModelingYears;
 	
 	private List<Zone> zones;
-	private int yearCursore;
+	private int yearCursor;
+	private YearStatisticCollector collector;
 	
 	public Experiment(
 			ExperimentDistribution firstDistribution,
@@ -29,6 +31,7 @@ public class Experiment {
 		this.scenario = scenario;
 		this.numberOfModelingYears = numberOfModelingYears;
 		createZones(statisticDispatcher, firstDistribution, capacityMultiplier);
+		collector = new YearStatisticCollector(statisticDispatcher, zones);
 	}
 	
 	private void createZones(
@@ -38,7 +41,7 @@ public class Experiment {
 		zones = new ArrayList<Zone>();
 		int zoneNumber=0;
 		for (ZoneDistribution firstZoneDistr : firstDistribution.getZoneDistributions()) {
-			Zone zone = new Zone(firstZoneDistr, zoneNumber, statisticDispatcher, capacityMultiplier, this);
+			Zone zone = new Zone(firstZoneDistr, zoneNumber, capacityMultiplier);
 			zones.add(zone);
 			zoneNumber++;
 		}
@@ -47,16 +50,25 @@ public class Experiment {
 	public void runWitExperimentNumber(int experimentNumber) {
 		resetZonesTo(experimentNumber);
 		scenario.start();
-		yearCursore = 0;
-		while (yearCursore < numberOfModelingYears) {
-			Shared.infoLogger.info("YEAR NUMBER\t" + yearCursore + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
-			firstPhaseProcessing();
-			try {
-				scenarioCommandsProcessing();
-			} catch (IOException e) {e.printStackTrace();}
-			movePhaseProcessing();
-			yearCursore++;
+		yearCursor = 0;
+		while (yearCursor < numberOfModelingYears) {
+			modelYear(experimentNumber, yearCursor);
+			yearCursor++;
 		}
+	}
+	
+	private void modelYear(int experimentNumber, int year) {
+		Shared.infoLogger.info("YEAR NUMBER\t" + yearCursor + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
+		collector.openNewYear(experimentNumber, yearCursor);
+		updateListsAndIndividualSettings();
+		reproductionPhaseProcessing();
+		competitionPhaseProcessing();
+		diePhaseProcessing();
+		try {
+			scenarioCommandsProcessing();
+		} catch (IOException e) {e.printStackTrace();}
+		movePhaseProcessing();
+		collector.commitLastYearStatistic();
 	}
 	
 	private void resetZonesTo(int experimentNumber) {
@@ -65,20 +77,40 @@ public class Experiment {
 	}
 	
 	private void scenarioCommandsProcessing() throws IOException{
-		ArrayList<Action> actions = scenario.getCommandsForNextYear(yearCursore);
+		ArrayList<Action> actions = scenario.getCommandsForNextYear(yearCursor);
 		for (Action action : actions)
 			for (Integer zoneNumber : action.getZonesNumbers())
 				zones.get(zoneNumber).scenarioCommand(action.getCommand());
 	}
 
-	private void firstPhaseProcessing(){
+	private void updateListsAndIndividualSettings() {
 		for (Zone zone : zones)
-			zone.firstPhase();
+			zone.updateListsAndIndividualSettings();
+		collector.collect(Subiteration.AFTER_EVOLUTION);
+	}
+
+	private void reproductionPhaseProcessing(){
+		for (Zone zone : zones)
+			zone.reproductionProcessing();
+		collector.collect(Subiteration.AFTER_REPRODACTION);
+	}
+
+	private void competitionPhaseProcessing(){
+		for (Zone zone : zones)
+			zone.competitionProcessing();
+		collector.collect(Subiteration.AFTER_COMPETITION);
+	}
+
+	private void diePhaseProcessing(){
+		for (Zone zone : zones)
+			zone.dieProcessing();
+		collector.collect(Subiteration.AFTER_DIEING);
 	}
 
 	private void movePhaseProcessing(){
 		for (Zone zone : zones)
 			zone.movePhase();
+		collector.collect(Subiteration.AFTER_MOVE_AND_SCENARIO);
 	}
 	
 	public Zone getZone(int number) {

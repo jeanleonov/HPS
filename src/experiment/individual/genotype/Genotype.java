@@ -1,7 +1,8 @@
 package experiment.individual.genotype;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Genotype implements Serializable {
@@ -12,10 +13,12 @@ public class Genotype implements Serializable {
 //==============================| Class Genotype: |===
 	Genome[] genomes;
 	boolean[] clonalities;
+	private int id;
 
-	private Genotype (Genome[] genomes, boolean[] clonalities) {
+	private Genotype (Genome[] genomes, boolean[] clonalities, int id) {
 		this.genomes = genomes;
 		this.clonalities = clonalities;
+		this.id = id;
 	}
 	
 	public boolean equals(Object obj) {
@@ -34,8 +37,11 @@ public class Genotype implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		if(genomes.length > 0) return genomes[0].gender;
-		else return 0xFF;
+		return id;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	// only for 2 Genomes in Genotype!!!
@@ -75,7 +81,7 @@ public class Genotype implements Serializable {
 
 	//==============================| GLOBAL: |===========
 
-	static private Vector<Genotype> genotypes = new Vector<Genotype>();
+	static private List<Genotype> genotypes = new ArrayList<Genotype>();
 	final static public byte UNDEF = -1;
 
 	/* It serves as a constructor
@@ -100,7 +106,7 @@ public class Genotype implements Serializable {
 			if (mustContinue)	continue;
 			return genotypes.get(i);
 		}
-		Genotype genotype = new Genotype(genomes, clonalities);
+		Genotype genotype = new Genotype(genomes, clonalities, genotypes.size());
 		genotypes.add(genotype);
 		return genotype;
 	}
@@ -178,7 +184,7 @@ public class Genotype implements Serializable {
 				}
 			if (!mustContinue)	return i;
 		}
-		Genotype genotype = new Genotype(genomes, clonalities);
+		Genotype genotype = new Genotype(genomes, clonalities, genotypes.size());
 		genotypes.add(genotype);
 		return genotypes.size()-1;
 	}
@@ -191,5 +197,9 @@ public class Genotype implements Serializable {
 	// get existed ID
 	static public int getIdOf(Genotype genotype){
 		return genotypes.indexOf(genotype);
+	}
+	
+	static public List<Genotype> getAll() {
+		return genotypes;
 	}
 }

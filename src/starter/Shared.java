@@ -15,7 +15,7 @@ public final class Shared {
 			DEFAULT_POSTERITY_FILE = "Posterity.csv",
 			DEFAULT_SCENARIO_FILE = "Scenario.scn",
 			DEFAULT_INITIATION_FILE = "Initiation.hpsi",
-			DEFAULT_STATISTIC_FILE = "Statistic.csv",
+			DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
 			
 			HELP_TEXT = "Usage: [--help] " +
 						"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +

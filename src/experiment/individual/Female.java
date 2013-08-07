@@ -10,8 +10,6 @@ import experiment.individual.genotype.Genotype;
 import experiment.zone.Zone;
 
 public class Female extends Individual {
-
-	private static final long serialVersionUID = 1L;
 	
 	ArrayList<Male> lovers;
 	

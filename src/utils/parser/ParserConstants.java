@@ -40,6 +40,26 @@ public interface ParserConstants {
   int NUMBER = 20;
   /** RegularExpression Id. */
   int DIGIT = 21;
+  /** RegularExpression Id. */
+  int AGES = 22;
+  /** RegularExpression Id. */
+  int GENOTYPES = 23;
+  /** RegularExpression Id. */
+  int WITH_IMMATURES = 24;
+  /** RegularExpression Id. */
+  int WITHOUT_IMMATURES = 25;
+  /** RegularExpression Id. */
+  int AFTER_MOVE_AND_SCENARIO = 26;
+  /** RegularExpression Id. */
+  int AFTER_EVOLUTION = 27;
+  /** RegularExpression Id. */
+  int AFTER_REPRODACTION = 28;
+  /** RegularExpression Id. */
+  int AFTER_COMPETITION = 29;
+  /** RegularExpression Id. */
+  int AFTER_DIEING = 30;
+  /** RegularExpression Id. */
+  int AFTER_EACH = 31;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -68,6 +88,16 @@ public interface ParserConstants {
     "<GENDER>",
     "<NUMBER>",
     "<DIGIT>",
+    "\"ages\"",
+    "\"genotypes\"",
+    "\"with_immatures\"",
+    "\"without_immatures\"",
+    "\"after_move_and_scenario\"",
+    "\"after_evolution\"",
+    "\"after_reprodaction\"",
+    "\"after_competition\"",
+    "\"after_dieing\"",
+    "\"after_each\"",
     "\",\"",
   };
 

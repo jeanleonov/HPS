@@ -10,7 +10,6 @@ import java.util.List;
 
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
-import settings.ViabilityPair;
 import settings.Vocabulary.Convertor;
 import settings.Vocabulary.Param;
 import utils.parser.Parser;
@@ -28,7 +27,7 @@ public class DataFiller {
 					scenarioReader,
 					experimentInfoReader;
 	private ExperimentDistribution experimentDistribution;
-	private HashMap<Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<>();
+	private HashMap<Genotype, Float[]> viabilityTable = new HashMap<>();
 	private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<>();
 	private HashMap<Integer, HashMap<Integer, Double>> movePosibilitiesTable = new HashMap<>();
 	private List<Rule> rules;
@@ -55,7 +54,7 @@ public class DataFiller {
 		
 	}
 	
-	public HashMap<Genotype, ArrayList<ViabilityPair>> getViabilityTable() {
+	public HashMap<Genotype, Float[]> getViabilityTable() {
 		return viabilityTable;
 	}
 
@@ -88,18 +87,17 @@ public class DataFiller {
 			for(int i = 0; i < genotypeOrder.size(); i++) {
 				Param param = Convertor.keyToParam(Integer.parseInt(strArr[2], 10));
 				if(!viabilityTable.containsKey(genotypeOrder.get(i)))
-					viabilityTable.put(genotypeOrder.get(i), new ArrayList<ViabilityPair>());
-				ArrayList<ViabilityPair> arr = viabilityTable.get(genotypeOrder.get(i));
-				arr.add(new ViabilityPair(Float.parseFloat(strArr[i + 3]), param));
+					viabilityTable.put(genotypeOrder.get(i), new Float[Param.values().length]);
+				viabilityTable.get(genotypeOrder.get(i))[param.ordinal()] = Float.parseFloat(strArr[i + 3]);
 			}
 		}
 	}
 	
 	public void printViabilityTable() {
-		for(Genotype g : viabilityTable.keySet()) {
-			System.out.print(g + " - ");
-			for(ViabilityPair pair : viabilityTable.get(g))
-				System.out.print(pair.getValue() + ", ");
+		for(Genotype genotype : viabilityTable.keySet()) {
+			System.out.print(genotype + " - ");
+			for(Float paramValue : viabilityTable.get(genotype))
+				System.out.print(paramValue + ", ");
 			System.out.println();
 		}
 	}
@@ -180,7 +178,7 @@ public class DataFiller {
 			arr.add(Genotype.getGenotype(strArr[i]));
 	}
 	
-	private void scenarioFill() {
+	private void scenarioFill() throws Exception {
 		Parser parser = new Parser(scenarioReader);
 		rules = parser.readRules();
 	}

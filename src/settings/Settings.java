@@ -1,18 +1,18 @@
 package settings;
 
-import experiment.individual.genotype.Genotype;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import experiment.individual.genotype.Genotype;
+
 public class Settings implements Vocabulary {
 
-	static private HashMap<Genotype, ArrayList<ViabilityPair>> viabilityTable = new HashMap<>();
+	static private HashMap<Genotype, Float[]> viabilityTable = new HashMap<>();
 	static private HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable = new HashMap<>();
 	static private HashMap<Integer, HashMap<Integer, Double>> movePosibilitiesTable = new HashMap<>();
 
 	public static void init(
-				HashMap<Genotype, ArrayList<ViabilityPair>> viability,
+				HashMap<Genotype, Float[]> viability,
 				HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterity,
 				HashMap<Integer, HashMap<Integer, Double>> movePosibilities) {
 		viabilityTable = viability;
@@ -21,7 +21,7 @@ public class Settings implements Vocabulary {
 	}
 	
 	// it's for Individual
-	static public ArrayList<ViabilityPair> getViabilitySettings (Genotype indivGenotype){
+	static public Float[] getViabilitySettings (Genotype indivGenotype){
 		// TODO process NullPointer or implement Singleton
 		return viabilityTable.get(indivGenotype);
 	}

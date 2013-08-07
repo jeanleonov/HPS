@@ -2,6 +2,7 @@ package starter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.StringReader;
 import java.util.Date;
 import java.util.Map;
 
@@ -9,7 +10,9 @@ import org.apache.log4j.Logger;
 
 import settings.Settings;
 import statistic.StatisticDispatcher;
-import statistic.visualisation.VisualisationFrame;
+import statistic.StatisticSettings;
+import utils.parser.ParseException;
+import utils.parser.Parser;
 import distribution.ExperimentDistribution;
 import experiment.Experiment;
 import experiment.scenario.Scenario;
@@ -31,10 +34,7 @@ public class SystemStarter {
 	private int numberOfModelingYears;
 	private int zoneMultiplier;
 	private double capacityMultiplier;
-	
-	private boolean shouldDisplayDiagram;
-	private boolean shouldDisplayDetailedDiagram;
-	private boolean shouldDisplayImmatures;
+	private String statisticSettingsString;
 	
 	long timeOfStart;
 
@@ -45,9 +45,7 @@ public class SystemStarter {
 			int curExperiment,
 			int numberOfExperints,
 			int numberOfYears,
-			boolean shouldDisplayDiagram,
-			boolean shouldDisplayDetailedDiagram,
-			boolean shouldDisplayImmatures){
+			String statisticSettings){
 		this.viabilitySettingsPath = pathesMap.get(SourceType.VIABILITY);
 		this.posteritySettingPath = pathesMap.get(SourceType.POSTERITY);
 		this.movePossibilitiesPath = pathesMap.get(SourceType.MOVE_POSSIBILITIES);
@@ -58,14 +56,12 @@ public class SystemStarter {
 		this.curExperiment = curExperiment;
 		this.numberOfExperints = numberOfExperints;
 		this.numberOfModelingYears = numberOfYears;
-		this.shouldDisplayDiagram = shouldDisplayDiagram || shouldDisplayDetailedDiagram || shouldDisplayImmatures; 
-		this.shouldDisplayDetailedDiagram = shouldDisplayDetailedDiagram;
-		this.shouldDisplayImmatures = shouldDisplayImmatures;
-		createStatisticDispatcher();
-		timeOfStart = System.currentTimeMillis();
+		this.statisticSettingsString = statisticSettings;
 	}
 	
 	public void startSystem() throws Exception {
+		createStatisticDispatcher(statisticSettingsString);
+		timeOfStart = System.currentTimeMillis();
 		readData();
 		Settings.init(dataFiller.getViabilityTable(), dataFiller.getPosterityTable(), dataFiller.getMovePosibilitiesTable());
 		if (curExperiment == -1)
@@ -93,11 +89,13 @@ public class SystemStarter {
 		dataFiller = new DataFiller(viabilitySettingsReader, posteritySettingsReader, movePossibilitiesReader, scenarioReader, experimentInfoReader, zoneMultiplier);
 	}
 	
-	private void createStatisticDispatcher() {
+	private void createStatisticDispatcher(String statisticSettings) throws ParseException, Exception {
 		Date d = new Date();
 		curStatisticFileURL = String.format("statistics/%tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d) + 
 							  ((curExperiment==-1)?(""):(" e"+curExperiment)) + ".csv";
-		statisticDispatcher	= new StatisticDispatcher(curStatisticFileURL);
+		Parser parser = new Parser(new StringReader(statisticSettings));
+		StatisticSettings settings = parser.statisticSettings();
+		statisticDispatcher	= new StatisticDispatcher(curStatisticFileURL, settings);
 	}
 	
 	private void runExperints() {
@@ -117,8 +115,6 @@ public class SystemStarter {
 			 sec = executingTime/1000 - min*60 - hour*3600,
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
 		Logger.getLogger("runningTimeLogger").info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
-		statisticDispatcher.flush();
-		if (shouldDisplayDiagram)
-			new VisualisationFrame(curStatisticFileURL, shouldDisplayDetailedDiagram, shouldDisplayImmatures);
+		statisticDispatcher.finish();
 	}
 }

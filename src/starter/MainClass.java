@@ -37,9 +37,7 @@ public class MainClass {
 				(Integer)getArgument("cur_experiment"),
 				(Integer)MainClass.getArgument("number_of_experiments"),
 				(Integer)MainClass.getArgument("years"),
-				(Boolean)getArgument("display_diagram"),
-				(Boolean)getArgument("detailed_diagram"),
-				(Boolean)getArgument("display_immatures"));
+				(String)getArgument("statistic"));
 		starter.startSystem();
 	}
 	
@@ -86,12 +84,10 @@ public class MainClass {
 		arguments.put("project_path", new ArgPair(parser.addStringOption('f', "project_path"), Shared.PROJECT_PATH));
 		arguments.put("viability", new ArgPair(parser.addStringOption('v', "viability"), Shared.DEFAULT_VIABILITY_FILE));
 		arguments.put("posterity", new ArgPair(parser.addStringOption('p', "posterity"), Shared.DEFAULT_POSTERITY_FILE));
-		arguments.put("display_diagram", new ArgPair(parser.addBooleanOption('d', "display_diagram"), Boolean.FALSE));
-		arguments.put("detailed_diagram", new ArgPair(parser.addBooleanOption('D', "detailed_diagram"), Boolean.FALSE));
-		arguments.put("display_immatures", new ArgPair(parser.addBooleanOption('I', "display_immatures"), Boolean.FALSE));
 		arguments.put("movePossibilities", new ArgPair(parser.addStringOption('m', "map"), Shared.DEFAULT_MAP_FILE));
 		arguments.put("scenario", new ArgPair(parser.addStringOption('s', "scenario"), Shared.DEFAULT_SCENARIO_FILE));
 		arguments.put("initiation", new ArgPair(parser.addStringOption('i', "initiation"), Shared.DEFAULT_INITIATION_FILE));
+		arguments.put("statistic", new ArgPair(parser.addStringOption('S', "statistic"), Shared.DEFAULT_STATISTIC_MODE));
 	}
 	
 	

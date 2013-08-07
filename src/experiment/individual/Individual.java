@@ -1,12 +1,11 @@
 package experiment.individual;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import settings.Settings;
-import settings.ViabilityPair;
 import settings.Vocabulary;
+import settings.Vocabulary.Param;
 import experiment.individual.genotype.Genotype;
 import experiment.zone.Zone;
 
@@ -23,9 +22,9 @@ public abstract class Individual {
 	protected float curAmplexusRepeat;
 	protected float curVoracity;
 	protected boolean readyToReproduction = true;
-	protected ArrayList<ViabilityPair> viabilitySettings;
+	protected Float[] viabilitySettings;
 
-	SettingsUpdater updater;
+	protected SettingsUpdater updater;
 
 	public Individual(Genotype myGenotype, int age, Zone myZone) {
 		this.myGenotype = myGenotype;
@@ -106,14 +105,8 @@ public abstract class Individual {
 		return curVoracity;
 	}
 
-	protected Float getSetting(Vocabulary.Param param) {
-		for (ViabilityPair pair : viabilitySettings)
-			if (pair.getParam() == param)
-				return pair.getValue();
-		assert false : "{" + param.name()
-				+ "} wasn't found in viability settings ["
-				+ this.getClass().getName() + "]";
-		return 0f;
+	protected Float getSetting(Param param) {
+		return viabilitySettings[param.ordinal()];
 	}
 
 	class SettingsUpdater {
@@ -130,13 +123,13 @@ public abstract class Individual {
 		}
 
 		private void updateSettingsForYearling() {
-			curSurvival = getSetting(Vocabulary.Param.SurvivalFactorFirst);
-			curCompetitiveness = getSetting(Vocabulary.Param.CompetitivenessFactorFirst);
-			curVoracity = getSetting(Vocabulary.Param.Voracity01);
+			curSurvival = getSetting(Param.SurvivalFactorFirst);
+			curCompetitiveness = getSetting(Param.CompetitivenessFactorFirst);
+			curVoracity = getSetting(Param.Voracity01);
 		}
 
 		private void updateSettingsForNotYearling() {
-			if (age > getSetting(Vocabulary.Param.Lifetime))
+			if (age > getSetting(Param.Lifetime))
 				curSurvival = curCompetitiveness = 0f;
 			else {
 				updateSurvivalForNotYearling();
@@ -146,46 +139,46 @@ public abstract class Individual {
 		}
 
 		private void updateSurvivalForNotYearling() {
-			float aS = getSetting(Vocabulary.Param.SurvivalAchieveAge);
-			float kbS = getSetting(Vocabulary.Param.SurvivalFactorBeforeS);
+			float aS = getSetting(Param.SurvivalAchieveAge);
+			float kbS = getSetting(Param.SurvivalFactorBeforeS);
 			if (age < aS)
 				curSurvival = curSurvival
-						+ (getSetting(Vocabulary.Param.Survival) - curSurvival)
+						+ (getSetting(Param.Survival) - curSurvival)
 						* kbS;
 			else if (age == aS)
-				curSurvival = getSetting(Vocabulary.Param.Survival);
+				curSurvival = getSetting(Param.Survival);
 			else
 				curSurvival = curSurvival + (1 - curSurvival)
-						* getSetting(Vocabulary.Param.SurvivalFactor);
+						* getSetting(Param.SurvivalFactor);
 		}
 
 		private void updateCompetitivenessForNotYearling() {
-			float aC = getSetting(Vocabulary.Param.CompetitivenessAchieveAge);
-			float kbC = getSetting(Vocabulary.Param.CompetitivenessFactorBeforeC);
+			float aC = getSetting(Param.CompetitivenessAchieveAge);
+			float kbC = getSetting(Param.CompetitivenessFactorBeforeC);
 			if (age < aC)
 				curCompetitiveness = curCompetitiveness
-						+ (getSetting(Vocabulary.Param.Competitiveness) - curCompetitiveness)
+						+ (getSetting(Param.Competitiveness) - curCompetitiveness)
 						* kbC;
 			else if (age == aC)
-				curCompetitiveness = getSetting(Vocabulary.Param.Competitiveness);
+				curCompetitiveness = getSetting(Param.Competitiveness);
 			else
 				curCompetitiveness = curCompetitiveness
 						+ (1 - curCompetitiveness)
-						* getSetting(Vocabulary.Param.CompetitivenessFactor);
+						* getSetting(Param.CompetitivenessFactor);
 		}
 
 		private void updateSettingsForMature() {
-			if (age == getSetting(Vocabulary.Param.Spawning)) {
-				curReproduction = getSetting(Vocabulary.Param.Reproduction);
-				curFertility = getSetting(Vocabulary.Param.Fertility);
-				curAmplexusRepeat = getSetting(Vocabulary.Param.AmplexusRepeat);
+			if (age == getSetting(Param.Spawning)) {
+				curReproduction = getSetting(Param.Reproduction);
+				curFertility = getSetting(Param.Fertility);
+				curAmplexusRepeat = getSetting(Param.AmplexusRepeat);
 			} else {
 				curReproduction = curReproduction + (1 - curReproduction)
-						* getSetting(Vocabulary.Param.ReproductionFactor);
+						* getSetting(Param.ReproductionFactor);
 				curFertility = curFertility + (1 - curFertility)
-						* getSetting(Vocabulary.Param.FertilityFactor);
+						* getSetting(Param.FertilityFactor);
 				curAmplexusRepeat = curAmplexusRepeat + (1 - curAmplexusRepeat)
-						* getSetting(Vocabulary.Param.AmplexusRepeatFactor);
+						* getSetting(Param.AmplexusRepeatFactor);
 			}
 		}
 
@@ -198,25 +191,25 @@ public abstract class Individual {
 		private float getCurVoracity() {
 			switch (age + 1) {
 			case 2:
-				return getSetting(Vocabulary.Param.Voracity02);
+				return getSetting(Param.Voracity02);
 			case 3:
-				return getSetting(Vocabulary.Param.Voracity03);
+				return getSetting(Param.Voracity03);
 			case 4:
-				return getSetting(Vocabulary.Param.Voracity04);
+				return getSetting(Param.Voracity04);
 			case 5:
-				return getSetting(Vocabulary.Param.Voracity05);
+				return getSetting(Param.Voracity05);
 			case 6:
-				return getSetting(Vocabulary.Param.Voracity06);
+				return getSetting(Param.Voracity06);
 			case 7:
-				return getSetting(Vocabulary.Param.Voracity07);
+				return getSetting(Param.Voracity07);
 			case 8:
-				return getSetting(Vocabulary.Param.Voracity08);
+				return getSetting(Param.Voracity08);
 			case 9:
-				return getSetting(Vocabulary.Param.Voracity09);
+				return getSetting(Param.Voracity09);
 			case 10:
-				return getSetting(Vocabulary.Param.Voracity10_N);
+				return getSetting(Param.Voracity10_N);
 			default:
-				return getSetting(Vocabulary.Param.Voracity10_N);
+				return getSetting(Param.Voracity10_N);
 			}
 		}
 	}

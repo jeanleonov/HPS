@@ -14,19 +14,19 @@ import experiment.scenario.Rule;
 import experiment.scenario.repeaters.SingleRepeat;
 import experiment.scenario.ZoneCommand;
 import experiment.individual.genotype.Genotype;
+import statistic.StatisticSettings;
+import statistic.StatisticSettings.Subiteration;
 
 public class Parser implements ParserConstants {
-    public List<Rule> readRules(){
-      try{
-               return ruleList();
-          }
-          catch(Exception e){
-               e.printStackTrace();
-          }
-          return null;
+    public List<Rule> readRules() throws Exception {
+                return ruleList();
     }
 
-//=======================| RULE LIST   static final public List<Rule> ruleList() throws ParseException, Exception {
+    public StatisticSettings readStatisticSettings() throws Exception {
+        return statisticSettings();
+    }
+
+//=======================| RULE LIST   final public List<Rule> ruleList() throws ParseException, Exception {
     List<Rule> rules = new LinkedList<Rule>();
     Rule curRule;
     label_1:
@@ -52,7 +52,7 @@ public class Parser implements ParserConstants {
  //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //=======================| RULE 
-  static final public Rule rule() throws ParseException, Exception {
+  final public Rule rule() throws ParseException, Exception {
      Rule rule;
     ActionRepeat actionRepeat;
     List<Action> actions;
@@ -121,7 +121,7 @@ public class Parser implements ParserConstants {
 
  //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-//=======================| ACTION LIST  static final public List<Action> actionList() throws ParseException, Exception {
+//=======================| ACTION LIST  final public List<Action> actionList() throws ParseException, Exception {
     List<Action> actions = new LinkedList<Action>();
     Action curAction;
     label_2:
@@ -143,7 +143,7 @@ public class Parser implements ParserConstants {
 
  //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-//=======================| ACTION  static final public Action action() throws ParseException, Exception {
+//=======================| ACTION  final public Action action() throws ParseException, Exception {
     Action action;
    List<Integer> zones = new LinkedList<Integer>();
    ZoneDistribution zoneDistribution = new ZoneDistribution();
@@ -186,8 +186,8 @@ public class Parser implements ParserConstants {
                                         Integer.parseInt(tokenA.image),
                                         Integer.parseInt(tokenN.image)));
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 22:
-        jj_consume_token(22);
+      case 32:
+        jj_consume_token(32);
         break;
       default:
         jj_la1[8] = jj_gen;
@@ -210,23 +210,102 @@ public class Parser implements ParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  static private boolean jj_initialized_once = false;
+ //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+//=======================| STATISTIC SETTINGS   final public StatisticSettings statisticSettings() throws ParseException, Exception {
+    StatisticSettings settings = new StatisticSettings();
+    label_5:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case AGES:
+      case GENOTYPES:
+      case WITH_IMMATURES:
+      case WITHOUT_IMMATURES:
+      case AFTER_MOVE_AND_SCENARIO:
+      case AFTER_EVOLUTION:
+      case AFTER_REPRODACTION:
+      case AFTER_COMPETITION:
+      case AFTER_DIEING:
+      case AFTER_EACH:
+        ;
+        break;
+      default:
+        jj_la1[10] = jj_gen;
+        break label_5;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case AGES:
+        jj_consume_token(AGES);
+                          settings.setShouldDistinguishAges(true);
+        break;
+      case GENOTYPES:
+        jj_consume_token(GENOTYPES);
+                               settings.setShouldDistinguishAges(false);
+        break;
+      case WITH_IMMATURES:
+        jj_consume_token(WITH_IMMATURES);
+                                    settings.setShouldDisplayImmatures(true);
+        break;
+      case WITHOUT_IMMATURES:
+        jj_consume_token(WITHOUT_IMMATURES);
+                                       settings.setShouldDisplayImmatures(false);
+        break;
+      case AFTER_MOVE_AND_SCENARIO:
+        jj_consume_token(AFTER_MOVE_AND_SCENARIO);
+                                             settings.addReportingSubiteration(Subiteration.AFTER_MOVE_AND_SCENARIO);
+        break;
+      case AFTER_EVOLUTION:
+        jj_consume_token(AFTER_EVOLUTION);
+                                     settings.addReportingSubiteration(Subiteration.AFTER_EVOLUTION);
+        break;
+      case AFTER_REPRODACTION:
+        jj_consume_token(AFTER_REPRODACTION);
+                                        settings.addReportingSubiteration(Subiteration.AFTER_REPRODACTION);
+        break;
+      case AFTER_COMPETITION:
+        jj_consume_token(AFTER_COMPETITION);
+                                       settings.addReportingSubiteration(Subiteration.AFTER_COMPETITION);
+        break;
+      case AFTER_DIEING:
+        jj_consume_token(AFTER_DIEING);
+                                  settings.addReportingSubiteration(Subiteration.AFTER_DIEING);
+        break;
+      case AFTER_EACH:
+        jj_consume_token(AFTER_EACH);
+                                settings.reportAfterEachSubiteration();
+        break;
+      default:
+        jj_la1[11] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+     {if (true) return settings;}
+    throw new Error("Missing return statement in function");
+  }
+
   /** Generated Token Manager. */
-  static public ParserTokenManager token_source;
-  static SimpleCharStream jj_input_stream;
+  public ParserTokenManager token_source;
+  SimpleCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[10];
+  public Token jj_nt;
+  private int jj_ntk;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[12];
   static private int[] jj_la1_0;
+  static private int[] jj_la1_1;
   static {
       jj_la1_init_0();
+      jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xc80,0x880,0x100,0x200,0xc80,0x1000,0x100000,0x102000,0x400000,0x10000,};
+      jj_la1_0 = new int[] {0xc80,0x880,0x100,0x200,0xc80,0x1000,0x100000,0x102000,0x0,0x10000,0xffc00000,0xffc00000,};
+   }
+   private static void jj_la1_init_1() {
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -235,76 +314,55 @@ public class Parser implements ParserConstants {
   }
   /** Constructor with InputStream and supplied encoding */
   public Parser(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new ParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
   public Parser(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new ParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
   public Parser(ParserTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -313,10 +371,10 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -332,7 +390,7 @@ public class Parser implements ParserConstants {
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -341,7 +399,7 @@ public class Parser implements ParserConstants {
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -350,35 +408,38 @@ public class Parser implements ParserConstants {
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[23];
+    boolean[] la1tokens = new boolean[33];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 12; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
             la1tokens[j] = true;
           }
+          if ((jj_la1_1[i] & (1<<j)) != 0) {
+            la1tokens[32+j] = true;
+          }
         }
       }
     }
-    for (int i = 0; i < 23; i++) {
+    for (int i = 0; i < 33; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -393,11 +454,11 @@ public class Parser implements ParserConstants {
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
 }
