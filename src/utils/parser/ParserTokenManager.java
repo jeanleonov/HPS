@@ -545,9 +545,6 @@ static private int jjMoveStringLiteralDfa12_0(long old0, long active0)
    }
    switch(curChar)
    {
-      case 65:
-      case 97:
-         return jjMoveStringLiteralDfa13_0(active0, 0x10000000L);
       case 69:
       case 101:
          return jjMoveStringLiteralDfa13_0(active0, 0x1000000L);
@@ -563,6 +560,9 @@ static private int jjMoveStringLiteralDfa12_0(long old0, long active0)
       case 84:
       case 116:
          return jjMoveStringLiteralDfa13_0(active0, 0x2000000L);
+      case 85:
+      case 117:
+         return jjMoveStringLiteralDfa13_0(active0, 0x10000000L);
       default :
          break;
    }

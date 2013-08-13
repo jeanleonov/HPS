@@ -41,7 +41,7 @@ public final class Shared {
 						"                               |after_each\n"+
 						"                               |after_move_and_scenario\n"+
 						"                               |after_evolution\n"+
-						"                               |after_reprodaction\n"+
+						"                               |after_reproduction\n"+
 						"                               |after_competition\n"+
 						"                               |after_dieing\n"+
 						"                              )*";

@@ -94,7 +94,7 @@ public interface ParserConstants {
     "\"without_immatures\"",
     "\"after_move_and_scenario\"",
     "\"after_evolution\"",
-    "\"after_reprodaction\"",
+    "\"after_reproduction\"",
     "\"after_competition\"",
     "\"after_dieing\"",
     "\"after_each\"",
