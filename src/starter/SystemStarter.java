@@ -29,7 +29,7 @@ public class SystemStarter {
 					movePossibilitiesPath,
 					experimentInfoPath,
 					scenarioPath;
-	private int numberOfExperints;
+	private int remainingExperints;
 	private int curExperiment;
 	private int numberOfModelingYears;
 	private int zoneMultiplier;
@@ -54,7 +54,7 @@ public class SystemStarter {
 		this.zoneMultiplier = zoneMultiplier;
 		this.capacityMultiplier = capacityMultiplier;
 		this.curExperiment = curExperiment;
-		this.numberOfExperints = numberOfExperints;
+		this.remainingExperints = numberOfExperints;
 		this.numberOfModelingYears = numberOfYears;
 		this.statisticSettingsString = statisticSettings;
 		new Parser(new StringReader(statisticSettingsString));
@@ -67,8 +67,8 @@ public class SystemStarter {
 		Settings.init(dataFiller.getViabilityTable(), dataFiller.getPosterityTable(), dataFiller.getMovePosibilitiesTable());
 		if (curExperiment == -1)
 			curExperiment = 0;
-		if (numberOfExperints == -1)
-			numberOfExperints = 1;
+		if (remainingExperints == -1)
+			remainingExperints = 1;
 		runExperints();
 		finish();
 	}
@@ -103,9 +103,9 @@ public class SystemStarter {
 		ExperimentDistribution firstDistribution = dataFiller.getExperimentDistribution();
 		Scenario scenario = dataFiller.getScenario();
 		Experiment experiment = new Experiment(firstDistribution, scenario, numberOfModelingYears, statisticDispatcher, capacityMultiplier);
-		while (curExperiment < numberOfExperints) {
+		while (remainingExperints > 0) {
 			experiment.runWitExperimentNumber(curExperiment);
-			curExperiment++;
+			remainingExperints--;
 		}
 	}
 	
