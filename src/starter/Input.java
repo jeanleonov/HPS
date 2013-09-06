@@ -1,6 +1,6 @@
 package starter;
 
-public enum SourceType {
+public enum Input {
 
 	VIABILITY,
 	POSTERITY,

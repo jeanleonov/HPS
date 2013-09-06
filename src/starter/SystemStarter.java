@@ -39,18 +39,18 @@ public class SystemStarter {
 	long timeOfStart;
 
 	public SystemStarter(
-			Map<SourceType,String> pathesMap,
+			Map<Input,String> pathesMap,
 			int zoneMultiplier,
 			double capacityMultiplier,
 			int curExperiment,
 			int numberOfExperints,
 			int numberOfYears,
 			String statisticSettings){
-		this.viabilitySettingsPath = pathesMap.get(SourceType.VIABILITY);
-		this.posteritySettingPath = pathesMap.get(SourceType.POSTERITY);
-		this.movePossibilitiesPath = pathesMap.get(SourceType.MOVE_POSSIBILITIES);
-		this.scenarioPath = pathesMap.get(SourceType.SCENARIO);
-		this.experimentInfoPath = pathesMap.get(SourceType.INITIATION);
+		this.viabilitySettingsPath = pathesMap.get(Input.VIABILITY);
+		this.posteritySettingPath = pathesMap.get(Input.POSTERITY);
+		this.movePossibilitiesPath = pathesMap.get(Input.MOVE_POSSIBILITIES);
+		this.scenarioPath = pathesMap.get(Input.SCENARIO);
+		this.experimentInfoPath = pathesMap.get(Input.INITIATION);
 		this.zoneMultiplier = zoneMultiplier;
 		this.capacityMultiplier = capacityMultiplier;
 		this.curExperiment = curExperiment;

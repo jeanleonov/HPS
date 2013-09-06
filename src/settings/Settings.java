@@ -21,20 +21,17 @@ public class Settings implements Vocabulary {
 	}
 	
 	// it's for Individual
-	static public Float[] getViabilitySettings (Genotype indivGenotype){
-		// TODO process NullPointer or implement Singleton
+	static public Float[] getViabilitySettings (Genotype indivGenotype) {
 		return viabilityTable.get(indivGenotype);
 	}
 	
 	// it's for Female
-	static public ArrayList<PosterityResultPair> getPosteritySettings (Genotype motherGenotype, Genotype fatherGenotype){
-		// TODO process NullPointer or implement Singleton
+	static public ArrayList<PosterityResultPair> getPosteritySettings (Genotype motherGenotype, Genotype fatherGenotype) {
 		return posterityTable.get(new PosterityParentsPair(motherGenotype, fatherGenotype));
 	}
 
 	// it's for Individual
-	static public HashMap<Integer, Double> getMovePosibilitiesFrom(Integer zoneNumber){
-		// TODO process NullPointer or implement Singleton
+	static public HashMap<Integer, Double> getMovePosibilitiesFrom(Integer zoneNumber) {
 		return movePosibilitiesTable.get(zoneNumber);
 	}
 }

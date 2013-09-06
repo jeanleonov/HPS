@@ -1,4 +1,4 @@
-package starter;
+package utils.cmd.line.parser;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

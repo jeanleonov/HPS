@@ -209,7 +209,7 @@ public class StatisticDispatcher {
 		StringBuilder buffer = new StringBuilder();
 		for (int i=0; i<columnGenotypes.size(); i++) {
 			int genotypeId = columnGenotypes.get(i).getId();
-			Map<Integer, Integer> genotypeStat = zoneStat.remove(genotypeId);
+			Map<Integer, Integer> genotypeStat = zoneStat.get(genotypeId);
 			if (genotypeStat == null)
 				buffer.append("0;");
 			else {
