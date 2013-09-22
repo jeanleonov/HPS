@@ -11,11 +11,11 @@ import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import settings.Settings;
-import settings.Vocabulary.Param;
+import settings.Param;
 import starter.Shared;
 import statistic.StatisticSettings.Subiteration;
 import experiment.YearStatisticCollector;
+import experiment.ZoneSettings;
 import experiment.individual.genotype.Genotype;
 
 public class StatisticDispatcher {
@@ -28,17 +28,19 @@ public class StatisticDispatcher {
 	private boolean finished = false;
 	private BufferedWriter writer = null;
 	private Lock queueLock = new ReentrantLock();
+	
+	private ZoneSettings zoneSettingsSTUB;
 	private ArrayList<Genotype> columnGenotypes = new ArrayList<>();
 	private ArrayList<Integer> columnAges = new ArrayList<>();
 	
 	private int curExperiment;
 	private int curYear;
 	private int curSubiteration;
-	private int curZone;
 
-	public StatisticDispatcher(String curStatisticFileURL, StatisticSettings settings) {
+	public StatisticDispatcher(String curStatisticFileURL, StatisticSettings settings, ZoneSettings STUB) {
 		fileLocation = curStatisticFileURL;
 		this.settings = settings;
+		this.zoneSettingsSTUB = STUB;
 	}
 
 	public StatisticSettings getSettings() {
@@ -146,7 +148,7 @@ public class StatisticDispatcher {
 	}
 	
 	private Float getMaxAgeFor(Genotype genotype) {
-		return Settings.getViabilitySettings(genotype)[Param.Lifetime.ordinal()];
+		return zoneSettingsSTUB.getViabilityTable().get(genotype)[Param.Lifetime.ordinal()];
 	}
 	
 	private String getMatureAgesColumns() {
@@ -162,7 +164,7 @@ public class StatisticDispatcher {
 	}
 	
 	private int getMatureAge(Genotype genotype) {
-		return Math.round(Settings.getViabilitySettings(genotype)[Param.Spawning.ordinal()]+0.0001f);
+		return Math.round(zoneSettingsSTUB.getViabilityTable().get(genotype)[Param.Spawning.ordinal()]+0.0001f);
 	}
 	
 	private String getGenotypesColumns() {
@@ -192,13 +194,13 @@ public class StatisticDispatcher {
 		return buffer.toString();
 	}
 	
-	private StringBuilder renderSubiteration(Map<Integer, Map<Integer, Map<Integer, Integer>>> subiterationStat) {
+	private StringBuilder renderSubiteration(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStat) {
 		StringBuilder buffer = new StringBuilder();
-		for (Integer zone : subiterationStat.keySet()) {
+		for (String zone : subiterationStat.keySet()) {
 			buffer.append('\n').append(curExperiment).append(';');
 			buffer.append(curYear).append(';');
 			buffer.append(Subiteration.values()[curSubiteration].getShortName()).append(';');
-			buffer.append(curZone).append(';');
+			buffer.append(zone).append(';');
 			buffer.append(renderZone(subiterationStat.get(zone)));
 			buffer.deleteCharAt(buffer.length()-1);
 		}

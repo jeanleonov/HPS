@@ -6,22 +6,22 @@ public class YearStatistic {
 	
 	private int experimentNumber;
 	private Integer year;
-	private Map<Integer, Map<Integer, Map<Integer, Map<Integer, Integer>>>> yearStatistic;
+	private Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> yearStatistic;
 	
 	public YearStatistic(
 			int experimentNumber, Integer year,
-			Map<Integer, Map<Integer, Map<Integer, Map<Integer, Integer>>>> yearStatistic) {
+			Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> yearStatistic) {
 		this.yearStatistic = yearStatistic;
 		this.experimentNumber = experimentNumber;
 		this.year = year;
 	}
 
-	public Map<Integer, Map<Integer, Map<Integer, Map<Integer, Integer>>>> getYearStatistic() {
+	public Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> getYearStatistic() {
 		return yearStatistic;
 	}
 	
 	public void setYearStatistic(
-			Map<Integer, Map<Integer, Map<Integer, Map<Integer, Integer>>>> yearStatistic) {
+			Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> yearStatistic) {
 		this.yearStatistic = yearStatistic;
 	}
 	

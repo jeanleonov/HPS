@@ -1,11 +1,8 @@
 package experiment.individual;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
-import settings.Settings;
-import settings.Vocabulary;
-import settings.Vocabulary.Param;
+import settings.Param;
 import experiment.individual.genotype.Genotype;
 import experiment.zone.Zone;
 
@@ -29,7 +26,7 @@ public abstract class Individual {
 	public Individual(Genotype myGenotype, int age, Zone myZone) {
 		this.myGenotype = myGenotype;
 		this.myZone = myZone;
-		viabilitySettings = Settings.getViabilitySettings(getGenotype());
+		viabilitySettings = myZone.getViabilitySettings(getGenotype());
 		updater = new SettingsUpdater();
 		for (this.age = 0; this.age <= age; this.age++)
 			updater.updateSettings();
@@ -57,20 +54,15 @@ public abstract class Individual {
 		return Math.random() > myZone.getAttractivness();
 	}
 
-	public Integer whereDoGo() {
-		HashMap<Integer, Double> neighboursTravelCost = myZone
-				.getZoneTravelPossibilities();
-		if (neighboursTravelCost == null)
-			return -1;
+	public String whereDoGo() {
+		Map<String, Double> neighboursTravelCost = myZone.getZoneTravelPossibilities();
 		double totalWeight = myZone.getSumOfTravelPossibilities();
 		double weightSum = 0;
 		double point = Math.random() * totalWeight;
-		Iterator<Integer> zoneNum = neighboursTravelCost.keySet().iterator();
-		while (zoneNum.hasNext()) {
-			Integer currentZone = zoneNum.next();
-			weightSum += neighboursTravelCost.get(currentZone);
+		for (String neighborName : neighboursTravelCost.keySet()) {
+			weightSum += neighboursTravelCost.get(neighborName);
 			if (point < weightSum)
-				return currentZone;
+				return neighborName;
 		}
 		return null;
 	}
@@ -78,7 +70,7 @@ public abstract class Individual {
 	public abstract boolean isFemale();
 
 	public boolean isMature() {
-		return age >= getSetting(Vocabulary.Param.Spawning);
+		return age >= getSetting(Param.Spawning);
 	}
 
 	public boolean isReadyToReproduction() {

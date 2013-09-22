@@ -25,41 +25,45 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int EACH = 13;
   /** RegularExpression Id. */
-  int IMMIGRATION = 14;
+  int GENOTYPE = 14;
   /** RegularExpression Id. */
-  int ABSOLUTE = 15;
+  int SPECIES = 15;
   /** RegularExpression Id. */
-  int GENOTYPE = 16;
+  int GENDER = 16;
   /** RegularExpression Id. */
-  int RULE_END = 17;
+  int IMMIGRATION = 17;
   /** RegularExpression Id. */
-  int SPECIES = 18;
+  int ABSOLUTE = 18;
   /** RegularExpression Id. */
-  int GENDER = 19;
+  int NUMBER = 19;
   /** RegularExpression Id. */
-  int NUMBER = 20;
+  int DIGIT = 20;
   /** RegularExpression Id. */
-  int DIGIT = 21;
+  int AGES = 21;
   /** RegularExpression Id. */
-  int AGES = 22;
+  int GENOTYPES = 22;
   /** RegularExpression Id. */
-  int GENOTYPES = 23;
+  int WITH_IMMATURES = 23;
   /** RegularExpression Id. */
-  int WITH_IMMATURES = 24;
+  int WITHOUT_IMMATURES = 24;
   /** RegularExpression Id. */
-  int WITHOUT_IMMATURES = 25;
+  int AFTER_MOVE_AND_SCENARIO = 25;
   /** RegularExpression Id. */
-  int AFTER_MOVE_AND_SCENARIO = 26;
+  int AFTER_EVOLUTION = 26;
   /** RegularExpression Id. */
-  int AFTER_EVOLUTION = 27;
+  int AFTER_REPRODACTION = 27;
   /** RegularExpression Id. */
-  int AFTER_REPRODACTION = 28;
+  int AFTER_COMPETITION = 28;
   /** RegularExpression Id. */
-  int AFTER_COMPETITION = 29;
+  int AFTER_DIEING = 29;
   /** RegularExpression Id. */
-  int AFTER_DIEING = 30;
+  int AFTER_EACH = 30;
   /** RegularExpression Id. */
-  int AFTER_EACH = 31;
+  int NAME = 31;
+  /** RegularExpression Id. */
+  int LETTER = 32;
+  /** RegularExpression Id. */
+  int PART_LETTER = 33;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -80,12 +84,11 @@ public interface ParserConstants {
     "\"with-possibility\"",
     "\"for\"",
     "\"each\"",
-    "\"immigration\"",
-    "\"absolute\"",
     "<GENOTYPE>",
-    "\";\"",
     "<SPECIES>",
     "<GENDER>",
+    "\"immigration\"",
+    "\"absolute\"",
     "<NUMBER>",
     "<DIGIT>",
     "\"ages\"",
@@ -98,7 +101,12 @@ public interface ParserConstants {
     "\"after_competition\"",
     "\"after_dieing\"",
     "\"after_each\"",
+    "<NAME>",
+    "<LETTER>",
+    "<PART_LETTER>",
+    "\";\"",
     "\",\"",
+    "\":\"",
   };
 
 }

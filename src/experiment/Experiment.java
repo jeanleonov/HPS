@@ -2,13 +2,13 @@ package experiment;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import starter.Shared;
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings.Subiteration;
-import distribution.ExperimentDistribution;
-import distribution.ZoneDistribution;
 import experiment.scenario.Action;
 import experiment.scenario.Scenario;
 import experiment.zone.Zone;
@@ -18,32 +18,28 @@ public class Experiment {
 	private final Scenario scenario;
 	private final Integer numberOfModelingYears;
 	
-	private List<Zone> zones;
+	private Map<String, Zone> zones;
 	private int yearCursor;
 	private YearStatisticCollector collector;
 	
 	public Experiment(
-			ExperimentDistribution firstDistribution,
+			List<ZoneSettings> zonesSettings,
 			Scenario scenario,
 			int numberOfModelingYears,
-			StatisticDispatcher statisticDispatcher,
-			double capacityMultiplier) {
+			StatisticDispatcher statisticDispatcher) {
 		this.scenario = scenario;
 		this.numberOfModelingYears = numberOfModelingYears;
-		createZones(statisticDispatcher, firstDistribution, capacityMultiplier);
-		collector = new YearStatisticCollector(statisticDispatcher, zones);
+		createZones(statisticDispatcher, zonesSettings);
+		collector = new YearStatisticCollector(statisticDispatcher, zones.values());
 	}
 	
 	private void createZones(
 			StatisticDispatcher statisticDispatcher,
-			ExperimentDistribution firstDistribution,
-			double capacityMultiplier) {
-		zones = new ArrayList<Zone>();
-		int zoneNumber=0;
-		for (ZoneDistribution firstZoneDistr : firstDistribution.getZoneDistributions()) {
-			Zone zone = new Zone(firstZoneDistr, zoneNumber, capacityMultiplier);
-			zones.add(zone);
-			zoneNumber++;
+			List<ZoneSettings> zonesSettings) {
+		zones = new HashMap<String, Zone>();
+		for (ZoneSettings zoneSettings : zonesSettings) {
+			Zone zone = new Zone(zoneSettings);
+			zones.put(zoneSettings.getZoneName(), zone);
 		}
 	}
 	
@@ -72,48 +68,48 @@ public class Experiment {
 	}
 	
 	private void resetZonesTo(int experimentNumber) {
-		for (Zone zone : zones)
+		for (Zone zone : zones.values())
 			zone.resetTo(experimentNumber);
 	}
 	
 	private void scenarioCommandsProcessing() throws IOException{
 		ArrayList<Action> actions = scenario.getCommandsForNextYear(yearCursor);
 		for (Action action : actions)
-			for (Integer zoneNumber : action.getZonesNumbers())
-				zones.get(zoneNumber).scenarioCommand(action.getCommand());
+			for (String zoneName : action.getZonesNames())
+				zones.get(zoneName).scenarioCommand(action.getCommand());
 	}
 
 	private void updateListsAndIndividualSettings() {
-		for (Zone zone : zones)
+		for (Zone zone : zones.values())
 			zone.updateListsAndIndividualSettings();
 		collector.collect(Subiteration.AFTER_EVOLUTION);
 	}
 
 	private void reproductionPhaseProcessing(){
-		for (Zone zone : zones)
+		for (Zone zone : zones.values())
 			zone.reproductionProcessing();
 		collector.collect(Subiteration.AFTER_REPRODACTION);
 	}
 
 	private void competitionPhaseProcessing(){
-		for (Zone zone : zones)
+		for (Zone zone : zones.values())
 			zone.competitionProcessing();
 		collector.collect(Subiteration.AFTER_COMPETITION);
 	}
 
 	private void diePhaseProcessing(){
-		for (Zone zone : zones)
+		for (Zone zone : zones.values())
 			zone.dieProcessing();
 		collector.collect(Subiteration.AFTER_DIEING);
 	}
 
 	private void movePhaseProcessing(){
-		for (Zone zone : zones)
+		for (Zone zone : zones.values())
 			zone.movePhase();
 		collector.collect(Subiteration.AFTER_MOVE_AND_SCENARIO);
 	}
 	
-	public Zone getZone(int number) {
-		return zones.get(number);
+	public Zone getZone(String zoneName) {
+		return zones.get(zoneName);
 	}
 }

@@ -10,11 +10,11 @@ public final class Shared {
 
 	public final static String
 	PROJECT_PATH = getProjectPath(),
-	DEFAULT_MAP_FILE = "*",
 	DEFAULT_VIABILITY_FILE = "Viability.csv",
 	DEFAULT_POSTERITY_FILE = "Posterity.csv",
 	DEFAULT_SCENARIO_FILE = "Scenario.scn",
 	DEFAULT_INITIATION_FILE = "Initiation.hpsi",
+	DEFAULT_MAP_FILE = "Map.csv",
 	DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
 	DEFAULT_START_POINT = "start.hpsi",
 	DEFAULT_END_POINT = "end.hpsi",
@@ -29,6 +29,7 @@ public final class Shared {
 				"	[{--posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
 				"	[{--scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
 				"	[{--initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
+				"	[{--map} string]  name of file with map settings | DEFAULT \'Map.csv\'\n"+
 				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
 				"                              ( ages\n"+
 				"                               |genotypes\n"+
@@ -51,6 +52,7 @@ public final class Shared {
 				"	[{--posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
 				"	[{--scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
 				"	[{--initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
+				"	[{--map} string]  name of file with map settings | DEFAULT \'Map.csv\'\n"+
 				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
 				"                              ( ages\n"+
 				"                               |genotypes\n"+
@@ -72,6 +74,7 @@ public final class Shared {
 				"	[{--viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
 				"	[{--posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
 				"	[{--scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
+				"	[{--map} string]  name of file with map settings | DEFAULT \'Map.csv\'\n"+
 				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
 				"                              ( ages\n"+
 				"                               |genotypes\n"+

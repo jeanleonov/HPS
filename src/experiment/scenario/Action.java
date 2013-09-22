@@ -4,20 +4,20 @@ import java.util.List;
 
 public class Action {
 	
-	private List<Integer> zonesNumbers;
+	private List<String> zonesNames;
 	private ZoneCommand command;
 	
-	public Action(List<Integer> zonesNumbers, ZoneCommand command){
-		this.zonesNumbers = zonesNumbers;
+	public Action(List<String> zonesNames, ZoneCommand command){
+		this.zonesNames = zonesNames;
 		this.command = command;
 	}
 
-	public List<Integer> getZonesNumbers() {
-		return zonesNumbers;
+	public List<String> getZonesNames() {
+		return zonesNames;
 	}
 
-	public void setZonesNumbers(List<Integer> zonesNumbers) {
-		this.zonesNumbers = zonesNumbers;
+	public void setZonesNames(List<String> zonesNames) {
+		this.zonesNames = zonesNames;
 	}
 
 	public ZoneCommand getCommand() {

@@ -16,7 +16,6 @@ public enum Argument {
 	NUMBER_OF_EXPERIMENTS ('E', "number_of_experiments", new Integer(-1), Integer.class),
 	CAPACITY_MULTIPLIER ('M', "capacity_multiplier", new Double(1), Double.class),
 	ZONE_MULTIPLIER ('z', "zone_multiplier", new Integer(1), Integer.class),
-	OBJECT_MANAGER ("object_manager", new Integer(0), Integer.class),
 	PROJECT_PATH ("project_path", Shared.PROJECT_PATH, String.class),
 	VIABILITY ("viability", Shared.DEFAULT_VIABILITY_FILE, String.class),
 	POSTERITY ("posterity", Shared.DEFAULT_POSTERITY_FILE, String.class),

@@ -1,9 +1,9 @@
 package experiment.individual;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import settings.PosterityResultPair;
-import settings.Settings;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 import experiment.individual.genotype.Genotype;
@@ -22,7 +22,7 @@ public class Female extends Individual {
 		this.myGenotype = myGenotype;
 		this.age = age;
 		this.myZone = myZone;
-		viabilitySettings = Settings.getViabilitySettings(getGenotype());
+		viabilitySettings = myZone.getViabilitySettings(getGenotype());
 		for (this.age = 0; this.age <= age; this.age++)
 			updater.updateSettings();
 		this.age = age;
@@ -48,7 +48,7 @@ public class Female extends Individual {
 	ZoneDistribution createPosterityWith(Male male){
 		ZoneDistribution posterity = new ZoneDistribution();
 		int posteritySize = (int)(male.curFertility * curFertility);
-		ArrayList<PosterityResultPair> resultsInterbreeding = Settings.getPosteritySettings(myGenotype, male.myGenotype);
+		List<PosterityResultPair> resultsInterbreeding = myZone.getPosteritySettings(myGenotype, male.myGenotype);
 		if (resultsInterbreeding != null)
 			for(PosterityResultPair pair : resultsInterbreeding)
 				posterity.addGenotypeDistribution(new GenotypeAgeCountTrio(pair.getGenotype(), 0, (int) (posteritySize*pair.getProbability())));

@@ -7,9 +7,8 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import utils.cmd.line.parser.Argument;
 import utils.cmd.line.parser.CmdLineParser;
-import utils.individuals.allocation.IndividualsManagerDispatcher;
 
-public class MainClass {
+public class RepeatingRunMainClass {
 	
 	private static String startArgs="";
 	
@@ -18,7 +17,7 @@ public class MainClass {
         DOMConfigurator.configure("src/log4j.xml");
 		saveStartArgs(args);
 		parseArgs(args);		
-		MainClass main = new MainClass();
+		RepeatingRunMainClass main = new RepeatingRunMainClass();
 		try {
 			main.start();
 		} catch (Exception e) {
@@ -28,10 +27,8 @@ public class MainClass {
 	}
 	
 	static void start() throws Exception {
-		IndividualsManagerDispatcher.setDispatchingMode((Integer) Argument.OBJECT_MANAGER.getValue());
-		SystemStarter starter = new SystemStarter(
+		RepeatingSystemStarter starter = new RepeatingSystemStarter(
 				getPathesMap(),
-				(Integer) Argument.ZONE_MULTIPLIER.getValue(),
 				(Double) Argument.CAPACITY_MULTIPLIER.getValue(),
 				(Integer) Argument.CURRENT_EXPERIMENT.getValue(),
 				(Integer) Argument.NUMBER_OF_EXPERIMENTS.getValue(),

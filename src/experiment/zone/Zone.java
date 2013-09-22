@@ -2,19 +2,19 @@ package experiment.zone;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Random;
 
-import settings.Settings;
+import settings.PosterityParentsPair;
+import settings.PosterityResultPair;
 import starter.Shared;
-import utils.individuals.allocation.IIndividualsManager;
-import utils.individuals.allocation.IndividualsManagerDispatcher;
 import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 import experiment.Experiment;
+import experiment.ZoneSettings;
 import experiment.individual.Female;
 import experiment.individual.Individual;
 import experiment.individual.Male;
@@ -29,14 +29,10 @@ public class Zone {
 	private List<Female> females = new LinkedList<Female>();
 	private List<Individual> otherImmatures = new LinkedList<Individual>();
 	private List<Individual> yearlings = new LinkedList<Individual>();
-	private IIndividualsManager individualsManager;
 	
-	private ZoneDistribution initialDistribution;
 	private Experiment experiment;
-	private int zoneNumber;
+	private ZoneSettings settings;
 	
-	private double capacity;
-	private HashMap<Integer, Double> travelCosts;
 	private double sumOfTravelPossibilities = 0;
 	private int maxSizeOfListOfFemales, minNumberOfMalesForContinue;
 	
@@ -46,44 +42,21 @@ public class Zone {
 	private double totalSumOfAntiCompetetiveness=0;
 	private double totalSumOfVoracity=0;
 	
-	public Zone(
-			ZoneDistribution firstZoneDistr,
-			int myNumber,
-			double capacityMultiplier) {
-		this.zoneNumber = myNumber;
-		travelCosts = Settings.getMovePosibilitiesFrom(zoneNumber);
-		for (Integer zoneNumber : travelCosts.keySet())
-			sumOfTravelPossibilities += travelCosts.get(zoneNumber);
-		this.initialDistribution = firstZoneDistr;
-		this.individualsManager = IndividualsManagerDispatcher.getIndividualsManager(zoneNumber);
+	public Zone(ZoneSettings settings) {
+		this.settings = settings;
+		for (Double movePossibility : settings.getMovePossibilitiesTable().values())
+			sumOfTravelPossibilities += movePossibility;
 		this.maxSizeOfListOfFemales = Shared.DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES;
 		this.minNumberOfMalesForContinue = Shared.DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE;
-		capacity = firstZoneDistr.getCapacity()*capacityMultiplier;
 		scenarioExecutor = new ScenarioExecutor(this);
 	}
 	
 	public void resetTo(int experimentNumber) {
-		for (Male male : males)
-			individualsManager.killMale(male);
 		males.clear();
-		for (Female female : females)
-			individualsManager.killFemale(female);
 		females.clear();
-		for (Individual individual : otherImmatures) {
-			if (individual.isFemale())
-				individualsManager.killFemale((Female)individual);
-			else
-				individualsManager.killMale((Male)individual);
-		}
-		otherImmatures.clear(); {
-		for (Individual individual : yearlings)
-			if (individual.isFemale())
-				individualsManager.killFemale((Female)individual);
-			else
-				individualsManager.killMale((Male)individual);
-		}
+		otherImmatures.clear();
 		yearlings.clear();
-		createIndividuals(initialDistribution);
+		createIndividuals(settings.getStartDistribution());
 	}
 
 	public void scenarioCommand(ZoneCommand command) throws IOException {
@@ -102,17 +75,13 @@ public class Zone {
 		ListIterator<? extends Individual> iterator = indivs.listIterator();
 		while (iterator.hasNext()) {
 			Individual indiv = iterator.next(); 
-			if (indiv.isDead()) {
-				if (indiv.isFemale())
-					individualsManager.killFemale((Female) indiv);
-				else
-					individualsManager.killMale((Male) indiv);
+			if (indiv.isDead())
 				iterator.remove();
-			}
 		}
 	}
 
 	public void movePhase() {
+		recalculateTotalSumOfVoracity();
 		logPopulationSizes("Move        ");
 		for (Individual individual : males)
 			tryToMoveIndividual(individual);
@@ -126,16 +95,16 @@ public class Zone {
 	
 	private void tryToMoveIndividual(Individual individual) {
 		if (individual.isGoingOut()){
-			Integer outZone = individual.whereDoGo();
-			if(outZone != new Integer(-1) && outZone != zoneNumber){
-				sendIndividualTo(individual, outZone);
+			String outZoneName = individual.whereDoGo();
+			if(outZoneName != null) {
+				sendIndividualTo(individual, outZoneName);
 				killIndividual(individual);
 			}
 		}
 	}
 	
-	private void sendIndividualTo(Individual indiv, int zoneNumber){
-		Zone newZone = experiment.getZone(zoneNumber);
+	private void sendIndividualTo(Individual indiv, String zoneName){
+		Zone newZone = experiment.getZone(zoneName);
 		if (newZone != null)
 			newZone.createIndividual(indiv.getGenotype(), indiv.getAge());
 	}
@@ -162,15 +131,9 @@ public class Zone {
 		logPopulationSizes("Competition ");
 		recalculateTotalSumOfAntiCompetetiveness();
 		recalculateTotalSumOfVoracity();
-		if(totalSumOfVoracity <= capacity)
+		if(totalSumOfVoracity <= settings.getCapacity())
 			return;
 		killCompetitionLoosers();
-	}
-	
-	public HashMap<Integer, Double> getZoneTravelPossibilities(){
-		if(travelCosts != null)
-			return (HashMap<Integer, Double>) travelCosts;
-		else return null;
 	}
 	
 	public double getSumOfTravelPossibilities() {
@@ -192,9 +155,9 @@ public class Zone {
 
 	private void createIndividual(Genotype genotype, int age) {
 		if (genotype.getGender() == Genome.X)
-			addIndividualToList(individualsManager.getFemale(genotype, age, this));
+			addIndividualToList(new Female(genotype, age, this));
 		else
-			addIndividualToList(individualsManager.getMale(genotype, age, this));
+			addIndividualToList(new Male(genotype, age, this));
 	}
 	
 	private void addIndividualToList(Individual individual) {
@@ -225,9 +188,9 @@ public class Zone {
 
 	private void createYearling(Genotype genotype) {
 		if (genotype.getGender() == Genome.X)
-			yearlings.add(individualsManager.getFemale(genotype, 0, this));
+			yearlings.add(new Female(genotype, 0, this));
 		else
-			yearlings.add(individualsManager.getMale(genotype, 0, this));
+			yearlings.add(new Male(genotype, 0, this));
 	}
 	
 	private int getIndividualsNumber(){
@@ -235,7 +198,20 @@ public class Zone {
 	}
 	
 	public double getAttractivness() {
-		return 0.5;			//#Stub
+		double preResult = settings.getCapacity() / totalSumOfVoracity;
+		return preResult>1 ? 1 : preResult;
+	}
+	
+	public Map<String, Double> getZoneTravelPossibilities() {
+		return settings.getMovePossibilitiesTable();
+	}
+	
+	public Float[] getViabilitySettings(Genotype genotype) {
+		return settings.getViabilityTable().get(genotype);
+	}
+	
+	public List<PosterityResultPair> getPosteritySettings(Genotype mother, Genotype father) {
+		return settings.getPosterityTable().get(new PosterityParentsPair(mother, father));
 	}
 	
 	private void killIndividual(Individual individual) {
@@ -243,10 +219,6 @@ public class Zone {
 			if (!females.remove(individual))
 				if (!otherImmatures.remove(individual))
 					yearlings.remove(individual);
-		if (individual.isFemale())
-			individualsManager.killFemale((Female)individual);
-		else
-			individualsManager.killMale((Male)individual);
 	}
 	
 	public int getMaxSizeOfListOfFemales() {
@@ -313,7 +285,7 @@ public class Zone {
 	
 	/** @return random elements according to specified probabilities */
 	private void killCompetitionLoosers() {
-		double coeficient =  (totalSumOfVoracity-capacity)/capacity
+		double coeficient =  (totalSumOfVoracity-settings.getCapacity())/settings.getCapacity()
 				*getIndividualsNumber()/totalSumOfAntiCompetetiveness
 				*getWeightedTotalSumOfVoracity()/totalSumOfVoracity;
 		killCompetitionLoosersIn(males, coeficient);
@@ -326,13 +298,8 @@ public class Zone {
 		ListIterator<? extends Individual> iterator = indivs.listIterator();
 		while (iterator.hasNext()) {
 			Individual indiv = iterator.next();
-			if (Math.random() <= 1 - indiv.getCompetitiveness()/coeficient) {
-				if (indiv.isFemale())
-					individualsManager.killFemale((Female) indiv);
-				else
-					individualsManager.killMale((Male) indiv);
+			if (Math.random() <= 1 - indiv.getCompetitiveness()/coeficient)
 				iterator.remove();
-			}
 		}
 	}
 	
@@ -363,8 +330,8 @@ public class Zone {
 		return yearlings;
 	}
 	
-	public int getZoneNumber() {
-		return zoneNumber;
+	public String getZoneName() {
+		return settings.getZoneName();
 	}
 
 	private void logPopulationSizes(String beforePhaseName){
@@ -375,5 +342,15 @@ public class Zone {
 		Shared.debugLogger.debug(MessageFormat.format(
 				"Before {0}: M-{1,number},\tF-{2,number},\tI-{3,number},\tY-{4,number}", 
 				beforePhaseName, malesNumber, femalesNumber, immaturesNumber, yearlingsNumber));
+	}
+	
+	@Override
+	public int hashCode() {
+		return settings.getZoneName().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return settings.getZoneName().equals(obj);
 	}
 }

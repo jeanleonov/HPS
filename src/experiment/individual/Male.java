@@ -2,7 +2,6 @@ package experiment.individual;
 
 import experiment.individual.genotype.Genotype;
 import experiment.zone.Zone;
-import settings.Settings;
 
 public class Male extends Individual {
 	
@@ -16,7 +15,7 @@ public class Male extends Individual {
 	public Male reset(Genotype myGenotype, int age, Zone myZone){
 		this.myGenotype = myGenotype;
 		this.myZone = myZone;
-		viabilitySettings = Settings.getViabilitySettings(getGenotype());
+		viabilitySettings = myZone.getViabilitySettings(getGenotype());
 		for (this.age = 0; this.age <= age; this.age++)
 			updater.updateSettings();
 		this.age = age;
