@@ -84,7 +84,8 @@ public class StatisticDispatcher {
 				System.exit(1);
 			} finally {
 				try {
-					writer.close();
+					if (writer != null)
+						writer.close();
 				} catch (IOException e) {
 					Shared.problemsLogger.error(Shared.printStack(e));
 					System.exit(1);
@@ -119,6 +120,8 @@ public class StatisticDispatcher {
 			parentFolder.mkdir();
 			file.createNewFile();
 		}
+		else
+			throw new IOException("Can not create statistic file (\""+fileLocation+"\") because it exists.");
 		return file;
 	}
 	
@@ -227,7 +230,8 @@ public class StatisticDispatcher {
 	}
 	
 	private void flushWriter() throws IOException {
-		writer.flush();
+		if (writer != null)
+			writer.flush();
 	}
 	
 	

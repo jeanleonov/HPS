@@ -1,8 +1,8 @@
-package utils.cmd.line.parser;
+package starter;
 
 import java.lang.reflect.Method;
 
-import starter.Shared;
+import utils.cmd.line.parser.CmdLineParser;
 import utils.cmd.line.parser.CmdLineParser.IllegalOptionValueException;
 import utils.cmd.line.parser.CmdLineParser.Option;
 import utils.cmd.line.parser.CmdLineParser.UnknownOptionException;
@@ -25,7 +25,9 @@ public enum Argument {
 	STATISTIC ('S', "statistic", Shared.DEFAULT_STATISTIC_MODE, String.class),
 	START_POINT ("start_point", Shared.DEFAULT_START_POINT, String.class),
 	END_POINT ("end_point", Shared.DEFAULT_END_POINT, String.class),
-	STEPS ("steps", Shared.DEFAULT_STEPS, String.class);
+	STEPS ("steps", Shared.DEFAULT_STEPS, String.class),
+	EXPERIMENTS_SERIES_NAME ("name", Shared.DEFAULT_NAME, String.class),
+	POINT_NUMBER('p', "point_number", new Integer(-1), Integer.class);
 	
 	private static CmdLineParser parser;
 	private Character shortName;

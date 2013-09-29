@@ -19,6 +19,9 @@ public final class Shared {
 	DEFAULT_START_POINT = "start.hpsi",
 	DEFAULT_END_POINT = "end.hpsi",
 	DEFAULT_STEPS = "steps.hpsi",
+	DEFAULT_NAME = "modeling",
+			
+	RESOURCES = "-RESOURCES-",
 	
 	SINGLE_RUN_HELP_TEXT = "Usage: [--help] " +
 				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
@@ -92,8 +95,7 @@ public final class Shared {
 				"	[{--steps} string]  name of file with steps for walking on configuration space | DEFAULT \'steps.hpsi\'";
 	
 	public final static 
-	int	DEFAULT_PACKAGE_BUFFER = 100,
-		DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,
+	int	DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,
 		DEFAULT_MIN_NUMBER_OF_MALES_FOR_CONTINUE = 3,
 		MAX_NUMBER_OF_REPRODUCTION_CIRCLES = 10;
 	
