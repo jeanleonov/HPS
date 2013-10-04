@@ -78,6 +78,7 @@ public class StatisticDispatcher {
 					flushQueue();
 					Thread.sleep(200);
 				}
+				flushQueue();
 				flushWriter();
 			} catch (Exception e) {
 				Shared.problemsLogger.error(Shared.printStack(e));

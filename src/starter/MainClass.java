@@ -1,13 +1,10 @@
-package starter.repeating;
+package starter;
 
-import starter.Shared;
-
-
-public class RepeatingRunMainClass {
+public class MainClass {
 	
 	public static void main(String[] args) {
 		try {
-			new RepeatingSystemStarter(args).startSystem();
+			new SystemStarter(args).startSystem();
 		} catch (Exception e) {
 			Shared.problemsLogger.error(Shared.printStack(e));
 			e.printStackTrace();

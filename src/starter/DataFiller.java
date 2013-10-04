@@ -1,4 +1,4 @@
-package starter.base;
+package starter;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -7,45 +7,41 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import distribution.ZoneDistribution;
 import settings.Param;
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
-import starter.Shared;
 import utils.parser.Parser;
 import experiment.ZoneSettings;
 import experiment.individual.genotype.Genotype;
 import experiment.scenario.Rule;
 import experiment.scenario.Scenario;
 
-public abstract class BaseDataFiller {
+public class DataFiller {
 	
 	private Reader	viabilityReader,
 					posterityReader, 
 					movePossibilitiesReader,
-					scenarioReader;
+					scenarioReader,
+					distributionInfoReader;
 	protected List<ZoneSettings> zones = new ArrayList<>();
 	private List<Rule> rules;
 	private double capacityMultilpier;
 	
-	public BaseDataFiller(
+	public DataFiller(
 			Reader viabilityReader, 
 			Reader posterityReader,
 			Reader movePossibilitiesReader,
 			Reader scenarioReader,
+			Reader distributionInfoReader,
 			double capacityMultilpier) {
 		this.viabilityReader = viabilityReader;
 		this.posterityReader = posterityReader;
 		this.movePossibilitiesReader = movePossibilitiesReader;
 		this.scenarioReader = scenarioReader;
+		this.distributionInfoReader = distributionInfoReader;
 		this.capacityMultilpier = capacityMultilpier;
 	}
-	
-	
-	
-	protected abstract void fillStartDistribution() throws Exception;
-	
-	
-	
 	
 	public List<ZoneSettings> getZonesSettings() {
 		return zones;
@@ -214,6 +210,17 @@ public abstract class BaseDataFiller {
 		rules = Parser.ruleList();
 	}
 	
+	protected void fillStartDistribution() throws Exception {
+		Parser.ReInit(distributionInfoReader);
+		Map<String, ZoneDistribution> distributions = Parser.zoneDistributions();
+		for (ZoneSettings zoneSettings : zones) {
+			ZoneDistribution distribution = distributions.get(zoneSettings.getZoneName());
+			if (distribution == null)
+				throw getDistributionException();
+			zoneSettings.setStartDistribution(distribution);
+		}
+	}
+	
 	private Exception getViabilityException(Exception e) {
 		String myMessage = "Wrong content of file with viability settings. \n";
 		String stack = Shared.printStack(e);
@@ -234,6 +241,11 @@ public abstract class BaseDataFiller {
 	
 	private Exception getMapException() {
 		String myMessage = "Wrong content of file with zones map description. \n";
+		return new Exception(myMessage);
+	}
+	
+	private Exception getDistributionException() {
+		String myMessage = "Wrong content of initiation file. \n";
 		return new Exception(myMessage);
 	}
 }

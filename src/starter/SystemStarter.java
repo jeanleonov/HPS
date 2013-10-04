@@ -1,13 +1,13 @@
-package starter.base;
+package starter;
 
+import java.io.FileReader;
+import java.io.Reader;
 import java.io.StringReader;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
-import starter.Argument;
-import starter.Shared;
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings;
 import utils.cmd.line.parser.CmdLineParser;
@@ -17,38 +17,46 @@ import experiment.Experiment;
 import experiment.ZoneSettings;
 import experiment.scenario.Scenario;
 
-public abstract class BaseSystemStarter {
+public class SystemStarter {
 	
 	private static String startArgs="";
 
-	private BaseDataFiller dataFiller;
+	private String	viabilitySettingsPath,
+					posteritySettingPath,
+					movePossibilitiesPath,
+					distributionInfoPath,
+					scenarioPath;
+
+	private DataFiller dataFiller;
 	private StatisticDispatcher statisticDispatcher;
 	private String curStatisticFileURL;
 	
 	protected int remainingExperints;
 	protected int curExperiment;
+	protected int curPoint;
 	protected int numberOfModelingYears;
 	private String statisticSettings;
 	protected double capacityMultiplier;
 	
 	private long timeOfStart;
 
-	public BaseSystemStarter(String[] args) {
+	public SystemStarter(String[] args) throws Exception {
         DOMConfigurator.configure("src/log4j.xml");
 		saveStartArgs(args);
 		parseArgs(args);
 		this.curExperiment = (Integer) Argument.CURRENT_EXPERIMENT.getValue();
+		this.curPoint = (Integer) Argument.POINT_NUMBER.getValue();
 		this.remainingExperints = (Integer) Argument.NUMBER_OF_EXPERIMENTS.getValue();
 		this.numberOfModelingYears = (Integer) Argument.YEARS.getValue();
 		this.statisticSettings = (String) Argument.STATISTIC.getValue();
 		this.capacityMultiplier = (Double) Argument.CAPACITY_MULTIPLIER.getValue();
+		String projectPath = (String) Argument.PROJECT_PATH.getValue();
+		this.viabilitySettingsPath = getPathOf(Argument.VIABILITY, projectPath);
+		this.posteritySettingPath = getPathOf(Argument.POSTERITY, projectPath);
+		this.movePossibilitiesPath = getPathOf(Argument.MOVE_POSSIBILITIES, projectPath);
+		this.scenarioPath = getPathOf(Argument.SCENARIO, projectPath);
+		this.distributionInfoPath = getPathOf(Argument.INITIATION, projectPath);
 	}
-	
-	
-	
-	protected abstract BaseDataFiller getDataFiller() throws Exception;
-	protected abstract String getStatisticFileName();
-	
 	
 	public void startSystem() throws Exception {
 		new Parser(new StringReader(statisticSettings));
@@ -64,12 +72,42 @@ public abstract class BaseSystemStarter {
 		finish();
 	}
 	
+	protected DataFiller getDataFiller() throws Exception {
+		Reader viabilityReader = new FileReader(viabilitySettingsPath);
+		Reader posterityReader = new FileReader(posteritySettingPath);
+		Reader movePossibilitiesReader = new FileReader(movePossibilitiesPath);
+		Reader scenarioReader = new FileReader(scenarioPath);
+		Reader distributionInfoReader = new FileReader(distributionInfoPath);
+		return new DataFiller(viabilityReader, posterityReader, movePossibilitiesReader, scenarioReader, distributionInfoReader, capacityMultiplier);
+	}
+	
 	private void createStatisticDispatcher() throws ParseException, Exception {
 		curStatisticFileURL = getStatisticFileName();
 		Parser.ReInit(new StringReader(statisticSettings));
 		StatisticSettings settings = Parser.statisticSettings();
 		statisticDispatcher	= new StatisticDispatcher(curStatisticFileURL, settings,
 				dataFiller.getZonesSettings().get(0));		// #TODO terrible stub!!!
+	}
+
+	protected String getStatisticFileName() {
+		String experimentSeriesName = null;
+		try {
+			experimentSeriesName = (String) Argument.EXPERIMENTS_SERIES_NAME.getValue();
+		} catch (Exception e) {
+			experimentSeriesName = "Statistic";
+		}
+		StringBuilder result = new StringBuilder("statistics/");
+		result.append(experimentSeriesName);
+		if (curExperiment != -1)
+			result.append(" -e ").append(curExperiment);
+		if (curPoint != -1)
+			result.append(" -p ").append(curPoint);
+		if (remainingExperints != -1)
+			result.append(" -E ").append(remainingExperints);
+		Date d = new Date();
+		result.append(String.format(" %tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d));
+		result.append(".csv");
+		return result.toString();
 	}
 	
 	private void runExperints() {
@@ -88,7 +126,7 @@ public abstract class BaseSystemStarter {
 			 min = executingTime/1000/60 - hour*60,
 			 sec = executingTime/1000 - min*60 - hour*3600,
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
-		Logger.getLogger("runningTimeLogger").info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + getStartArgs());
+		Shared.infoLogger.info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + getStartArgs());
 		statisticDispatcher.finish();
 	}
 	
@@ -116,11 +154,11 @@ public abstract class BaseSystemStarter {
         }
         catch(CmdLineParser.OptionException e) {
         	Shared.problemsLogger.error(e.getMessage());
-            System.out.println(Shared.SINGLE_RUN_HELP_TEXT);
+            System.out.println(Shared.HELP_TEXT);
             System.exit(2);
         }
 		if((Boolean) Argument.HELP.getValue()) {
-            System.out.println(Shared.SINGLE_RUN_HELP_TEXT);
+            System.out.println(Shared.HELP_TEXT);
             System.exit(0);
 		}
 	}

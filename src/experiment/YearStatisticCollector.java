@@ -35,25 +35,27 @@ public class YearStatisticCollector {
 		this.subiteration = subiteration.ordinal();
 		if (!isDispatcherInterestedIn())
 			return;
+		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap = initSubiterationStatMap();
 		if (dispatcher.getSettings().shouldDisplayImmatures())
 			if (dispatcher.getSettings().shouldDistinguishAges())
-				collectWithImmatures();
+				collectWithImmatures(subiterationMap);
 			else
-				sumWithImmatures();
+				sumWithImmatures(subiterationMap);
 		else
 			if (dispatcher.getSettings().shouldDistinguishAges())
-				collectWithoutImmatures();
+				collectWithoutImmatures(subiterationMap);
 			else
-				sumWithoutImmatures();
+				sumWithoutImmatures(subiterationMap);
 	}
 	
 	private boolean isDispatcherInterestedIn() {
 		return dispatcher.getSettings().getReportingSubiterations().contains(subiteration);
 	}
 	
-	private void collectWithImmatures() {
+	private void collectWithImmatures(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap) {
 		for (Zone zone : zones) {
 			zoneName = zone.getZoneName();
+			initZoneStat(subiterationMap);
 			for (Individual indiv : zone.getMales())
 				add(indiv);
 			for (Individual indiv : zone.getFemales())
@@ -65,9 +67,10 @@ public class YearStatisticCollector {
 		}
 	}
 	
-	private void sumWithImmatures() {
+	private void sumWithImmatures(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap) {
 		for (Zone zone : zones) {
 			zoneName = zone.getZoneName();
+			initZoneStat(subiterationMap);
 			for (Individual indiv : zone.getMales())
 				addToTotal(indiv);
 			for (Individual indiv : zone.getFemales())
@@ -79,9 +82,10 @@ public class YearStatisticCollector {
 		}
 	}
 	
-	private void collectWithoutImmatures() {
+	private void collectWithoutImmatures(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap) {
 		for (Zone zone : zones) {
 			zoneName = zone.getZoneName();
+			initZoneStat(subiterationMap);
 			for (Individual indiv : zone.getMales())
 				add(indiv);
 			for (Individual indiv : zone.getFemales())
@@ -89,9 +93,10 @@ public class YearStatisticCollector {
 		}
 	}
 	
-	private void sumWithoutImmatures() {
+	private void sumWithoutImmatures(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap) {
 		for (Zone zone : zones) {
 			zoneName = zone.getZoneName();
+			initZoneStat(subiterationMap);
 			for (Individual indiv : zone.getMales())
 				addToTotal(indiv);
 			for (Individual indiv : zone.getFemales())
@@ -100,15 +105,15 @@ public class YearStatisticCollector {
 	}
 	
 	private void add(Individual individual) {
-		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStat = getSubiterationStatMap();
-		Map<Integer, Map<Integer, Integer>> zoneStat = getZoneStatMap(subiterationStat);
+		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStat = yearStatistic.get(subiteration);
+		Map<Integer, Map<Integer, Integer>> zoneStat = subiterationStat.get(zoneName);
 		Map<Integer, Integer> genotypeStat = getGenotypeStatMap(zoneStat, individual.getGenotype().getId());
 		increment(genotypeStat, individual.getAge());
 	}
 	
 	private void addToTotal(Individual individual) {
-		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStat = getSubiterationStatMap();
-		Map<Integer, Map<Integer, Integer>> zoneStat = getZoneStatMap(subiterationStat);
+		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStat = yearStatistic.get(subiteration);
+		Map<Integer, Map<Integer, Integer>> zoneStat = subiterationStat.get(zoneName);
 		Map<Integer, Integer> genotypeStat = getGenotypeStatMap(zoneStat, individual.getGenotype().getId());
 		incrementTotal(genotypeStat);
 	}
@@ -117,21 +122,15 @@ public class YearStatisticCollector {
 		dispatcher.addPackage(new YearStatistic(experimentNumber, year, yearStatistic));
 	}
 	
-	private Map<String, Map<Integer, Map<Integer, Integer>>> getSubiterationStatMap() {
-		Map<String, Map<Integer, Map<Integer, Integer>>> map = yearStatistic.get(subiteration);
-		if (map == null) {
-			map = new TreeMap<>();
-			yearStatistic.put(subiteration, map);
-		}
+	private Map<String, Map<Integer, Map<Integer, Integer>>> initSubiterationStatMap() {
+		Map<String, Map<Integer, Map<Integer, Integer>>> map = new TreeMap<>();
+		yearStatistic.put(subiteration, map);
 		return map;
 	}
 	
-	private Map<Integer, Map<Integer, Integer>> getZoneStatMap(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStatMap) {
-		Map<Integer, Map<Integer, Integer>> map = subiterationStatMap.get(zoneName);
-		if (map == null) {
-			map = new TreeMap<>();
-			subiterationStatMap.put(zoneName, map);
-		}
+	private Map<Integer, Map<Integer, Integer>> initZoneStat(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationStatMap) {
+		Map<Integer, Map<Integer, Integer>> map = new TreeMap<>();
+		subiterationStatMap.put(zoneName, map);
 		return map;
 	}
 	

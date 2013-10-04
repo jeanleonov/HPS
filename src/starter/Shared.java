@@ -23,31 +23,9 @@ public final class Shared {
 			
 	RESOURCES = "-RESOURCES-",
 	
-	SINGLE_RUN_HELP_TEXT = "Usage: [--help] " +
+	HELP_TEXT = "Usage: [--help] " +
 				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
 				"	[{-e, --cur_experiment} int]  current experiment number | DEFAULT 1" +
-				"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n" +
-				"	[{--project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
-				"	[{--viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
-				"	[{--posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
-				"	[{--scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
-				"	[{--initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
-				"	[{--map} string]  name of file with map settings | DEFAULT \'Map.csv\'\n"+
-				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
-				"                              ( ages\n"+
-				"                               |genotypes\n"+
-				"                               |with_immatures\n"+
-				"                               |without_immatures\n"+
-				"                               |after_each\n"+
-				"                               |after_move_and_scenario\n"+
-				"                               |after_evolution\n"+
-				"                               |after_reproduction\n"+
-				"                               |after_competition\n"+
-				"                               |after_dieing\n"+
-				"                              )*\n",
-	
-	REPEATING_RUN_HELP_TEXT = "Usage: [--help] " +
-				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
 				"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT 1\n" +
 				"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n" +
 				"	[{--project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
@@ -67,32 +45,7 @@ public final class Shared {
 				"                               |after_reproduction\n"+
 				"                               |after_competition\n"+
 				"                               |after_dieing\n"+
-				"                              )*\n",
-	
-	SERIAL_RUN_HELP_TEXT = "Usage: [--help] " +
-				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
-				"	[{-E, --number_of_experiments} int]  number of simulated experiments on each point | DEFAULT 1\n" +
-				"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n" +
-				"	[{--project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
-				"	[{--viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
-				"	[{--posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
-				"	[{--scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
-				"	[{--map} string]  name of file with map settings | DEFAULT \'Map.csv\'\n"+
-				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
-				"                              ( ages\n"+
-				"                               |genotypes\n"+
-				"                               |with_immatures\n"+
-				"                               |without_immatures\n"+
-				"                               |after_each\n"+
-				"                               |after_move_and_scenario\n"+
-				"                               |after_evolution\n"+
-				"                               |after_reproduction\n"+
-				"                               |after_competition\n"+
-				"                               |after_dieing\n"+
-				"                              )*\n"+
-				"	[{--start} string]  name of file with start point of configuration space | DEFAULT \'start.hpsi\'\n"+
-				"	[{--end} string]  name of file with end point of configuration space | DEFAULT \'end.hpsi\'\n"+
-				"	[{--steps} string]  name of file with steps for walking on configuration space | DEFAULT \'steps.hpsi\'";
+				"                              )*\n";
 	
 	public final static 
 	int	DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,

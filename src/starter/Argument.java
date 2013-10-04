@@ -23,9 +23,6 @@ public enum Argument {
 	SCENARIO ("scenario", Shared.DEFAULT_SCENARIO_FILE, String.class),
 	INITIATION ("initiation", Shared.DEFAULT_INITIATION_FILE, String.class),
 	STATISTIC ('S', "statistic", Shared.DEFAULT_STATISTIC_MODE, String.class),
-	START_POINT ("start_point", Shared.DEFAULT_START_POINT, String.class),
-	END_POINT ("end_point", Shared.DEFAULT_END_POINT, String.class),
-	STEPS ("steps", Shared.DEFAULT_STEPS, String.class),
 	EXPERIMENTS_SERIES_NAME ("name", Shared.DEFAULT_NAME, String.class),
 	POINT_NUMBER('p', "point_number", new Integer(-1), Integer.class);
 	
