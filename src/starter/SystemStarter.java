@@ -1,6 +1,9 @@
 package starter;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +34,7 @@ public class SystemStarter {
 	private StatisticDispatcher statisticDispatcher;
 	private String curStatisticFileURL;
 	private InputsPreparer inputsPreparer;
+	private StringBuilder settingsStatistic = new StringBuilder();
 	
 	private int numberOfModelingExperints;
 	private int curExperiment;
@@ -78,6 +82,18 @@ public class SystemStarter {
 		runPoints();
 	}
 	
+	private void runPoints() throws Exception {
+		while (curPoint < numberOfPoints) {
+			this.dataFiller = getDataFiller();
+			dataFiller.read();
+			saveSettingsPack();
+			createStatisticDispatcher();
+			runExperints();
+			finish();
+			curPoint++;
+		}
+	}
+	
 	private DataFiller getDataFiller() throws Exception {
 		inputsPreparer.setPoint(curPoint);
 		String viabilityContent = inputsPreparer.getPreparedContent(viabilitySettingsPath);
@@ -85,6 +101,12 @@ public class SystemStarter {
 		String movePossibilityContent = inputsPreparer.getPreparedContent(movePossibilitiesPath);
 		String scenarioContent = inputsPreparer.getPreparedContent(scenarioPath);
 		String distributionInfoContent = inputsPreparer.getPreparedContent(distributionInfoPath);
+		settingsStatistic.setLength(0);
+		settingsStatistic.append(viabilityContent).append("\n\n\n");
+		settingsStatistic.append(posterityContent).append("\n\n\n");
+		settingsStatistic.append(movePossibilityContent).append("\n\n\n");
+		settingsStatistic.append(scenarioContent).append("\n\n\n");
+		settingsStatistic.append(distributionInfoContent);
 		return new DataFiller(viabilityContent, posterityContent, movePossibilityContent, scenarioContent, distributionInfoContent, capacityMultiplier);
 	}
 	
@@ -95,8 +117,28 @@ public class SystemStarter {
 		statisticDispatcher	= new StatisticDispatcher(curStatisticFileURL, settings,
 				dataFiller.getZonesSettings().get(0));		// #TODO terrible stub!!!
 	}
+	
+	private void saveSettingsPack() throws IOException {
+		BufferedWriter settingsStatisticWriter = null;
+		try {
+			FileWriter fileWriter = new FileWriter(getSettingsStatisticFileName());
+			settingsStatisticWriter = new BufferedWriter(fileWriter);
+			settingsStatisticWriter.write(settingsStatistic.toString());
+		} finally {
+			if (settingsStatisticWriter != null)
+				settingsStatisticWriter.close();
+		}
+	}
 
 	private String getStatisticFileName() {
+		return getStatisticFilePrefix().append(".csv").toString();
+	}
+	
+	private String getSettingsStatisticFileName() {
+		return getStatisticFilePrefix().append(" settings.csv").toString();
+	}
+	
+	private StringBuilder getStatisticFilePrefix() {
 		String experimentSeriesName = null;
 		try {
 			experimentSeriesName = (String) Argument.EXPERIMENTS_SERIES_NAME.getValue();
@@ -113,19 +155,7 @@ public class SystemStarter {
 			result.append(" -E ").append(numberOfModelingExperints);
 		Date d = new Date();
 		result.append(String.format(" %tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d));
-		result.append(".csv");
-		return result.toString();
-	}
-	
-	private void runPoints() throws Exception {
-		while (curPoint < numberOfPoints) {
-			this.dataFiller = getDataFiller();
-			dataFiller.read();
-			createStatisticDispatcher();
-			runExperints();
-			finish();
-			curPoint++;
-		}
+		return result;
 	}
 	
 	private void runExperints() {

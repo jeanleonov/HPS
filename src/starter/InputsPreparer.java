@@ -88,13 +88,18 @@ public class InputsPreparer {
 	}
 	
 	private String getFullContent(String inputPath) throws IOException {
-		BufferedReader inputReader = new BufferedReader(new FileReader(inputPath));
-		StringBuilder builder = new StringBuilder();
-		String line;
-		while ((line = inputReader.readLine()) != null)
-			builder.append(line).append('\n');
-		inputReader.close();
-		return builder.toString();	
+		BufferedReader inputReader = null;
+		try {
+			inputReader = new BufferedReader(new FileReader(inputPath));
+			StringBuilder builder = new StringBuilder();
+			String line;
+			while ((line = inputReader.readLine()) != null)
+				builder.append(line).append('\n');
+			return builder.toString();
+		} finally {
+			if (inputReader != null)
+				inputReader.close();
+		}
 	}
 	
 	private String putThisPointsValues(String content) throws Exception {
