@@ -24,7 +24,8 @@ public enum Argument {
 	INITIATION ("initiation", Shared.DEFAULT_INITIATION_FILE, String.class),
 	STATISTIC ('S', "statistic", Shared.DEFAULT_STATISTIC_MODE, String.class),
 	EXPERIMENTS_SERIES_NAME ("name", Shared.DEFAULT_NAME, String.class),
-	POINT_NUMBER('p', "point_number", new Integer(-1), Integer.class);
+	POINT_NUMBER('p', "point", new Integer(-1), Integer.class),
+	DIMENSIONS_TO_TEST("dimensions", Shared.DEFAULT_DIMENSIONS_TO_TEST, String.class);
 	
 	private static CmdLineParser parser;
 	private Character shortName;

@@ -54,7 +54,7 @@ public class Experiment {
 	}
 	
 	private void modelYear(int experimentNumber, int year) {
-		Shared.infoLogger.info("YEAR NUMBER\t" + yearCursor + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
+		Shared.debugLogger.debug("YEAR NUMBER\t" + yearCursor + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
 		collector.openNewYear(experimentNumber, yearCursor);
 		updateListsAndIndividualSettings();
 		reproductionPhaseProcessing();

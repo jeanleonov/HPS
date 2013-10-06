@@ -233,42 +233,5 @@ public class StatisticDispatcher {
 	private void flushWriter() throws IOException {
 		if (writer != null)
 			writer.flush();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

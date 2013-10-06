@@ -1,17 +1,16 @@
 package starter;
 
-import java.io.BufferedReader;
-import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import distribution.ZoneDistribution;
 import settings.Param;
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
 import utils.parser.Parser;
+import distribution.ZoneDistribution;
 import experiment.ZoneSettings;
 import experiment.individual.genotype.Genotype;
 import experiment.scenario.Rule;
@@ -19,27 +18,27 @@ import experiment.scenario.Scenario;
 
 public class DataFiller {
 	
-	private Reader	viabilityReader,
-					posterityReader, 
-					movePossibilitiesReader,
-					scenarioReader,
-					distributionInfoReader;
-	protected List<ZoneSettings> zones = new ArrayList<>();
+	private String	viabilityFileContent,
+					posterityFileContent, 
+					movePossibilityFileContent,
+					scenarioFileContent,
+					distributionInfoFileContent;
+	private List<ZoneSettings> zones = new ArrayList<>();
 	private List<Rule> rules;
 	private double capacityMultilpier;
 	
 	public DataFiller(
-			Reader viabilityReader, 
-			Reader posterityReader,
-			Reader movePossibilitiesReader,
-			Reader scenarioReader,
-			Reader distributionInfoReader,
+			String viabilityFileContent, 
+			String posterityFileContent,
+			String movePossibilityFileContent,
+			String scenarioFileContent,
+			String distributionInfoFileContent,
 			double capacityMultilpier) {
-		this.viabilityReader = viabilityReader;
-		this.posterityReader = posterityReader;
-		this.movePossibilitiesReader = movePossibilitiesReader;
-		this.scenarioReader = scenarioReader;
-		this.distributionInfoReader = distributionInfoReader;
+		this.viabilityFileContent = viabilityFileContent;
+		this.posterityFileContent = posterityFileContent;
+		this.movePossibilityFileContent = movePossibilityFileContent;
+		this.scenarioFileContent = scenarioFileContent;
+		this.distributionInfoFileContent = distributionInfoFileContent;
 		this.capacityMultilpier = capacityMultilpier;
 	}
 	
@@ -60,15 +59,14 @@ public class DataFiller {
 	}
 
 	private void fillViability() throws NumberFormatException, Exception {
-		BufferedReader reader = new BufferedReader(viabilityReader);
-		String headerLine = reader.readLine();
+		String[] lines = viabilityFileContent.split("\n");
+		String headerLine = lines[0];
 		List<Genotype> genotypes = parseGenotypesLine(headerLine, 3);
-		String line;
 		HashMap<Genotype, Float[]> viabilityTable = new HashMap<>();	// TODO
 		for (ZoneSettings zoneSettings : zones)							// #stub
 			zoneSettings.setViabilityTable(viabilityTable);				// Now all zones have same viability settings
-		while ((line = reader.readLine()) != null)
-			parseViabilityLine(line, genotypes, viabilityTable);
+		for (int i=1; i<lines.length; i++)
+			parseViabilityLine(lines[i], genotypes, viabilityTable);
 	}
 	
 	private void parseViabilityLine(
@@ -93,16 +91,15 @@ public class DataFiller {
 	}
 
 	private void fillPosterity() throws Exception {
-		BufferedReader reader = new BufferedReader(posterityReader);
-		String headerLine = reader.readLine();
+		String[] lines = posterityFileContent.split("\n");
+		String headerLine = lines[0];
 		List<Genotype> genotypes = parseGenotypesLine(headerLine, 2);
-		String line;
 		HashMap<PosterityParentsPair, ArrayList<PosterityResultPair>> posterityTable;
 		posterityTable = new HashMap<>();						// TODO
 		for (ZoneSettings zoneSettings : zones)					// #stub
 			zoneSettings.setPosterityTable(posterityTable);		// Now all zones have same posterity settings
-		while ((line = reader.readLine()) != null)
-			parsePosterityLine(line, genotypes, posterityTable);
+		for (int i=1; i<lines.length; i++)
+			parsePosterityLine(lines[i], genotypes, posterityTable);
 	}
 	
 	private void parsePosterityLine(
@@ -140,20 +137,19 @@ public class DataFiller {
 	}
 	
 	private void fillZonesMap() throws Exception {
-		BufferedReader reader = new BufferedReader(movePossibilitiesReader);
-		String headerLine = reader.readLine();
+		String[] lines = movePossibilityFileContent.split("\n|\r");
+		String headerLine = lines[0];
 		List<String> zoneNames = parseZonesLine(headerLine, 1);
 		initZonesSettingsSet(zoneNames);
 		int zoneNumber=0;
 		while (true) {
-			String line = reader.readLine();
-			if (line == null)
+			if (zoneNumber+1 > lines.length)
 				throw new Exception("Wrong content of file with zones map description.");
-			if (line.startsWith(Shared.RESOURCES)) {
-				parseResourcesLine(line);
+			if (lines[zoneNumber+1].startsWith(Shared.RESOURCES)) {
+				parseResourcesLine(lines[zoneNumber+1]);
 				break;
 			}
-			parseMovePossibilitiesLine(line, zoneNumber);
+			parseMovePossibilitiesLine(lines[zoneNumber+1], zoneNumber);
 			zoneNumber++;
 		}
 	}
@@ -206,12 +202,12 @@ public class DataFiller {
 	}
 	
 	private void fillScenario() throws Exception {
-		Parser.ReInit(scenarioReader);
+		Parser.ReInit(new StringReader(scenarioFileContent));
 		rules = Parser.ruleList();
 	}
 	
-	protected void fillStartDistribution() throws Exception {
-		Parser.ReInit(distributionInfoReader);
+	private void fillStartDistribution() throws Exception {
+		Parser.ReInit(new StringReader(distributionInfoFileContent));
 		Map<String, ZoneDistribution> distributions = Parser.zoneDistributions();
 		for (ZoneSettings zoneSettings : zones) {
 			ZoneDistribution distribution = distributions.get(zoneSettings.getZoneName());

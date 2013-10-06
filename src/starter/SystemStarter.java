@@ -1,7 +1,6 @@
 package starter;
 
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.File;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
@@ -25,18 +24,19 @@ public class SystemStarter {
 					posteritySettingPath,
 					movePossibilitiesPath,
 					distributionInfoPath,
-					scenarioPath;
+					scenarioPath,
+					dimensionsConfPath;
 
 	private DataFiller dataFiller;
 	private StatisticDispatcher statisticDispatcher;
 	private String curStatisticFileURL;
 	
-	protected int remainingExperints;
-	protected int curExperiment;
-	protected int curPoint;
-	protected int numberOfModelingYears;
+	private int remainingExperints;
+	private int curExperiment;
+	private int curPoint;
+	private int numberOfModelingYears;
 	private String statisticSettings;
-	protected double capacityMultiplier;
+	private double capacityMultiplier;
 	
 	private long timeOfStart;
 
@@ -44,6 +44,7 @@ public class SystemStarter {
         DOMConfigurator.configure("src/log4j.xml");
 		saveStartArgs(args);
 		parseArgs(args);
+		createLogsFolder();
 		this.curExperiment = (Integer) Argument.CURRENT_EXPERIMENT.getValue();
 		this.curPoint = (Integer) Argument.POINT_NUMBER.getValue();
 		this.remainingExperints = (Integer) Argument.NUMBER_OF_EXPERIMENTS.getValue();
@@ -56,6 +57,7 @@ public class SystemStarter {
 		this.movePossibilitiesPath = getPathOf(Argument.MOVE_POSSIBILITIES, projectPath);
 		this.scenarioPath = getPathOf(Argument.SCENARIO, projectPath);
 		this.distributionInfoPath = getPathOf(Argument.INITIATION, projectPath);
+		this.dimensionsConfPath = (String) Argument.DIMENSIONS_TO_TEST.getValue();
 	}
 	
 	public void startSystem() throws Exception {
@@ -72,13 +74,14 @@ public class SystemStarter {
 		finish();
 	}
 	
-	protected DataFiller getDataFiller() throws Exception {
-		Reader viabilityReader = new FileReader(viabilitySettingsPath);
-		Reader posterityReader = new FileReader(posteritySettingPath);
-		Reader movePossibilitiesReader = new FileReader(movePossibilitiesPath);
-		Reader scenarioReader = new FileReader(scenarioPath);
-		Reader distributionInfoReader = new FileReader(distributionInfoPath);
-		return new DataFiller(viabilityReader, posterityReader, movePossibilitiesReader, scenarioReader, distributionInfoReader, capacityMultiplier);
+	private DataFiller getDataFiller() throws Exception {
+		InputsPreparer inputsPreparer = new InputsPreparer(dimensionsConfPath, curPoint);
+		String viabilityContent = inputsPreparer.getPreparedContent(viabilitySettingsPath);
+		String posterityContent = inputsPreparer.getPreparedContent(posteritySettingPath);
+		String movePossibilityContent = inputsPreparer.getPreparedContent(movePossibilitiesPath);
+		String scenarioContent = inputsPreparer.getPreparedContent(scenarioPath);
+		String distributionInfoContent = inputsPreparer.getPreparedContent(distributionInfoPath);
+		return new DataFiller(viabilityContent, posterityContent, movePossibilityContent, scenarioContent, distributionInfoContent, capacityMultiplier);
 	}
 	
 	private void createStatisticDispatcher() throws ParseException, Exception {
@@ -89,7 +92,7 @@ public class SystemStarter {
 				dataFiller.getZonesSettings().get(0));		// #TODO terrible stub!!!
 	}
 
-	protected String getStatisticFileName() {
+	private String getStatisticFileName() {
 		String experimentSeriesName = null;
 		try {
 			experimentSeriesName = (String) Argument.EXPERIMENTS_SERIES_NAME.getValue();
@@ -130,7 +133,7 @@ public class SystemStarter {
 		statisticDispatcher.finish();
 	}
 	
-	static protected String getPathOf(Argument argument, String projectPath) throws Exception {
+	static private String getPathOf(Argument argument, String projectPath) throws Exception {
 		return projectPath + '/' + (String) argument.getValue();
 	}
 	
@@ -161,5 +164,11 @@ public class SystemStarter {
             System.out.println(Shared.HELP_TEXT);
             System.exit(0);
 		}
+	}
+	
+	private static void createLogsFolder() {
+		File logsFolder = new File(Shared.LOGS_FOLDER);
+		if (!logsFolder.exists())
+			logsFolder.mkdir();
 	}
 }

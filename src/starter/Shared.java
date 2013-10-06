@@ -15,25 +15,26 @@ public final class Shared {
 	DEFAULT_SCENARIO_FILE = "Scenario.scn",
 	DEFAULT_INITIATION_FILE = "Initiation.hpsi",
 	DEFAULT_MAP_FILE = "Map.csv",
+	DEFAULT_DIMENSIONS_TO_TEST = "Dimensions.csv",
 	DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
-	DEFAULT_START_POINT = "start.hpsi",
-	DEFAULT_END_POINT = "end.hpsi",
-	DEFAULT_STEPS = "steps.hpsi",
 	DEFAULT_NAME = "modeling",
+	LOGS_FOLDER = "/log",
 			
 	RESOURCES = "-RESOURCES-",
 	
 	HELP_TEXT = "Usage: [--help] " +
 				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
-				"	[{-e, --cur_experiment} int]  current experiment number | DEFAULT 1" +
-				"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT 1\n" +
+				"	[{-e, --cur_experiment} int]  current experiment number | DEFAULT -1" +
+				"	[{-p, --point} int]  number of point to test | DEFAULT -1\n" +
+				"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
 				"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n" +
 				"	[{--project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
-				"	[{--viability} string]  name of file with viability settings | DEFAULT \'Viability.csv\'\n" +
-				"	[{--posterity} string]  name of file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
-				"	[{--scenario} string]  name of file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
-				"	[{--initiation} string]  name of file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
-				"	[{--map} string]  name of file with map settings | DEFAULT \'Map.csv\'\n"+
+				"	[{--viability} string]  name of the file with viability settings | DEFAULT \'Viability.csv\'\n" +
+				"	[{--posterity} string]  name of the file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
+				"	[{--scenario} string]  name of the file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
+				"	[{--initiation} string]  name of the file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
+				"	[{--map} string]  name of the file with map settings | DEFAULT \'Map.csv\'\n"+
+				"	[{--dimensions} string]  name of the file with dimensions to test | DEFAULT \'Map.csv\'\n"+
 				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
 				"                              ( ages\n"+
 				"                               |genotypes\n"+
