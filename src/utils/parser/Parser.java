@@ -278,68 +278,6 @@ public class Parser implements ParserConstants {
     throw new Error("Missing return statement in function");
   }
 
- //^^^^^^^^^^^^^^^^^^^
-
-//=====================================================//-----------------------|>> ZONE DISTRIBUTIONS <<|----  static final public Map<String, ZoneDistribution> zoneDistributions() throws ParseException, Exception {
-    Map<String, ZoneDistribution> distributions = new HashMap<String, ZoneDistribution>();
-    Token name;
-    ZoneDistribution distribution;
-    label_6:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NAME:
-        ;
-        break;
-      default:
-        jj_la1[12] = jj_gen;
-        break label_6;
-      }
-      name = jj_consume_token(NAME);
-      jj_consume_token(36);
-      distribution = zoneDistribution();
-                 distributions.put(name.image, distribution);
-      jj_consume_token(34);
-    }
-     {if (true) return distributions;}
-    throw new Error("Missing return statement in function");
-  }
-
- //^^^^^^^^^^^^^^^^^^^^^^^^
-
-//=======================| DISTRIBUTION  static final public ZoneDistribution zoneDistribution() throws ParseException, Exception {
-    ZoneDistribution zoneDistribution = new ZoneDistribution();
-   Token tokenG, tokenA, tokenN, token;
-    label_7:
-    while (true) {
-      tokenG = jj_consume_token(GENOTYPE);
-      tokenA = jj_consume_token(NUMBER);
-      tokenN = jj_consume_token(NUMBER);
-           zoneDistribution.addGenotypeDistribution(
-                                new GenotypeAgeCountTrio(
-                                      Genotype.getGenotype(tokenG.image),
-                                      Integer.parseInt(tokenA.image),
-                                      Integer.parseInt(tokenN.image)));
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 35:
-        jj_consume_token(35);
-        break;
-      default:
-        jj_la1[13] = jj_gen;
-        ;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case GENOTYPE:
-        ;
-        break;
-      default:
-        jj_la1[14] = jj_gen;
-        break label_7;
-      }
-    }
-     {if (true) return zoneDistribution;}
-    throw new Error("Missing return statement in function");
-  }
-
   static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
   static public ParserTokenManager token_source;
@@ -350,7 +288,7 @@ public class Parser implements ParserConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[15];
+  static final private int[] jj_la1 = new int[12];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -358,10 +296,10 @@ public class Parser implements ParserConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xc80,0x880,0x100,0x200,0xc80,0x1000,0x80000000,0x80002000,0x0,0x4000,0x7fe00000,0x7fe00000,0x80000000,0x0,0x4000,};
+      jj_la1_0 = new int[] {0xc80,0x880,0x100,0x200,0xc80,0x1000,0x80000000,0x80002000,0x0,0x4000,0x7fe00000,0x7fe00000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,0x0,0x8,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x8,0x0,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -382,7 +320,7 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -396,7 +334,7 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -413,7 +351,7 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -423,7 +361,7 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -439,7 +377,7 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -448,7 +386,7 @@ public class Parser implements ParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 12; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -499,12 +437,12 @@ public class Parser implements ParserConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[37];
+    boolean[] la1tokens = new boolean[36];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 12; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -516,7 +454,7 @@ public class Parser implements ParserConstants {
         }
       }
     }
-    for (int i = 0; i < 37; i++) {
+    for (int i = 0; i < 36; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

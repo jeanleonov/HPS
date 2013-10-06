@@ -106,7 +106,6 @@ public interface ParserConstants {
     "<PART_LETTER>",
     "\";\"",
     "\",\"",
-    "\":\"",
   };
 
 }

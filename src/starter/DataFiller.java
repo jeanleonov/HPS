@@ -10,6 +10,7 @@ import settings.Param;
 import settings.PosterityParentsPair;
 import settings.PosterityResultPair;
 import utils.parser.Parser;
+import distribution.GenotypeAgeCountTrio;
 import distribution.ZoneDistribution;
 import experiment.ZoneSettings;
 import experiment.individual.genotype.Genotype;
@@ -137,7 +138,7 @@ public class DataFiller {
 	}
 	
 	private void fillZonesMap() throws Exception {
-		String[] lines = movePossibilityFileContent.split("\n|\r");
+		String[] lines = movePossibilityFileContent.split("\n");
 		String headerLine = lines[0];
 		List<String> zoneNames = parseZonesLine(headerLine, 1);
 		initZonesSettingsSet(zoneNames);
@@ -207,14 +208,52 @@ public class DataFiller {
 	}
 	
 	private void fillStartDistribution() throws Exception {
-		Parser.ReInit(new StringReader(distributionInfoFileContent));
-		Map<String, ZoneDistribution> distributions = Parser.zoneDistributions();
-		for (ZoneSettings zoneSettings : zones) {
-			ZoneDistribution distribution = distributions.get(zoneSettings.getZoneName());
-			if (distribution == null)
-				throw getDistributionException();
-			zoneSettings.setStartDistribution(distribution);
+		try {
+			String[] lines = distributionInfoFileContent.split("\n");
+			String headerLine = lines[0];
+			List<Genotype> genotypes = new ArrayList<>();
+			List<Integer> ages = new ArrayList<>();
+			fillGenotypesAndAgesHeader(headerLine, genotypes, ages);
+			for (int i=1; i<lines.length; i++)
+				parseDistributionLine(lines[i], genotypes, ages);
+		} catch (Exception e) {
+			throw getDistributionException();
 		}
+	}
+	
+	private void fillGenotypesAndAgesHeader(String line, List<Genotype> genotypes, List<Integer> ages) throws Exception {
+		String[] cells = line.split(";");
+		for (int i=1; i<cells.length; i++) {
+			String[] subStrings = cells[i].split("-");
+			genotypes.add(Genotype.getGenotype(subStrings[0]));
+			ages.add(Integer.parseInt(subStrings[1]));
+		}
+	}
+	
+	private void parseDistributionLine(String line, List<Genotype> genotypes, List<Integer> ages) throws Exception {
+		String[] cells = line.split(";");
+		ZoneSettings zoneSettings = getZoneSettings(cells[0]);
+		for (int i=1; i<cells.length; i++)
+			zoneSettings.setStartDistribution(getDistribution(cells, genotypes, ages));
+	}
+	
+	private ZoneSettings getZoneSettings(String zoneName) throws Exception {
+		for (ZoneSettings settings : zones)
+			if (zoneName.equals(settings.getZoneName()))
+				return settings;
+		throw new Exception("Wrong content of file with start distribution. \n");
+	}
+	
+	private ZoneDistribution getDistribution(String[] lineCells, List<Genotype> genotypes, List<Integer> ages) {
+		ZoneDistribution distribution = new ZoneDistribution();
+		for (int i=1; i<lineCells.length; i++) {
+			Genotype genotype = genotypes.get(i-1);
+			Integer age = ages.get(i-1);
+			Integer number = Integer.parseInt(lineCells[i]);
+			GenotypeAgeCountTrio gact = new GenotypeAgeCountTrio(genotype, age, number);
+			distribution.addGenotypeDistribution(gact);
+		}
+		return distribution;
 	}
 	
 	private Exception getViabilityException(Exception e) {

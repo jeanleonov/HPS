@@ -13,7 +13,7 @@ public final class Shared {
 	DEFAULT_VIABILITY_FILE = "Viability.csv",
 	DEFAULT_POSTERITY_FILE = "Posterity.csv",
 	DEFAULT_SCENARIO_FILE = "Scenario.scn",
-	DEFAULT_INITIATION_FILE = "Initiation.hpsi",
+	DEFAULT_INITIATION_FILE = "Initiation.csv",
 	DEFAULT_MAP_FILE = "Map.csv",
 	DEFAULT_DIMENSIONS_TO_TEST = "Dimensions.csv",
 	DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
