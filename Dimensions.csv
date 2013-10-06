@@ -1,1 +1,3 @@
-zone_capacity;integer;10
+capacity;integer;3
+phantom;float;1
+RxRy-fertility;float;3

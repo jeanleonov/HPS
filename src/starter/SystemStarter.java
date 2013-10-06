@@ -30,10 +30,12 @@ public class SystemStarter {
 	private DataFiller dataFiller;
 	private StatisticDispatcher statisticDispatcher;
 	private String curStatisticFileURL;
+	private InputsPreparer inputsPreparer;
 	
-	private int remainingExperints;
+	private int numberOfModelingExperints;
 	private int curExperiment;
 	private int curPoint;
+	private int numberOfPoints;
 	private int numberOfModelingYears;
 	private String statisticSettings;
 	private double capacityMultiplier;
@@ -47,7 +49,7 @@ public class SystemStarter {
 		createLogsFolder();
 		this.curExperiment = (Integer) Argument.CURRENT_EXPERIMENT.getValue();
 		this.curPoint = (Integer) Argument.POINT_NUMBER.getValue();
-		this.remainingExperints = (Integer) Argument.NUMBER_OF_EXPERIMENTS.getValue();
+		this.numberOfModelingExperints = (Integer) Argument.NUMBER_OF_EXPERIMENTS.getValue();
 		this.numberOfModelingYears = (Integer) Argument.YEARS.getValue();
 		this.statisticSettings = (String) Argument.STATISTIC.getValue();
 		this.capacityMultiplier = (Double) Argument.CAPACITY_MULTIPLIER.getValue();
@@ -62,20 +64,22 @@ public class SystemStarter {
 	
 	public void startSystem() throws Exception {
 		new Parser(new StringReader(statisticSettings));
-		this.dataFiller = getDataFiller();
-		dataFiller.read();
-		createStatisticDispatcher();
+		inputsPreparer = new InputsPreparer(dimensionsConfPath);
+		numberOfPoints = inputsPreparer.maxPointNumber()+1;
 		timeOfStart = System.currentTimeMillis();
 		if (curExperiment == -1)
 			curExperiment = 0;
-		if (remainingExperints == -1)
-			remainingExperints = 1;
-		runExperints();
-		finish();
+		if (numberOfModelingExperints == -1)
+			numberOfModelingExperints = 1;
+		if (curPoint == -1)
+			curPoint = 0;
+		else
+			numberOfPoints = 1;
+		runPoints();
 	}
 	
 	private DataFiller getDataFiller() throws Exception {
-		InputsPreparer inputsPreparer = new InputsPreparer(dimensionsConfPath, curPoint);
+		inputsPreparer.setPoint(curPoint);
 		String viabilityContent = inputsPreparer.getPreparedContent(viabilitySettingsPath);
 		String posterityContent = inputsPreparer.getPreparedContent(posteritySettingPath);
 		String movePossibilityContent = inputsPreparer.getPreparedContent(movePossibilitiesPath);
@@ -105,18 +109,30 @@ public class SystemStarter {
 			result.append(" -e ").append(curExperiment);
 		if (curPoint != -1)
 			result.append(" -p ").append(curPoint);
-		if (remainingExperints != -1)
-			result.append(" -E ").append(remainingExperints);
+		if (numberOfModelingExperints != -1)
+			result.append(" -E ").append(numberOfModelingExperints);
 		Date d = new Date();
 		result.append(String.format(" %tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d));
 		result.append(".csv");
 		return result.toString();
 	}
 	
+	private void runPoints() throws Exception {
+		while (curPoint < numberOfPoints) {
+			this.dataFiller = getDataFiller();
+			dataFiller.read();
+			createStatisticDispatcher();
+			runExperints();
+			finish();
+			curPoint++;
+		}
+	}
+	
 	private void runExperints() {
 		List<ZoneSettings> zonesSettings = dataFiller.getZonesSettings();
 		Scenario scenario = dataFiller.getScenario();
 		Experiment experiment = new Experiment(zonesSettings, scenario, numberOfModelingYears, statisticDispatcher);
+		int remainingExperints = numberOfModelingExperints;
 		while (remainingExperints > 0) {
 			experiment.runWitExperimentNumber(curExperiment);
 			remainingExperints--;

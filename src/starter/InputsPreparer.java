@@ -18,14 +18,20 @@ public class InputsPreparer {
 	private List<Integer> currentSteps;
 	private int pointNumber;
 
-	public InputsPreparer(String dimensionsToTestPath, int pointNumber) throws Exception {
+	public InputsPreparer(String dimensionsToTestPath) throws Exception {
 		this.dimensionsConfigurationsReader = new BufferedReader(new FileReader(dimensionsToTestPath));
-		this.pointNumber = pointNumber;
 		this.dimensionsIDs = new ArrayList<>();
 		this.dimensionValueClasses = new ArrayList<>();
 		this.totalSteps = new ArrayList<>();
 		this.currentSteps = new ArrayList<>();
 		initDimensions();
+	}
+	
+	public void setPoint(int point) throws Exception {
+		pointNumber = point;
+		currentSteps.clear();
+		for (int i=0; i<dimensionsIDs.size(); i++)
+			currentSteps.add(0);
 		initCurrentSteps();
 	}
 	
@@ -41,7 +47,6 @@ public class InputsPreparer {
 			dimensionsIDs.add(dimensionID);
 			dimensionValueClasses.add(getClassByString(clazz));
 			totalSteps.add(steps);
-			currentSteps.add(0);
 		}
 	}
 	
@@ -60,11 +65,11 @@ public class InputsPreparer {
 			moveToNextPoint(0);
 	}
 	
-	private int maxPointNumber() {
+	public int maxPointNumber() {
 		int result = 1;
 		for (Integer steps : totalSteps)
 			result *= steps;
-		return result;
+		return result-1;
 	}
 	
 	private void moveToNextPoint(int index) {
