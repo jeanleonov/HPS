@@ -39,6 +39,16 @@
     </filter>
   </appender>
 
+  <appender name="FileMemory" class="org.apache.log4j.FileAppender">
+    <param name="file" value="log/memory.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="DEBUG"/>
+    </filter>
+  </appender>
+
   <appender name="FileInfo" class="org.apache.log4j.FileAppender">
     <param name="file" value="log/info.log"/>
     <layout class="org.apache.log4j.PatternLayout">
@@ -66,6 +76,11 @@
     <level value="INFO"/>
     <appender-ref ref="ConsoleInfo"/>
     <appender-ref ref="FileInfo"/>
+  </logger>
+
+  <logger name="memoryLogger">
+    <level value="debug"/>
+    <appender-ref ref="FileMemory"/>
   </logger>
 
   <logger name="debugLogger">

@@ -16,15 +16,20 @@ public class Scenario {
 	private List<Rule> finishedRules;
 	
 	public Scenario() {
-		unstartedRules = new LinkedList<Rule>();
-		activeRules = new LinkedList<Rule>();
-		finishedRules = new LinkedList<Rule>();
+		unstartedRules = new ArrayList<>(0);
+		activeRules = new ArrayList<>(0);
+		finishedRules = new ArrayList<>(0);
 	}
 	
 	public Scenario(List<Rule> rules) {
+		unstartedRules = rules;
+		activeRules = new ArrayList<>(0);
+		finishedRules = new ArrayList<>(0);
+	}
+	
+	private void reset(List<Rule> rules) {
 		unstartedRules = new LinkedList<Rule>();
 		activeRules = new LinkedList<Rule>();
-		finishedRules = new LinkedList<Rule>();
 		for (Rule rule : rules) {
 			if (rule.getState(0) == Rule.ACTIVE)
 				activeRules.add(rule);
@@ -34,6 +39,11 @@ public class Scenario {
 	}
 	
 	public void start() {
+		List<Rule> rules = new ArrayList<>(unstartedRules.size() + activeRules.size() + finishedRules.size());
+		rules.addAll(activeRules);
+		rules.addAll(unstartedRules);
+		rules.addAll(finishedRules);
+		reset(rules);
 		yearCursor = 0;
 		updateRuleLists();
 	}
@@ -57,17 +67,16 @@ public class Scenario {
 		}
 	}
 	
-	// experimentYearCursor is necessary to avoid desynchronization
-	public ArrayList<Action> getCommandsForNextYear(int experimentYearCursor){
-		// TODO if (experimentYearCursor != yearCursor) throw ...; OR reorganize all.
+	public ArrayList<Action> getCommandsForNextYear(int experimentYearCursor) {
+		yearCursor = experimentYearCursor;
 		ArrayList<Action> commands = new ArrayList<Action>();
 		for (Rule rule : activeRules){
 			ArrayList<Action> toAdd = rule.getCommandsForIteration(yearCursor);
 			if (toAdd != null)
 				commands.addAll(toAdd);
 		}
-		updateRuleLists();
 		yearCursor++;
+		updateRuleLists();
 		return commands;
 	}
 

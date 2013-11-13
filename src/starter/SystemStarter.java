@@ -8,8 +8,6 @@ import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.xml.DOMConfigurator;
-
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings;
 import utils.cmd.line.parser.CmdLineParser;
@@ -47,10 +45,9 @@ public class SystemStarter {
 	private long timeOfStart;
 
 	public SystemStarter(String[] args) throws Exception {
-        DOMConfigurator.configure("src/log4j.xml");
 		saveStartArgs(args);
 		parseArgs(args);
-		createLogsFolder();
+		createFolders();
 		this.curExperiment = (Integer) Argument.CURRENT_EXPERIMENT.getValue();
 		this.curPoint = (Integer) Argument.POINT_NUMBER.getValue();
 		this.numberOfModelingExperints = (Integer) Argument.NUMBER_OF_EXPERIMENTS.getValue();
@@ -66,11 +63,16 @@ public class SystemStarter {
 		this.dimensionsConfPath = (String) Argument.DIMENSIONS_TO_TEST.getValue();
 	}
 	
+	private void createFolders() {
+		createLogsFolder();
+		createSettingsFolder();
+		createStatisticFolder();
+	}
+	
 	public void startSystem() throws Exception {
 		new Parser(new StringReader(statisticSettings));
 		inputsPreparer = new InputsPreparer(dimensionsConfPath);
 		numberOfPoints = inputsPreparer.maxPointNumber()+1;
-		timeOfStart = System.currentTimeMillis();
 		if (curExperiment == -1)
 			curExperiment = 0;
 		if (numberOfModelingExperints == -1)
@@ -87,10 +89,9 @@ public class SystemStarter {
 			this.dataFiller = getDataFiller();
 			dataFiller.read();
 			saveSettingsPack();
-			createStatisticDispatcher();
 			runExperints();
-			finish();
 			curPoint++;
+			curExperiment = 0;
 		}
 	}
 	
@@ -131,41 +132,40 @@ public class SystemStarter {
 	}
 
 	private String getStatisticFileName() {
-		return getStatisticFilePrefix().append(".csv").toString();
+		return getStatisticFilePrefix(Shared.STATISTICS_FOLDER).append(".csv").toString();
 	}
 	
 	private String getSettingsStatisticFileName() {
-		return getStatisticFilePrefix().append(" settings.csv").toString();
+		return getStatisticFilePrefix(Shared.SETTINGS_FOLDER).append(" settings.csv").toString();
 	}
 	
-	private StringBuilder getStatisticFilePrefix() {
+	private StringBuilder getStatisticFilePrefix(String folderName) {
 		String experimentSeriesName = null;
 		try {
 			experimentSeriesName = (String) Argument.EXPERIMENTS_SERIES_NAME.getValue();
 		} catch (Exception e) {
 			experimentSeriesName = "Statistic";
 		}
-		StringBuilder result = new StringBuilder("statistics/");
+		StringBuilder result = new StringBuilder(folderName+"/");
 		result.append(experimentSeriesName);
-		if (curExperiment != -1)
-			result.append(" -e ").append(curExperiment);
-		if (curPoint != -1)
-			result.append(" -p ").append(curPoint);
-		if (numberOfModelingExperints != -1)
-			result.append(" -E ").append(numberOfModelingExperints);
+		result.append(" -e ").append(curExperiment);
+		result.append(" -p ").append(curPoint);
 		Date d = new Date();
 		result.append(String.format(" %tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d));
 		return result;
 	}
 	
-	private void runExperints() {
+	private void runExperints() throws ParseException, Exception {
 		List<ZoneSettings> zonesSettings = dataFiller.getZonesSettings();
 		Scenario scenario = dataFiller.getScenario();
-		Experiment experiment = new Experiment(zonesSettings, scenario, numberOfModelingYears, statisticDispatcher);
+		Experiment experiment = new Experiment(zonesSettings, scenario, numberOfModelingYears);
 		int remainingExperints = numberOfModelingExperints;
 		while (remainingExperints > 0) {
-			experiment.runWitExperimentNumber(curExperiment);
+			timeOfStart = System.currentTimeMillis();
+			createStatisticDispatcher();
+			experiment.runWitExperimentNumber(curExperiment++, statisticDispatcher);
 			remainingExperints--;
+			finish();
 		}
 	}
 	
@@ -213,8 +213,20 @@ public class SystemStarter {
 	}
 	
 	private static void createLogsFolder() {
-		File logsFolder = new File(Shared.LOGS_FOLDER);
+		File logsFolder = new File(Shared.LOGS_FOLDER+"/");
 		if (!logsFolder.exists())
 			logsFolder.mkdir();
+	}
+	
+	private static void createSettingsFolder() {
+		File settingsFolder = new File(Shared.SETTINGS_FOLDER+"/");
+		if (!settingsFolder.exists())
+			settingsFolder.mkdir();
+	}
+	
+	private static void createStatisticFolder() {
+		File statisticsFolder = new File(Shared.STATISTICS_FOLDER+"/");
+		if (!statisticsFolder.exists())
+			statisticsFolder.mkdir();
 	}
 }

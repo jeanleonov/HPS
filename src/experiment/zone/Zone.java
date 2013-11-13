@@ -18,7 +18,6 @@ import experiment.ZoneSettings;
 import experiment.individual.Female;
 import experiment.individual.Individual;
 import experiment.individual.Male;
-import experiment.individual.genotype.Genome;
 import experiment.individual.genotype.Genotype;
 import experiment.scenario.ScenarioExecutor;
 import experiment.scenario.ZoneCommand;
@@ -122,15 +121,19 @@ public class Zone {
 					readyMales++;
 				}
 			}
+			Shared.debugLogger.debug("Ready males = " + readyMales);
 			for (Female female : females)
 				createIndividuals(female.getPosterity());
+			Shared.debugLogger.debug("Cicle #" + cicles + " of reproduction");
 		}while (readyMales>minNumberOfMalesForContinue && cicles++<Shared.MAX_NUMBER_OF_REPRODUCTION_CIRCLES);
 	}
 	
 	public void competitionProcessing() {
 		logPopulationSizes("Competition ");
 		recalculateTotalSumOfAntiCompetetiveness();
+		Shared.debugLogger.debug("totalSumOfAntiCompetetiveness = " + totalSumOfAntiCompetetiveness);
 		recalculateTotalSumOfVoracity();
+		Shared.debugLogger.debug("totalSumOfVoracity = " + totalSumOfVoracity);
 		if(totalSumOfVoracity <= settings.getCapacity())
 			return;
 		killCompetitionLoosers();
@@ -154,7 +157,7 @@ public class Zone {
 	}
 
 	private void createIndividual(Genotype genotype, int age) {
-		if (genotype.getGender() == Genome.X)
+		if (genotype.isFemale())
 			addIndividualToList(new Female(genotype, age, this));
 		else
 			addIndividualToList(new Male(genotype, age, this));
@@ -187,7 +190,7 @@ public class Zone {
 	}
 
 	private void createYearling(Genotype genotype) {
-		if (genotype.getGender() == Genome.X)
+		if (genotype.isFemale())
 			yearlings.add(new Female(genotype, 0, this));
 		else
 			yearlings.add(new Male(genotype, 0, this));
@@ -288,10 +291,15 @@ public class Zone {
 		double coeficient =  (totalSumOfVoracity-settings.getCapacity())/settings.getCapacity()
 				*getIndividualsNumber()/totalSumOfAntiCompetetiveness
 				*getWeightedTotalSumOfVoracity()/totalSumOfVoracity;
+		Shared.debugLogger.debug("Coeficient = " + coeficient);
 		killCompetitionLoosersIn(males, coeficient);
+		Shared.debugLogger.debug("Males CompetitionLoosers have been killed");
 		killCompetitionLoosersIn(females, coeficient);
+		Shared.debugLogger.debug("Females CompetitionLoosers have been killed");
 		killCompetitionLoosersIn(otherImmatures, coeficient);
+		Shared.debugLogger.debug("OtherImmatures CompetitionLoosers have been killed");
 		killCompetitionLoosersIn(yearlings, coeficient);
+		Shared.debugLogger.debug("Yearlings CompetitionLoosers have been killed");
 	}
 	
 	private void killCompetitionLoosersIn(List<? extends Individual> indivs, double coeficient) {

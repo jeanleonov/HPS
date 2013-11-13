@@ -7,11 +7,11 @@ import experiment.scenario.repeaters.ActionRepeat;
 
 public class Rule {
 
-	final static public byte	FINISHED = 1,
+	final static public int 	FINISHED = 1,
 								ACTIVE = 2,
 								UNSTARTED = 3,
-								FOREVER_BEFORE = -2,
-								FOREVER_AFTER = -3;
+								FOREVER_BEFORE = 0,
+								FOREVER_AFTER = Integer.MAX_VALUE;
 	
 	private ActionRepeat actionRepeat;
 	private List<Action> actions;
@@ -26,17 +26,16 @@ public class Rule {
 	}
 
 	public byte getState(int yearNumber) {
-		if (	(yearNumber>=startYear || yearNumber==FOREVER_BEFORE)
-			&&	(yearNumber<=endYear || yearNumber==FOREVER_AFTER))
+		if (yearNumber>=startYear && yearNumber<=endYear)
 			return ACTIVE;
-		if (yearNumber>=0 && yearNumber<startYear)
+		if (yearNumber<startYear)
 			return UNSTARTED;
 		return FINISHED;
 	}
 	
 	public ArrayList<Action> getCommandsForIteration(int iterationNumber) {
 		ArrayList<Action> commands = null;
-		if (actionRepeat.shouldDoAction(iterationNumber-startYear)) {
+		if (actionRepeat.shouldDoAction(iterationNumber)) {
 			commands = new ArrayList<Action>();
 			for (Action action : actions)
 				commands.add(action);

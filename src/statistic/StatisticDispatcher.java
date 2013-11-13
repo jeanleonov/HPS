@@ -57,16 +57,12 @@ public class StatisticDispatcher {
 	
 	public void finish() {
 		hasToFinish = true;
-		while (!finished)
-			try {
-				Thread.sleep(200);
-			} catch (Exception e) {
-				Shared.problemsLogger.error(Shared.printStack(e));
-			}
 	}
 	
 	private void startWritingThread() {
-		new Thread(new StatisticWriter()).start();
+		Thread writingThread = new Thread(new StatisticWriter());
+		writingThread.setDaemon(false);
+		writingThread.start();
 		isWritingThreadStarted = true;
 	}
 	

@@ -1,32 +1,37 @@
 package experiment.individual.genotype;
 
-import java.io.Serializable;
-
-public class Genome implements Serializable{
-
-	private static final long serialVersionUID = 1L;
+public class Genome {
 	
-	final static public byte	X = 1,
-								Y = 2,
-								UNDEF = -1;
-	public enum GenomeName{
-		R, L;
+	final static public boolean	X = true,
+								Y = false;
+	
+	private boolean xGender;
+	private char letter;
+	
+	public Genome(Character gender, Character letter) throws Exception{
+		if (gender.charValue() == 'x' || gender.charValue() == 'X')
+			xGender = Genome.X;
+		else if (gender.charValue() == 'y' || gender.charValue() == 'Y')
+			xGender = Genome.Y;
+		else
+			throw new Exception("Can not parse genome: \'"+gender+letter+"\'");
+		if (Character.isLetter(letter))
+			this.letter = letter;
+		else
+			throw new Exception("Can not parse genome: \'"+gender+letter+"\'");
 	}
 	
-	byte gender;
-	GenomeName name;
-	
-	public Genome(byte gender, GenomeName name){
-		this.gender = gender;
-		this.name = name;
+	public Genome(boolean isXGender, char letter){
+		this.xGender = isXGender;
+		this.letter = letter;
 	}
 
-	public byte getGender() {
-		return gender;
+	public boolean isXGender() {
+		return xGender;
 	}
 
-	public GenomeName getName() {
-		return name;
+	public char getLetter() {
+		return letter;
 	}
 	
 	@Override
@@ -35,15 +40,15 @@ public class Genome implements Serializable{
 			return true;
 		if (getClass() != obj.getClass())
 			return false;
-		return gender == ((Genome)obj).gender
-			&& name == ((Genome)obj).name;
+		return xGender == ((Genome)obj).xGender
+			&&  letter == ((Genome)obj).letter;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		str.append((gender == Y) ? 'y' : 'x');
-		str.append((name == GenomeName.L) ? 'L' : 'R');
+		str.append(xGender ? 'x' : 'y');
+		str.append(letter);
 		return str.toString();
 	}
 }

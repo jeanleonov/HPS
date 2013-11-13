@@ -1,3 +1,1 @@
-capacity;integer;3
-phantom;float;1
-RxRy-fertility;float;3
+immigration_year;integer;15

@@ -18,11 +18,14 @@ public final class Shared {
 	DEFAULT_DIMENSIONS_TO_TEST = "Dimensions.csv",
 	DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
 	DEFAULT_NAME = "modeling",
-	LOGS_FOLDER = "/log",
+	LOGS_FOLDER = "log",
+	SETTINGS_FOLDER = "settings",
+	STATISTICS_FOLDER = "statistics",
 			
 	RESOURCES = "-RESOURCES-",
 	
 	HELP_TEXT = "Usage: [--help] " +
+				"	[{--name} string]  name of experiments series | DEFAULT \"modeling\"\n" +
 				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
 				"	[{-e, --cur_experiment} int]  current experiment number | DEFAULT -1" +
 				"	[{-p, --point} int]  number of point to test | DEFAULT -1\n" +
@@ -56,7 +59,8 @@ public final class Shared {
 	public final static 
 	Logger	problemsLogger = Logger.getLogger("problemsLogger"),
 			debugLogger = Logger.getLogger("debugLogger"),
-			infoLogger = Logger.getLogger("infoLogger");
+			infoLogger = Logger.getLogger("infoLogger"),
+			memoryLogger = Logger.getLogger("memoryLogger");
 	
 	public static String printStack(Throwable throwable) {
 		StringBuffer stackTrace = new StringBuffer();

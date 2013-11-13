@@ -1,5 +1,6 @@
 package experiment;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,17 +26,13 @@ public class Experiment {
 	public Experiment(
 			List<ZoneSettings> zonesSettings,
 			Scenario scenario,
-			int numberOfModelingYears,
-			StatisticDispatcher statisticDispatcher) {
+			int numberOfModelingYears) {
 		this.scenario = scenario;
 		this.numberOfModelingYears = numberOfModelingYears;
-		createZones(statisticDispatcher, zonesSettings);
-		collector = new YearStatisticCollector(statisticDispatcher, zones.values());
+		createZones(zonesSettings);
 	}
 	
-	private void createZones(
-			StatisticDispatcher statisticDispatcher,
-			List<ZoneSettings> zonesSettings) {
+	private void createZones(List<ZoneSettings> zonesSettings) {
 		zones = new HashMap<String, Zone>();
 		for (ZoneSettings zoneSettings : zonesSettings) {
 			Zone zone = new Zone(zoneSettings);
@@ -43,7 +40,8 @@ public class Experiment {
 		}
 	}
 	
-	public void runWitExperimentNumber(int experimentNumber) {
+	public void runWitExperimentNumber(int experimentNumber, StatisticDispatcher statisticDispatcher) {
+		collector = new YearStatisticCollector(statisticDispatcher, zones.values());
 		resetZonesTo(experimentNumber);
 		scenario.start();
 		yearCursor = 0;
