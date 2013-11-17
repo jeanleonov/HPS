@@ -3,13 +3,8 @@
 /bin
 /log
 /statistics
-APDescription.txt
-MTPs-Main-Container.txt
-GalynaPatch.patch
-statisticFile.csv
-statistic*.csv
-statistic*.txt
+/settings
 *.xls*
-#*.csv
-anti.ind
+*.csv
 *.orig
+*.scn
