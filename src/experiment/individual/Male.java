@@ -5,11 +5,10 @@ import experiment.zone.Zone;
 
 public class Male extends Individual {
 	
-	private Female[] femalesList;
+	private Female[] femalesList = null;
 
 	public Male(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
-		femalesList = new Female[myZone.getMaxSizeOfListOfFemales()];
 	}
 	
 	public Male reset(Genotype myGenotype, int age, Zone myZone){
@@ -23,20 +22,37 @@ public class Male extends Individual {
 	}
 	
 	// it's for Zone
-	public Female[] getFemaleListForUpdating(){
+	public Female[] getFemaleListForUpdating() {
+		if (femalesList == null)
+			femalesList = new Female[myZone.getMaxSizeOfListOfFemales()];
 		return femalesList;
 	}
 
 	public void chooseFemale() {
 		if(femalesList.length==0 || femalesList[0]==null || Math.random()>=curReproduction)
 			return;
-		int femaleNumber;
-		double attractivnessesSum=0, point = Math.random(), curSum=femalesList[0].getAttractivness();
-		for (femaleNumber=0; femaleNumber<femalesList.length && femalesList[femaleNumber]!=null; femaleNumber++)
-			attractivnessesSum += femalesList[femaleNumber].getAttractivness();
-		point *= attractivnessesSum;
-		for(femaleNumber=0; curSum<point /*#re TODO*/ && femaleNumber<femalesList.length-1; curSum+=femalesList[femaleNumber].getAttractivness(), femaleNumber++);
-		femalesList[femaleNumber].addLover(this);
+		Female myLover = null;
+		double attractivnessesSum=0;
+		for(Female female : femalesList) {
+			if (female == null)
+				break;
+			attractivnessesSum += female.getAttractivness();
+		}
+		double point = Math.random() * attractivnessesSum;
+		double curSum = 0;
+		for(Female female : femalesList)
+			if (female != null) {
+				curSum += female.getAttractivness();
+				if(point <= curSum + 0.000001) {
+					myLover = female;
+					break;
+				}
+			}
+			else {
+				myLover = female;
+				break;
+			}
+		myLover.addLover(this);
 		readyToReproduction = (Math.random()<curAmplexusRepeat)?true:false;
 	}
 	

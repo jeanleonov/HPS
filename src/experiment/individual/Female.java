@@ -1,6 +1,6 @@
 package experiment.individual;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import settings.PosterityResultPair;
@@ -11,11 +11,10 @@ import experiment.zone.Zone;
 
 public class Female extends Individual {
 	
-	ArrayList<Male> lovers;
+	private LinkedList<Male> lovers = null;
 	
 	public Female(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
-		lovers = new ArrayList<Male>();
 	}
 	
 	public Female reset(Genotype myGenotype, int age, Zone myZone){
@@ -30,28 +29,44 @@ public class Female extends Individual {
 	}
 
 	public ZoneDistribution getPosterity() {
-		if(lovers.size()==0 || Math.random()>=curReproduction)
+		if(lovers == null || lovers.size()==0 || Math.random()>=curReproduction)
 			return null;
-		int maleNumber;
-		Male male;
-		double attractivnessesSum=0, point = Math.random(), curSum=lovers.get(0).getAttractivness();
-		for (maleNumber=0; maleNumber<lovers.size(); maleNumber++)
-			attractivnessesSum += lovers.get(maleNumber).getAttractivness();
-		point *= attractivnessesSum;
-		for(maleNumber=0; point > curSum /*#re TODO*/ && maleNumber<lovers.size()-1; curSum+=lovers.get(maleNumber).getAttractivness(), maleNumber++);
-		male = lovers.get(maleNumber); 
+		Male myLover = chooseLover();
 		lovers.clear();
 		readyToReproduction = false;
-		return createPosterityWith(male);
+		return createPosterityWith(myLover);
 	}
 	
-	ZoneDistribution createPosterityWith(Male male){
+	private Male chooseLover() {
+		Male myLover = null;
+		double attractivnessesSum=0;
+		for (Male lover : lovers)
+			attractivnessesSum += lover.getAttractivness();
+		double point = Math.random() * attractivnessesSum;
+		double curSum=0;
+		for(Male lover : lovers) {
+			curSum += lover.getAttractivness();
+			if (point <= curSum + 0.000001) {
+				myLover = lover;
+				break;
+			}
+		}
+		return myLover;
+	}
+	
+	public ZoneDistribution createPosterityWith(Male male){
 		ZoneDistribution posterity = new ZoneDistribution();
 		int posteritySize = (int)(male.curFertility * curFertility);
 		List<PosterityResultPair> resultsInterbreeding = myZone.getPosteritySettings(myGenotype, male.myGenotype);
 		if (resultsInterbreeding != null)
-			for(PosterityResultPair pair : resultsInterbreeding)
-				posterity.addGenotypeDistribution(new GenotypeAgeCountTrio(pair.getGenotype(), 0, (int) (posteritySize*pair.getProbability())));
+			for(PosterityResultPair pair : resultsInterbreeding) {
+				Genotype genotype = pair.getGenotype();
+				int age = 0;
+				int size = (int) (posteritySize*pair.getProbability());
+				GenotypeAgeCountTrio genotypeDistribution;
+				genotypeDistribution = new GenotypeAgeCountTrio(genotype, age, size);
+				posterity.addGenotypeDistribution(genotypeDistribution);
+			}
 		return posterity;
 	}
 	
@@ -60,6 +75,8 @@ public class Female extends Individual {
 	}
 	
 	void addLover(Male male){
+		if (lovers == null)
+			lovers = new LinkedList<Male>();
 		lovers.add(male);
 	}
 
