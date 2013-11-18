@@ -19,6 +19,10 @@ import experiment.scenario.Scenario;
 
 public class DataFiller {
 	
+	enum InputKind {
+		VIABILITY, POSTERITY, ZONES_MAP, SCENARIO, INITIATION;
+	}
+	
 	private String	viabilityFileContent,
 					posterityFileContent, 
 					movePossibilityFileContent,

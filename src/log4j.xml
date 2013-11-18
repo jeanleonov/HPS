@@ -22,15 +22,19 @@
     </filter>
   </appender>
 
-  <appender name="FileDebug" class="org.apache.log4j.FileAppender">
-    <param name="file" value="log/debug.log"/>
+  <appender name="FileDebug" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="log/debug" />
+    <param name="immediateFlush" value="true"/>
+	<param name="DatePattern" value="'-'yyyy-MM-dd-HH'.log'" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
     </layout>
   </appender>
 
-  <appender name="FileProblem" class="org.apache.log4j.FileAppender">
-    <param name="file" value="log/problems.log"/>
+  <appender name="FileProblem" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="log/problems" />
+	<param name="DatePattern" value="'-'yyyy-MM-dd-HH'.log'" />
+   <param name="immediateFlush" value="true"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
     </layout>
@@ -39,18 +43,22 @@
     </filter>
   </appender>
 
-  <appender name="FileMemory" class="org.apache.log4j.FileAppender">
-    <param name="file" value="log/memory.log"/>
+  <appender name="FileMemory" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="log/memory" />
+    <param name="immediateFlush" value="true"/>
+	<param name="DatePattern" value="'-'yyyy-MM-dd-HH'.log'" />
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m at %l%n"/>
+      <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m%n"/>
     </layout>
     <filter class="org.apache.log4j.varia.LevelRangeFilter">
       <param name="LevelMin" value="DEBUG"/>
     </filter>
   </appender>
 
-  <appender name="FileInfo" class="org.apache.log4j.FileAppender">
-    <param name="file" value="log/info.log"/>
+  <appender name="FileInfo" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="log/info" />
+    <param name="immediateFlush" value="true"/>
+	<param name="DatePattern" value="'-'yyyy-MM-dd-HH'.log'" />
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{ISO8601} [%5p] %m%n"/>
     </layout>
@@ -79,12 +87,12 @@
   </logger>
 
   <logger name="memoryLogger">
-    <level value="debug"/>
+    <level value="INFO"/>
     <appender-ref ref="FileMemory"/>
   </logger>
 
   <logger name="debugLogger">
-    <level value="debug"/>                   <!-- stub.. change "info" to "debug" if you want to debug the application  -->
+    <level value="INFO"/>                   <!-- stub.. change "info" to "debug" if you want to debug the application  -->
     <appender-ref ref="ConsoleDebug"/>
   </logger>
 

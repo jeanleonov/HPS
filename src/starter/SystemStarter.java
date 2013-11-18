@@ -1,7 +1,9 @@
 package starter;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,6 +29,11 @@ public class SystemStarter {
 					distributionInfoPath,
 					scenarioPath,
 					dimensionsConfPath;
+	private String	viabilitySettingsContent,
+					posteritySettingContent,
+					movePossibilitiesContent,
+					distributionInfoContent,
+					scenarioContent;
 
 	private DataFiller dataFiller;
 	private StatisticDispatcher statisticDispatcher;
@@ -72,6 +79,7 @@ public class SystemStarter {
 	public void startSystem() throws Exception {
 		new Parser(new StringReader(statisticSettings));
 		inputsPreparer = new InputsPreparer(dimensionsConfPath);
+		readSettingsFiles();
 		numberOfPoints = inputsPreparer.maxPointNumber()+1;
 		if (curExperiment == -1)
 			curExperiment = 0;
@@ -82,6 +90,29 @@ public class SystemStarter {
 		else
 			numberOfPoints = 1;
 		runPoints();
+	}
+	
+	private void readSettingsFiles() throws IOException {
+		viabilitySettingsContent = getFullFileContent(viabilitySettingsPath);
+		posteritySettingContent = getFullFileContent(posteritySettingPath);
+		movePossibilitiesContent = getFullFileContent(movePossibilitiesPath);
+		distributionInfoContent = getFullFileContent(distributionInfoPath);
+		scenarioContent = getFullFileContent(scenarioPath);
+	}
+	
+	private String getFullFileContent(String inputPath) throws IOException {
+		BufferedReader inputReader = null;
+		try {
+			inputReader = new BufferedReader(new FileReader(inputPath));
+			StringBuilder builder = new StringBuilder();
+			String line;
+			while ((line = inputReader.readLine()) != null)
+				builder.append(line).append('\n');
+			return builder.toString();
+		} finally {
+			if (inputReader != null)
+				inputReader.close();
+		}
 	}
 	
 	private void runPoints() throws Exception {
@@ -97,18 +128,12 @@ public class SystemStarter {
 	
 	private DataFiller getDataFiller() throws Exception {
 		inputsPreparer.setPoint(curPoint);
-		String viabilityContent = inputsPreparer.getPreparedContent(viabilitySettingsPath);
-		String posterityContent = inputsPreparer.getPreparedContent(posteritySettingPath);
-		String movePossibilityContent = inputsPreparer.getPreparedContent(movePossibilitiesPath);
-		String scenarioContent = inputsPreparer.getPreparedContent(scenarioPath);
-		String distributionInfoContent = inputsPreparer.getPreparedContent(distributionInfoPath);
-		settingsStatistic.setLength(0);
-		settingsStatistic.append(viabilityContent).append("\n\n\n");
-		settingsStatistic.append(posterityContent).append("\n\n\n");
-		settingsStatistic.append(movePossibilityContent).append("\n\n\n");
-		settingsStatistic.append(scenarioContent).append("\n\n\n");
-		settingsStatistic.append(distributionInfoContent);
-		return new DataFiller(viabilityContent, posterityContent, movePossibilityContent, scenarioContent, distributionInfoContent, capacityMultiplier);
+		String viability = inputsPreparer.getPreparedContent(viabilitySettingsContent);
+		String posterity = inputsPreparer.getPreparedContent(posteritySettingContent);
+		String movePossibility = inputsPreparer.getPreparedContent(movePossibilitiesContent);
+		String scenario = inputsPreparer.getPreparedContent(scenarioContent);
+		String distributionInfo = inputsPreparer.getPreparedContent(distributionInfoContent);
+		return new DataFiller(viability, posterity, movePossibility, scenario, distributionInfo, capacityMultiplier);
 	}
 	
 	private void createStatisticDispatcher() throws ParseException, Exception {

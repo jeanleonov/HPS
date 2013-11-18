@@ -2,9 +2,12 @@ package starter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** 
  * Class that prepares inputs for the new point of configuration space 
@@ -16,7 +19,11 @@ public class InputsPreparer {
 	private List<Class<?>> dimensionValueClasses;
 	private List<Integer> totalSteps;
 	private List<Integer> currentSteps;
+	private Map<String,String> onPointValues;
 	private int pointNumber;
+
+	private static final String contentRegex = "(?<static>(?s).+?)?(:?#\\{(?<dinamic>.*?)\\})|(?<juststatic>(?s).*)";
+	private static final String templateRegex = "(?<dimension>\\w+)(:?\\((?<valueName>\\w+)\\))?:(?<first>[\\d.,]+)-(?<last>[\\d.,]+)";
 
 	public InputsPreparer(String dimensionsToTestPath) throws Exception {
 		this.dimensionsConfigurationsReader = new BufferedReader(new FileReader(dimensionsToTestPath));
@@ -24,11 +31,13 @@ public class InputsPreparer {
 		this.dimensionValueClasses = new ArrayList<>();
 		this.totalSteps = new ArrayList<>();
 		this.currentSteps = new ArrayList<>();
+		this.onPointValues = new HashMap<>();
 		initDimensions();
 	}
 	
 	public void setPoint(int point) throws Exception {
 		pointNumber = point;
+		onPointValues.clear();
 		currentSteps.clear();
 		for (int i=0; i<dimensionsIDs.size(); i++)
 			currentSteps.add(0);
@@ -82,66 +91,56 @@ public class InputsPreparer {
 		}
 	}
 	
-	public String getPreparedContent(String inputPath) throws Exception {
-		String content = getFullContent(inputPath);
-		return putThisPointsValues(content);
-	}
-	
-	private String getFullContent(String inputPath) throws IOException {
-		BufferedReader inputReader = null;
-		try {
-			inputReader = new BufferedReader(new FileReader(inputPath));
-			StringBuilder builder = new StringBuilder();
-			String line;
-			while ((line = inputReader.readLine()) != null)
-				builder.append(line).append('\n');
-			return builder.toString();
-		} finally {
-			if (inputReader != null)
-				inputReader.close();
+	public String getPreparedContent(String content) throws Exception {
+		Matcher matcher = Pattern.compile(contentRegex).matcher(content);
+		StringBuilder prepared = new StringBuilder("");
+		while(matcher.find()) {
+			String staticPart = matcher.group("juststatic");
+			String dinamic = "";
+			if (staticPart == null) {
+				staticPart = matcher.group("static");
+				String dinamicTemplate = matcher.group("dinamic");
+				dinamic = compileTemplate(dinamicTemplate);
+			}
+			prepared.append(staticPart).append(dinamic);
 		}
+		return prepared.toString();
 	}
 	
-	private String putThisPointsValues(String content) throws Exception {
-		StringBuilder builder = new StringBuilder();
-		for (int i=0; i<content.length(); i++)
-			if (i+1<content.length() && content.charAt(i)=='#' && content.charAt(i+1)=='{')
-				i = processChangeableToken(i, builder, content);
-			else
-				builder.append(content.charAt(i));
-		return builder.toString();
+	private String compileTemplate(String template) throws Exception {
+		template = template.replace(" ", "");
+		Matcher matcher = Pattern.compile(templateRegex).matcher(template);
+		String dim=null, valueName=null, first=null, last=null;
+		matcher.find();
+		dim = matcher.group("dimension");
+		valueName = matcher.group("valueName");
+		first = matcher.group("first");
+		last = matcher.group("last");
+		String result = translate(dim, first, last);
+		if (valueName == null)
+			valueName = dim;
+		onPointValues.put(valueName, result);
+		return result;
 	}
 	
-	private int processChangeableToken(int sharpIndex, StringBuilder globalBuilder, String content) throws Exception {
-		int tokenFinishIndex = getTokenFinishIndex(sharpIndex, content);
-		String changeableToken = content.substring(sharpIndex+2, tokenFinishIndex).replace(" ", "");
-		String[] subTokens = changeableToken.split(":");
-		String dimensionID = subTokens[0];
-		String[] valuesTokens = subTokens[1].split("\\|");
-		globalBuilder.append(translateToken(dimensionID, valuesTokens[0], valuesTokens[1]));
-		return tokenFinishIndex;
-	}
-	
-	private int getTokenFinishIndex(int sharpIndex, String content) {
-		int i;
-		for (i=sharpIndex+2; i<content.length() && content.charAt(i)!='}'; i++);
-		return i;
-	}
-	
-	private String translateToken(String dimensionID, String firstValueString, String lastValueString) throws Exception {
-		int dimensionIndex = dimensionsIDs.indexOf(dimensionID);
+	private String translate(String dimID, String firstValStr, String lastValStr) throws Exception {
+		int dimensionIndex = dimensionsIDs.indexOf(dimID);
 		Integer steps = totalSteps.get(dimensionIndex);
 		Integer currentStep = currentSteps.get(dimensionIndex);
 		if (dimensionValueClasses.get(dimensionIndex).equals(Integer.class)) {
-			Integer first = Integer.parseInt(firstValueString);
-			Integer last = Integer.parseInt(lastValueString);
+			Integer first = Integer.parseInt(firstValStr);
+			Integer last = Integer.parseInt(lastValStr);
 			return ((Integer)(first + (last-first)/steps*currentStep)).toString();
 		}
 		if (dimensionValueClasses.get(dimensionIndex).equals(Double.class)) {
-			Double firstInt = Double.parseDouble(firstValueString);
-			Double lastInt = Double.parseDouble(lastValueString);
+			Double firstInt = Double.parseDouble(firstValStr);
+			Double lastInt = Double.parseDouble(lastValStr);
 			return ((Double)(firstInt + (lastInt-firstInt)/steps*currentStep)).toString();
 		}
 		throw new Exception("Changeable token translation was failed.");
+	}
+	
+	public Map<String,String> getPrevPointValuesMap() {
+		return onPointValues;
 	}
 }

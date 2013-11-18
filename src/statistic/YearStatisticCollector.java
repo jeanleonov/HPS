@@ -1,11 +1,9 @@
-package experiment;
+package statistic;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-import statistic.StatisticDispatcher;
 import statistic.StatisticSettings.Subiteration;
-import statistic.YearStatistic;
 import experiment.individual.Individual;
 import experiment.zone.Zone;
 
@@ -16,6 +14,7 @@ public class YearStatisticCollector {
 	private Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> yearStatistic;
 	private int experimentNumber;
 	private Integer year;
+	private boolean isYearLast;
 	private Integer subiteration;
 	private String zoneName;
 	public final static Integer TOTAL_AGE = 999;
@@ -25,9 +24,10 @@ public class YearStatisticCollector {
 		this.zones = zones;
 	}
 	
-	public void openNewYear(int experimentNumber, int year) {
+	public void openNewYear(int experimentNumber, int year, boolean isYearLast) {
 		this.experimentNumber = experimentNumber;
 		this.year = year;
+		this.isYearLast = isYearLast;
 		yearStatistic = new TreeMap<>();
 	}
 	

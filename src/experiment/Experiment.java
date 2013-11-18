@@ -1,6 +1,5 @@
 package experiment;
 
-import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.Map;
 import starter.Shared;
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings.Subiteration;
+import statistic.YearStatisticCollector;
 import experiment.scenario.Action;
 import experiment.scenario.Scenario;
 import experiment.zone.Zone;
@@ -45,15 +45,17 @@ public class Experiment {
 		resetZonesTo(experimentNumber);
 		scenario.start();
 		yearCursor = 0;
-		while (yearCursor < numberOfModelingYears) {
-			modelYear(experimentNumber, yearCursor);
+		boolean isYearLast = yearCursor>=numberOfModelingYears-1;
+		while (!isYearLast) {
+			isYearLast = yearCursor==numberOfModelingYears-1;
+			modelYear(experimentNumber, yearCursor, isYearLast);
 			yearCursor++;
 		}
 	}
 	
-	private void modelYear(int experimentNumber, int year) {
+	private void modelYear(int experimentNumber, int year, boolean isYearLast) {
 		Shared.debugLogger.debug("YEAR NUMBER\t" + yearCursor + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
-		collector.openNewYear(experimentNumber, yearCursor);
+		collector.openNewYear(experimentNumber, yearCursor, isYearLast);
 		updateListsAndIndividualSettings();
 		reproductionPhaseProcessing();
 		competitionPhaseProcessing();

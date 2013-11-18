@@ -14,7 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import settings.Param;
 import starter.Shared;
 import statistic.StatisticSettings.Subiteration;
-import experiment.YearStatisticCollector;
 import experiment.ZoneSettings;
 import experiment.individual.genotype.Genotype;
 
@@ -25,11 +24,11 @@ public class StatisticDispatcher {
 	private Queue<YearStatistic> queue = new LinkedList<>();
 	private boolean isWritingThreadStarted = false;
 	private boolean hasToFinish = false;
-	private boolean finished = false;
 	private BufferedWriter writer = null;
 	private Lock queueLock = new ReentrantLock();
 	
-	private ZoneSettings zoneSettingsSTUB;
+	private ZoneSettings zoneSettingsStub;
+	private Map<String,String> pointValues;
 	private ArrayList<Genotype> columnGenotypes = new ArrayList<>();
 	private ArrayList<Integer> columnAges = new ArrayList<>();
 	
@@ -37,10 +36,14 @@ public class StatisticDispatcher {
 	private int curYear;
 	private int curSubiteration;
 
-	public StatisticDispatcher(String curStatisticFileURL, StatisticSettings settings, ZoneSettings STUB) {
+	public StatisticDispatcher(String curStatisticFileURL, 
+							   StatisticSettings settings, 
+							   ZoneSettings STUB, 
+							   Map<String,String> pointValues) {
 		fileLocation = curStatisticFileURL;
 		this.settings = settings;
-		this.zoneSettingsSTUB = STUB;
+		this.zoneSettingsStub = STUB;
+		this.pointValues = pointValues;
 	}
 
 	public StatisticSettings getSettings() {
@@ -87,7 +90,6 @@ public class StatisticDispatcher {
 					Shared.problemsLogger.error(Shared.printStack(e));
 					System.exit(1);
 				}
-				finished = true;
 			}
 		}
 	}
@@ -148,7 +150,7 @@ public class StatisticDispatcher {
 	}
 	
 	private Float getMaxAgeFor(Genotype genotype) {
-		return zoneSettingsSTUB.getViabilityTable().get(genotype)[Param.Lifetime.ordinal()];
+		return zoneSettingsStub.getViabilityTable().get(genotype)[Param.Lifetime.ordinal()];
 	}
 	
 	private String getMatureAgesColumns() {
@@ -164,7 +166,7 @@ public class StatisticDispatcher {
 	}
 	
 	private int getMatureAge(Genotype genotype) {
-		return Math.round(zoneSettingsSTUB.getViabilityTable().get(genotype)[Param.Spawning.ordinal()]+0.0001f);
+		return Math.round(zoneSettingsStub.getViabilityTable().get(genotype)[Param.Spawning.ordinal()]+0.0001f);
 	}
 	
 	private String getGenotypesColumns() {

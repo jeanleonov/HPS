@@ -17,41 +17,39 @@ public class MemoryLogger implements Runnable {
 
 	@Override
 	public void run() {
-		int mb = 1024*1024;
+		int kb = 1024;
 	    Runtime runtime = Runtime.getRuntime();
 		try {
 			fileWriter.write("Used;Free;Total;Max\n");
 		} catch (IOException e2) {e2.printStackTrace();}
 		while (true) {
-	        Shared.memoryLogger.debug("Used Memory:" + (runtime.totalMemory() - runtime.freeMemory()) / mb);
-	        Shared.memoryLogger.debug("Free Memory:" + runtime.freeMemory() / mb);
-	        Shared.memoryLogger.debug("Total Memory:" + runtime.totalMemory() / mb);
-	        Shared.memoryLogger.debug("Max Memory:" + runtime.maxMemory() / mb);
+        	long used = (runtime.totalMemory() - runtime.freeMemory()) / kb;
+        	long free = runtime.freeMemory() / kb;
+        	long total = runtime.totalMemory() / kb;
+        	long max = runtime.maxMemory() / kb;
+	        Shared.memoryLogger.debug("Used Memory:" + used);
+	        Shared.memoryLogger.debug("Free Memory:" + free);
+	        Shared.memoryLogger.debug("Total Memory:" + total);
+	        Shared.memoryLogger.debug("Max Memory:" + max);
 	        try {
-	        	long used = (runtime.totalMemory() - runtime.freeMemory()) / mb;
-	        	long free = runtime.freeMemory() / mb;
-	        	long total = runtime.totalMemory() / mb;
-	        	long max = runtime.maxMemory() / mb;
 				fileWriter.write(""+used+";"+free+";"+total+";"+max+"\n");
-			} catch (IOException e1) {e1.printStackTrace();}
+				fileWriter.flush();
+			} catch (IOException e1) {}
 	        try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {e.printStackTrace();}
+				Thread.sleep(500);
+			} catch (InterruptedException e) {}
 		}
 	}
 	
 	public void finish() {
 		try {
 			fileWriter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+		} catch (IOException e) {}
+		finally {
 			if (fileWriter != null)
 				try {
 					fileWriter.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (IOException e) {}
 		}
 	}
 
