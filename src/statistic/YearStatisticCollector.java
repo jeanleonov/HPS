@@ -12,12 +12,13 @@ public class YearStatisticCollector {
 	private StatisticDispatcher dispatcher;
 	private Iterable<Zone> zones;
 	private Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> yearStatistic;
-	private int experimentNumber;
 	private Integer year;
 	private boolean isYearLast;
 	private Integer subiteration;
 	private String zoneName;
 	public final static Integer TOTAL_AGE = 999;
+	
+	private YearStatistic lastYearStatistic;
 	
 	public YearStatisticCollector(StatisticDispatcher dispatcher, Iterable<Zone> zones) {
 		this.dispatcher = dispatcher;
@@ -25,7 +26,6 @@ public class YearStatisticCollector {
 	}
 	
 	public void openNewYear(int experimentNumber, int year, boolean isYearLast) {
-		this.experimentNumber = experimentNumber;
 		this.year = year;
 		this.isYearLast = isYearLast;
 		yearStatistic = new TreeMap<>();
@@ -33,8 +33,22 @@ public class YearStatisticCollector {
 	
 	public void collect(Subiteration subiteration) {
 		this.subiteration = subiteration.ordinal();
-		if (!isDispatcherInterestedIn())
+		if (!isDispatcherInterestedIn() && !isYearLast)
 			return;
+		if (isYearLast && subiteration == Subiteration.AFTER_MOVE_AND_SCENARIO)
+			collectLastYearStatistic();
+		collectInteresting();
+	}
+	
+	public YearStatistic getLastYearStatistic() {
+		return lastYearStatistic;
+	}
+	
+	private boolean isDispatcherInterestedIn() {
+		return dispatcher.getSettings().getReportingSubiterations().contains(subiteration);
+	}
+	
+	private void collectInteresting() {
 		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap = initSubiterationStatMap();
 		if (dispatcher.getSettings().shouldDisplayImmatures())
 			if (dispatcher.getSettings().shouldDistinguishAges())
@@ -45,11 +59,14 @@ public class YearStatisticCollector {
 			if (dispatcher.getSettings().shouldDistinguishAges())
 				collectWithoutImmatures(subiterationMap);
 			else
-				sumWithoutImmatures(subiterationMap);
+				sumWithoutImmatures(subiterationMap);		
 	}
 	
-	private boolean isDispatcherInterestedIn() {
-		return dispatcher.getSettings().getReportingSubiterations().contains(subiteration);
+	private void collectLastYearStatistic() {
+		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap = initSubiterationStatMap();
+		sumWithoutImmatures(subiterationMap);
+		lastYearStatistic = new YearStatistic(year, yearStatistic);
+		yearStatistic = new TreeMap<>();
 	}
 	
 	private void collectWithImmatures(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap) {
@@ -119,7 +136,7 @@ public class YearStatisticCollector {
 	}
 	
 	public void commitLastYearStatistic() {
-		dispatcher.addPackage(new YearStatistic(experimentNumber, year, yearStatistic));
+		dispatcher.addPackage(new YearStatistic(year, yearStatistic));
 	}
 	
 	private Map<String, Map<Integer, Map<Integer, Integer>>> initSubiterationStatMap() {

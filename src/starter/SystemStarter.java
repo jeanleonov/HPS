@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
 
+import statistic.LastYearStatisticWriter;
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings;
 import utils.cmd.line.parser.CmdLineParser;
@@ -37,6 +38,7 @@ public class SystemStarter {
 
 	private DataFiller dataFiller;
 	private StatisticDispatcher statisticDispatcher;
+	private LastYearStatisticWriter lastYearStatisticWriter;
 	private String curStatisticFileURL;
 	private InputsPreparer inputsPreparer;
 	private StringBuilder settingsStatistic = new StringBuilder();
@@ -79,6 +81,7 @@ public class SystemStarter {
 	public void startSystem() throws Exception {
 		new Parser(new StringReader(statisticSettings));
 		inputsPreparer = new InputsPreparer(dimensionsConfPath);
+		lastYearStatisticWriter = new LastYearStatisticWriter(getShortStatisticFileName());
 		readSettingsFiles();
 		numberOfPoints = inputsPreparer.maxPointNumber()+1;
 		if (curExperiment == -1)
@@ -90,6 +93,7 @@ public class SystemStarter {
 		else
 			numberOfPoints = 1;
 		runPoints();
+		lastYearStatisticWriter.finish();
 	}
 	
 	private void readSettingsFiles() throws IOException {
@@ -133,6 +137,12 @@ public class SystemStarter {
 		String movePossibility = inputsPreparer.getPreparedContent(movePossibilitiesContent);
 		String scenario = inputsPreparer.getPreparedContent(scenarioContent);
 		String distributionInfo = inputsPreparer.getPreparedContent(distributionInfoContent);
+		settingsStatistic.setLength(0);
+		settingsStatistic.append(viability).append("\n\n\n");
+		settingsStatistic.append(posterity).append("\n\n\n");
+		settingsStatistic.append(movePossibility).append("\n\n\n");
+		settingsStatistic.append(scenario).append("\n\n\n");
+		settingsStatistic.append(distributionInfo);
 		return new DataFiller(viability, posterity, movePossibility, scenario, distributionInfo, capacityMultiplier);
 	}
 	
@@ -150,7 +160,12 @@ public class SystemStarter {
 			FileWriter fileWriter = new FileWriter(getSettingsStatisticFileName());
 			settingsStatisticWriter = new BufferedWriter(fileWriter);
 			settingsStatisticWriter.write(settingsStatistic.toString());
-		} finally {
+		}catch (IOException e) {
+			StringBuilder errorMsg = new StringBuilder();
+			errorMsg.append("Writting of settings pack was failed!\n");
+			errorMsg.append(Shared.printStack(e));
+			Shared.problemsLogger.error(errorMsg.toString());
+		}finally {
 			if (settingsStatisticWriter != null)
 				settingsStatisticWriter.close();
 		}
@@ -164,6 +179,10 @@ public class SystemStarter {
 		return getStatisticFilePrefix(Shared.SETTINGS_FOLDER).append(" settings.csv").toString();
 	}
 	
+	private String getShortStatisticFileName() {
+		return getStatisticFileShortPrefix(Shared.STATISTICS_FOLDER).append(".csv").toString();
+	}
+	
 	private StringBuilder getStatisticFilePrefix(String folderName) {
 		String experimentSeriesName = null;
 		try {
@@ -171,7 +190,7 @@ public class SystemStarter {
 		} catch (Exception e) {
 			experimentSeriesName = "Statistic";
 		}
-		StringBuilder result = new StringBuilder(folderName+"/");
+		StringBuilder result = new StringBuilder(folderName).append("/");
 		result.append(experimentSeriesName);
 		result.append(" -e ").append(curExperiment);
 		result.append(" -p ").append(curPoint);
@@ -180,15 +199,29 @@ public class SystemStarter {
 		return result;
 	}
 	
+	private StringBuilder getStatisticFileShortPrefix(String folderName) {
+		String experimentSeriesName = null;
+		try {
+			experimentSeriesName = (String) Argument.EXPERIMENTS_SERIES_NAME.getValue();
+		} catch (Exception e) {
+			experimentSeriesName = "Statistic";
+		}
+		StringBuilder result = new StringBuilder(folderName).append("/");
+		result.append(experimentSeriesName);
+		return result;
+	}
+	
 	private void runExperints() throws ParseException, Exception {
 		List<ZoneSettings> zonesSettings = dataFiller.getZonesSettings();
 		Scenario scenario = dataFiller.getScenario();
 		Experiment experiment = new Experiment(zonesSettings, scenario, numberOfModelingYears);
+		lastYearStatisticWriter.openNewPoint(inputsPreparer.getPrevPointValuesMap(), curPoint);
 		int remainingExperints = numberOfModelingExperints;
 		while (remainingExperints > 0) {
 			timeOfStart = System.currentTimeMillis();
 			createStatisticDispatcher();
 			experiment.runWitExperimentNumber(curExperiment++, statisticDispatcher);
+			lastYearStatisticWriter.write(experiment.getLastYearStatistic());
 			remainingExperints--;
 			finish();
 		}

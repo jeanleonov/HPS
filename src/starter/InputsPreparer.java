@@ -130,12 +130,12 @@ public class InputsPreparer {
 		if (dimensionValueClasses.get(dimensionIndex).equals(Integer.class)) {
 			Integer first = Integer.parseInt(firstValStr);
 			Integer last = Integer.parseInt(lastValStr);
-			return ((Integer)(first + (last-first)/steps*currentStep)).toString();
+			return ((Integer)(first + ((last-first)*currentStep)/steps)).toString();
 		}
 		if (dimensionValueClasses.get(dimensionIndex).equals(Double.class)) {
 			Double firstInt = Double.parseDouble(firstValStr);
 			Double lastInt = Double.parseDouble(lastValStr);
-			return ((Double)(firstInt + (lastInt-firstInt)/steps*currentStep)).toString();
+			return ((Double)(firstInt + ((lastInt-firstInt)*currentStep)/steps)).toString();
 		}
 		throw new Exception("Changeable token translation was failed.");
 	}

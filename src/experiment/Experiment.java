@@ -9,6 +9,7 @@ import java.util.Map;
 import starter.Shared;
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings.Subiteration;
+import statistic.YearStatistic;
 import statistic.YearStatisticCollector;
 import experiment.scenario.Action;
 import experiment.scenario.Scenario;
@@ -51,6 +52,10 @@ public class Experiment {
 			modelYear(experimentNumber, yearCursor, isYearLast);
 			yearCursor++;
 		}
+	}
+	
+	public YearStatistic getLastYearStatistic() {
+		return collector.getLastYearStatistic();
 	}
 	
 	private void modelYear(int experimentNumber, int year, boolean isYearLast) {
