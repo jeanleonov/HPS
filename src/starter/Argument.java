@@ -33,6 +33,7 @@ public enum Argument {
 	private Object defaultValue;
 	private Option option;
 	private Class<?> valueClass;
+	private Object value=null;
 	
 	static {
 		parser = new CmdLineParser();
@@ -98,7 +99,9 @@ public enum Argument {
 	}
 
 	public Object getValue() {
-		return parser.getOptionValue(option, defaultValue);
+		if (value == null)
+			value = parser.getOptionValue(option, defaultValue);
+		return value;
 	}
 	
 }
