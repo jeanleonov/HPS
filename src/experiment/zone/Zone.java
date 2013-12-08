@@ -50,7 +50,7 @@ public class Zone {
 		scenarioExecutor = new ScenarioExecutor(this);
 	}
 	
-	public void resetTo(int experimentNumber) {
+	public void reset() {
 		males.clear();
 		females.clear();
 		otherImmatures.clear();

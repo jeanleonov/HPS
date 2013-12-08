@@ -41,9 +41,9 @@ public class Experiment {
 		}
 	}
 	
-	public void runWitExperimentNumber(int experimentNumber, StatisticDispatcher statisticDispatcher) {
+	public void runWitExperimentNumber(int experimentNumber, StatisticDispatcher statisticDispatcher) throws IOException {
 		collector = new YearStatisticCollector(statisticDispatcher, zones.values());
-		resetZonesTo(experimentNumber);
+		resetZones();
 		scenario.start();
 		yearCursor = 0;
 		boolean isYearLast = yearCursor>=numberOfModelingYears-1;
@@ -58,7 +58,7 @@ public class Experiment {
 		return collector.getLastYearStatistic();
 	}
 	
-	private void modelYear(int experimentNumber, int year, boolean isYearLast) {
+	private void modelYear(int experimentNumber, int year, boolean isYearLast) throws IOException {
 		Shared.debugLogger.debug("YEAR NUMBER\t" + yearCursor + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
 		collector.openNewYear(experimentNumber, yearCursor, isYearLast);
 		updateListsAndIndividualSettings();
@@ -72,9 +72,9 @@ public class Experiment {
 		collector.commitLastYearStatistic();
 	}
 	
-	private void resetZonesTo(int experimentNumber) {
+	private void resetZones() {
 		for (Zone zone : zones.values())
-			zone.resetTo(experimentNumber);
+			zone.reset();
 	}
 	
 	private void scenarioCommandsProcessing() throws IOException{
