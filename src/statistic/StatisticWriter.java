@@ -54,7 +54,7 @@ public class StatisticWriter implements Runnable {
 			}
 			flushQueue();
 			flushWriter();
-		} catch (Exception e) {
+		} catch (IOException | InterruptedException e ) {
 			Shared.problemsLogger.error(Shared.printStack(e));
 			System.exit(1);
 		} finally {

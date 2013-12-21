@@ -1,11 +1,13 @@
 package experiment.individual;
 
+import java.util.LinkedList;
+
 import experiment.individual.genotype.Genotype;
 import experiment.zone.Zone;
 
 public class Male extends Individual {
 	
-	private Female[] femalesList = null;
+	private LinkedList<Female> femalesList = null;
 
 	public Male(Genotype myGenotype, int age, Zone myZone) {
 		super(myGenotype, age, myZone);
@@ -22,36 +24,28 @@ public class Male extends Individual {
 	}
 	
 	// it's for Zone
-	public Female[] getFemaleListForUpdating() {
+	public LinkedList<Female> getFemaleListForUpdating() {
 		if (femalesList == null)
-			femalesList = new Female[myZone.getMaxSizeOfListOfFemales()];
+			femalesList = new LinkedList<>();
 		return femalesList;
 	}
 
 	public void chooseFemale() {
-		if(femalesList.length==0 || femalesList[0]==null || Math.random()>=curReproduction)
+		if(femalesList.size()==0 || Math.random()>=curReproduction)
 			return;
 		Female myLover = null;
 		double attractivnessesSum=0;
-		for(Female female : femalesList) {
-			if (female == null)
-				break;
+		for(Female female : femalesList)
 			attractivnessesSum += female.getAttractivness();
-		}
 		double point = Math.random() * attractivnessesSum;
 		double curSum = 0;
-		for(Female female : femalesList)
-			if (female != null) {
-				curSum += female.getAttractivness();
-				if(point <= curSum + 0.000001) {
-					myLover = female;
-					break;
-				}
-			}
-			else {
+		for(Female female : femalesList) {
+			curSum += female.getAttractivness();
+			if(point <= curSum + 0.000001) {
 				myLover = female;
 				break;
 			}
+		}
 		myLover.addLover(this);
 		readyToReproduction = (Math.random()<curAmplexusRepeat)?true:false;
 	}

@@ -42,6 +42,7 @@ public class Experiment {
 	}
 	
 	public void runWitExperimentNumber(int experimentNumber, StatisticDispatcher statisticDispatcher) throws IOException {
+		collector = null;
 		collector = new YearStatisticCollector(statisticDispatcher, zones.values());
 		resetZones();
 		scenario.start();
@@ -49,7 +50,9 @@ public class Experiment {
 		boolean isYearLast = yearCursor>=numberOfModelingYears-1;
 		while (!isYearLast) {
 			isYearLast = yearCursor==numberOfModelingYears-1;
+			//MemoryLogger.get().saveMemoryStateToCsv("    <year>");
 			modelYear(experimentNumber, yearCursor, isYearLast);
+			//MemoryLogger.get().saveMemoryStateToCsv("    </year>");
 			yearCursor++;
 		}
 	}

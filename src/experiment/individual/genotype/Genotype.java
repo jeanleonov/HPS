@@ -1,5 +1,6 @@
 package experiment.individual.genotype;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,14 +85,14 @@ public class Genotype {
 		return genotypes.get(index);
 	}
 
-	static public Genotype getGenotype(String str) throws Exception {
+	static public Genotype getGenotype(String str) throws IOException {
 		List<Genome> genomes = new ArrayList<>(2);
 		List<Boolean> clonalities = new ArrayList<>(2);
 		boolean isBracketOpened = false;
 		for (int i = 0; i < str.length(); isBracketOpened = false) {
 			if (str.charAt(i) == '(') {
 				if (isBracketOpened)
-					throw new Exception("Can not parse genotype: \'" + str
+					throw new IOException("Can not parse genotype: \'" + str
 							+ "\'");
 				isBracketOpened = true;
 				clonalities.add(Boolean.TRUE);
@@ -100,7 +101,7 @@ public class Genotype {
 				clonalities.add(Boolean.FALSE);
 			genomes.add(new Genome(str.charAt(i++), str.charAt(i++)));
 			if (isBracketOpened && str.charAt(i++) != ')')
-				throw new Exception("Can not parse genotype: \'" + str + "\'");
+				throw new IOException("Can not parse genotype: \'" + str + "\'");
 		}
 		return getGenotype(
 				genomes.<Genome> toArray(new Genome[genomes.size()]),

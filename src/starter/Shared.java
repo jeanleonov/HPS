@@ -59,8 +59,7 @@ public final class Shared {
 	public final static 
 	Logger	problemsLogger = Logger.getLogger("problemsLogger"),
 			debugLogger = Logger.getLogger("debugLogger"),
-			infoLogger = Logger.getLogger("infoLogger"),
-			memoryLogger = Logger.getLogger("memoryLogger");
+			infoLogger = Logger.getLogger("infoLogger");
 	
 	public static String printStack(Throwable throwable) {
 		StringBuffer stackTrace = new StringBuffer();

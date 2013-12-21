@@ -1,5 +1,7 @@
 package starter;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import utils.cmd.line.parser.CmdLineParser;
@@ -48,7 +50,11 @@ public enum Argument {
 					argument.option = (Option) addMethod.invoke(parser, argument.shortName, argument.fullName);
 				}
 			}
-			catch (Exception e) {
+			catch (NoSuchMethodException | 
+					SecurityException | 
+					IllegalAccessException | 
+					IllegalArgumentException | 
+					InvocationTargetException e) {
 				Shared.problemsLogger.error(Shared.printStack(e));
 				e.printStackTrace();
 			}

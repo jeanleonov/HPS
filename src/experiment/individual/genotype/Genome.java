@@ -1,5 +1,7 @@
 package experiment.individual.genotype;
 
+import java.io.IOException;
+
 public class Genome {
 	
 	final static public boolean	X = true,
@@ -8,17 +10,17 @@ public class Genome {
 	private boolean xGender;
 	private char letter;
 	
-	public Genome(Character gender, Character letter) throws Exception{
+	public Genome(Character gender, Character letter) throws IOException{
 		if (gender.charValue() == 'x' || gender.charValue() == 'X')
 			xGender = Genome.X;
 		else if (gender.charValue() == 'y' || gender.charValue() == 'Y')
 			xGender = Genome.Y;
 		else
-			throw new Exception("Can not parse genome: \'"+gender+letter+"\'");
+			throw new IOException("Can not parse genome: \'"+gender+letter+"\'");
 		if (Character.isLetter(letter))
 			this.letter = letter;
 		else
-			throw new Exception("Can not parse genome: \'"+gender+letter+"\'");
+			throw new IOException("Can not parse genome: \'"+gender+letter+"\'");
 	}
 	
 	public Genome(boolean isXGender, char letter){

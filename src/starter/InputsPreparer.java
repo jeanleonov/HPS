@@ -2,6 +2,7 @@ package starter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ public class InputsPreparer {
 	private static final String contentRegex = "(?<static>(?s).+?)?(:?#\\{(?<dinamic>.*?)\\})|(?<juststatic>(?s).*)";
 	private static final String templateRegex = "(?<dimension>\\w+)(:?\\((?<valueName>\\w+)\\))?:(?<first>[\\d.,]+)-(?<last>[\\d.,]+)";
 
-	public InputsPreparer(String dimensionsToTestPath) throws Exception {
+	public InputsPreparer(String dimensionsToTestPath) throws IOException {
 		this.dimensionsConfigurationsReader = new BufferedReader(new FileReader(dimensionsToTestPath));
 		this.dimensionsIDs = new ArrayList<>();
 		this.dimensionValueClasses = new ArrayList<>();
@@ -35,7 +36,7 @@ public class InputsPreparer {
 		initDimensions();
 	}
 	
-	public void setPoint(int point) throws Exception {
+	public void setPoint(int point) throws IOException {
 		pointNumber = point;
 		onPointValues.clear();
 		currentSteps.clear();
@@ -44,7 +45,7 @@ public class InputsPreparer {
 		initCurrentSteps();
 	}
 	
-	private void initDimensions() throws Exception {
+	private void initDimensions() throws IOException {
 		String line;
 		while ((line = dimensionsConfigurationsReader.readLine()) != null) {
 			if (line.isEmpty())
@@ -59,17 +60,17 @@ public class InputsPreparer {
 		}
 	}
 	
-	private Class<?> getClassByString(String clazz) throws Exception {
+	private Class<?> getClassByString(String clazz) throws IOException {
 		if (clazz.equals("integer"))
 			return Integer.class;
 		if (clazz.equals("float"))
 			return Double.class;
-		throw new Exception("Wrong content of file with dimensions configurations. \n");
+		throw new IOException("Wrong content of file with dimensions configurations. \n");
 	}
 	
-	private void initCurrentSteps() throws Exception {
+	private void initCurrentSteps() throws IOException {
 		if (pointNumber > maxPointNumber())
-			throw new Exception("Too big point number.");
+			throw new IOException("Too big point number.");
 		for (int i=0; i<pointNumber; i++)
 			moveToNextPoint(0);
 	}
@@ -83,7 +84,7 @@ public class InputsPreparer {
 	
 	private void moveToNextPoint(int index) {
 		int currentValueOnDimension = currentSteps.get(index);
-		if (currentValueOnDimension < totalSteps.get(index)-1)
+		if (currentValueOnDimension < totalSteps.get(index))
 			currentSteps.set(index, currentValueOnDimension+1);
 		else {
 			currentSteps.set(index, 0);
@@ -91,7 +92,7 @@ public class InputsPreparer {
 		}
 	}
 	
-	public String getPreparedContent(String content) throws Exception {
+	public String getPreparedContent(String content) throws IOException {
 		Matcher matcher = Pattern.compile(contentRegex).matcher(content);
 		StringBuilder prepared = new StringBuilder("");
 		while(matcher.find()) {
@@ -107,7 +108,7 @@ public class InputsPreparer {
 		return prepared.toString();
 	}
 	
-	private String compileTemplate(String template) throws Exception {
+	private String compileTemplate(String template) throws IOException {
 		template = template.replace(" ", "");
 		Matcher matcher = Pattern.compile(templateRegex).matcher(template);
 		String dim=null, valueName=null, first=null, last=null;
@@ -123,21 +124,21 @@ public class InputsPreparer {
 		return result;
 	}
 	
-	private String translate(String dimID, String firstValStr, String lastValStr) throws Exception {
+	private String translate(String dimID, String firstValStr, String lastValStr) throws IOException {
 		int dimensionIndex = dimensionsIDs.indexOf(dimID);
 		Integer steps = totalSteps.get(dimensionIndex);
 		Integer currentStep = currentSteps.get(dimensionIndex);
 		if (dimensionValueClasses.get(dimensionIndex).equals(Integer.class)) {
 			Integer first = Integer.parseInt(firstValStr);
 			Integer last = Integer.parseInt(lastValStr);
-			return ((Integer)(first + ((last-first)*currentStep)/steps)).toString();
+			return ((Integer)(first + ((last-first)*currentStep)/(steps-1))).toString();
 		}
 		if (dimensionValueClasses.get(dimensionIndex).equals(Double.class)) {
 			Double firstInt = Double.parseDouble(firstValStr);
 			Double lastInt = Double.parseDouble(lastValStr);
-			return ((Double)(firstInt + ((lastInt-firstInt)*currentStep)/steps)).toString();
+			return ((Double)(firstInt + ((lastInt-firstInt)*currentStep)/(steps-1))).toString();
 		}
-		throw new Exception("Changeable token translation was failed.");
+		throw new IOException("Changeable token translation was failed.");
 	}
 	
 	public Map<String,String> getPrevPointValuesMap() {

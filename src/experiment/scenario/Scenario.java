@@ -2,7 +2,6 @@ package experiment.scenario;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Scenario {
@@ -28,8 +27,9 @@ public class Scenario {
 	}
 	
 	private void reset(List<Rule> rules) {
-		unstartedRules = new LinkedList<Rule>();
-		activeRules = new LinkedList<Rule>();
+		unstartedRules.clear();;
+		activeRules.clear();
+		finishedRules.clear();
 		for (Rule rule : rules) {
 			if (rule.getState(0) == Rule.ACTIVE)
 				activeRules.add(rule);

@@ -115,7 +115,7 @@ public class Zone {
 			readyMales=0;
 			for (Male male : males){
 				if (male.isReadyToReproduction()){
-					Female[] femaleList = male.getFemaleListForUpdating();
+					LinkedList<Female> femaleList = male.getFemaleListForUpdating();
 					randomFilling(femaleList);
 					male.chooseFemale();
 					readyMales++;
@@ -302,15 +302,13 @@ public class Zone {
 		}
 	}
 	
-	private void randomFilling(Female[] femalesArray){
+	private void randomFilling(LinkedList<Female> femalesList){
 		int i=0;
 		if (females.size()!=0){
 			int numberOfFemales = Math.abs(rand.nextInt()%(maxSizeOfListOfFemales+1));
 			for (i=0; i<numberOfFemales; i++)
-				femalesArray[i] = females.get(Math.abs(rand.nextInt()%females.size()));
+				femalesList.add(females.get(Math.abs(rand.nextInt()%females.size())));
 		}
-		for (; i<maxSizeOfListOfFemales; i++)
-			femalesArray[i] = null;
 	}
 	
 	public List<Male> getMales() {

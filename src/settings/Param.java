@@ -1,5 +1,7 @@
 package settings;
 
+import java.io.IOException;
+
 public enum Param {
 	Lifetime,
 	Spawning,
@@ -30,10 +32,10 @@ public enum Param {
 	Voracity09,
 	Voracity10_N;
 	
-	public static Param getByKey(int key) throws Exception {
+	public static Param getByKey(int key) throws IOException {
 		Param[] params = Param.values();
 		if (key >= params.length || key<0)
-			throw new Exception("Too big or negative key for viability param ("+key+")");
+			throw new IOException("Too big or negative key for viability param ("+key+")");
 		return params[key];
 	}
 }

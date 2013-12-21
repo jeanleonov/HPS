@@ -28,6 +28,7 @@ public class YearStatisticCollector {
 	public void openNewYear(int experimentNumber, int year, boolean isYearLast) {
 		this.year = year;
 		this.isYearLast = isYearLast;
+		yearStatistic = null;
 		yearStatistic = new TreeMap<>();
 	}
 	
@@ -65,7 +66,9 @@ public class YearStatisticCollector {
 	private void collectLastYearStatistic() {
 		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap = initSubiterationStatMap();
 		sumWithoutImmatures(subiterationMap);
+		lastYearStatistic = null;
 		lastYearStatistic = new YearStatistic(year, yearStatistic);
+		yearStatistic = null;
 		yearStatistic = new TreeMap<>();
 	}
 	

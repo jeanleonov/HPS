@@ -1,5 +1,7 @@
 package distribution;
 
+import java.io.IOException;
+
 import experiment.individual.genotype.Genotype;
 
 public class GenotypeAgeCountTrio {
@@ -26,7 +28,7 @@ public class GenotypeAgeCountTrio {
 		return number;
 	}
 	
-	public static GenotypeAgeCountTrio parseGenotype(String resource) throws Exception {
+	public static GenotypeAgeCountTrio parseGenotype(String resource) throws IOException {
 		String[] t = resource.split(" ");
 		for(int i = 0; i < t.length; i++)
 			if((t[i] == null) || (t[i].equals("")))
