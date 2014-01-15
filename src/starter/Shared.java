@@ -18,6 +18,7 @@ public final class Shared {
 	DEFAULT_DIMENSIONS_TO_TEST = "Dimensions.csv",
 	DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
 	DEFAULT_NAME = "modeling",
+	DEFAULT_OUTPUTS_FOLDER = "",
 	LOGS_FOLDER = "log",
 	SETTINGS_FOLDER = "settings",
 	STATISTICS_FOLDER = "statistics",

@@ -1,6 +1,5 @@
 package starter;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -16,6 +15,7 @@ public enum Argument {
 	YEARS ('y',"years", new Integer(1), Integer.class),
 	CURRENT_EXPERIMENT ('e', "cur_experiment", new Integer(-1), Integer.class),
 	NUMBER_OF_EXPERIMENTS ('E', "number_of_experiments", new Integer(-1), Integer.class),
+	POINT_NUMBER('p', "point", new Integer(-1), Integer.class),
 	CAPACITY_MULTIPLIER ('M', "capacity_multiplier", new Double(1), Double.class),
 	ZONE_MULTIPLIER ('z', "zone_multiplier", new Integer(1), Integer.class),
 	PROJECT_PATH ("project_path", Shared.PROJECT_PATH, String.class),
@@ -26,8 +26,8 @@ public enum Argument {
 	INITIATION ("initiation", Shared.DEFAULT_INITIATION_FILE, String.class),
 	STATISTIC ('S', "statistic", Shared.DEFAULT_STATISTIC_MODE, String.class),
 	EXPERIMENTS_SERIES_NAME ("name", Shared.DEFAULT_NAME, String.class),
-	POINT_NUMBER('p', "point", new Integer(-1), Integer.class),
-	DIMENSIONS_TO_TEST("dimensions", Shared.DEFAULT_DIMENSIONS_TO_TEST, String.class);
+	DIMENSIONS_TO_TEST("dimensions", Shared.DEFAULT_DIMENSIONS_TO_TEST, String.class),
+	OUTPUTS_FOLDER('o', "outputs_folder", Shared.DEFAULT_OUTPUTS_FOLDER, String.class);
 	
 	private static CmdLineParser parser;
 	private Character shortName;

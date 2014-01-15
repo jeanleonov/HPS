@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
  * */
 public class InputsPreparer {
 	
+	private FileReader fileReader;
 	private BufferedReader dimensionsConfigurationsReader;
 	private List<String> dimensionsIDs;
 	private List<Class<?>> dimensionValueClasses;
@@ -27,7 +28,8 @@ public class InputsPreparer {
 	private static final String templateRegex = "(?<dimension>\\w+)(:?\\((?<valueName>\\w+)\\))?:(?<first>[\\d.,]+)-(?<last>[\\d.,]+)";
 
 	public InputsPreparer(String dimensionsToTestPath) throws IOException {
-		this.dimensionsConfigurationsReader = new BufferedReader(new FileReader(dimensionsToTestPath));
+		this.fileReader = new FileReader(dimensionsToTestPath);
+		this.dimensionsConfigurationsReader = new BufferedReader(fileReader);
 		this.dimensionsIDs = new ArrayList<>();
 		this.dimensionValueClasses = new ArrayList<>();
 		this.totalSteps = new ArrayList<>();
@@ -143,5 +145,14 @@ public class InputsPreparer {
 	
 	public Map<String,String> getPrevPointValuesMap() {
 		return onPointValues;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		if (this.dimensionsConfigurationsReader != null)
+			this.dimensionsConfigurationsReader.close();
+		if (this.fileReader != null)
+			this.fileReader.close();
+		super.finalize();
 	}
 }

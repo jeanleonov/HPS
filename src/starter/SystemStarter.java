@@ -112,8 +112,10 @@ public class SystemStarter {
 	
 	private String getFullFileContent(String inputPath) throws IOException {
 		BufferedReader inputReader = null;
+		FileReader fileReader = null;
 		try {
-			inputReader = new BufferedReader(new FileReader(inputPath));
+			fileReader = new FileReader(inputPath);
+			inputReader = new BufferedReader(fileReader);
 			StringBuilder builder = new StringBuilder();
 			String line;
 			while ((line = inputReader.readLine()) != null)
@@ -122,10 +124,13 @@ public class SystemStarter {
 		} finally {
 			if (inputReader != null)
 				inputReader.close();
+			if (fileReader != null)
+				fileReader.close();
 		}
 	}
 	
 	private void runPoints() throws IOException, ParseException {
+		int startExperiment = curExperiment;
 		while (curPoint < numberOfPoints) {
 			dataFiller = null;
 			dataFiller = getDataFiller();
@@ -133,7 +138,7 @@ public class SystemStarter {
 			saveSettingsPack();
 			runExperints();
 			curPoint++;
-			curExperiment = 0;
+			curExperiment = startExperiment;
 		}
 	}
 	
@@ -180,15 +185,21 @@ public class SystemStarter {
 	}
 
 	private String getStatisticFileName() {
-		return getStatisticFilePrefix(Shared.STATISTICS_FOLDER).append(".csv").toString();
+		String outputFolder = (String) Argument.OUTPUTS_FOLDER.getValue();
+		String statisticsFolder = buildPathName(outputFolder, Shared.STATISTICS_FOLDER);
+		return getStatisticFilePrefix(statisticsFolder).append(".csv").toString();
 	}
 	
 	private String getSettingsStatisticFileName() {
-		return getStatisticFilePrefix(Shared.SETTINGS_FOLDER).append(" settings.csv").toString();
+		String outputFolder = (String) Argument.OUTPUTS_FOLDER.getValue();
+		String settingsFolder = buildPathName(outputFolder, Shared.SETTINGS_FOLDER);
+		return getStatisticFilePrefix(settingsFolder).append(" settings.csv").toString();
 	}
 	
 	private String getShortStatisticFileName() {
-		return getStatisticFileShortPrefix(Shared.STATISTICS_FOLDER).append(".csv").toString();
+		String outputFolder = (String) Argument.OUTPUTS_FOLDER.getValue();
+		String statisticsFolder = buildPathName(outputFolder, Shared.STATISTICS_FOLDER);
+		return getStatisticFileShortPrefix(statisticsFolder).append(".csv").toString();
 	}
 	
 	private StringBuilder getStatisticFilePrefix(String folderName) {
@@ -200,8 +211,8 @@ public class SystemStarter {
 		}
 		StringBuilder result = new StringBuilder(folderName).append("/");
 		result.append(experimentSeriesName);
-		result.append(" -p ").append(String.format("%03d", curPoint));
-		result.append(" -e ").append(String.format("%03d", curExperiment));
+		result.append(String.format(" -p %03d", curPoint));
+		result.append(String.format(" -e %03d", curExperiment));
 		Date d = new Date();
 		result.append(String.format(" %tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d));
 		return result;
@@ -216,6 +227,9 @@ public class SystemStarter {
 		}
 		StringBuilder result = new StringBuilder(folderName).append("/");
 		result.append(experimentSeriesName);
+		result.append(String.format(" -p %03d", curPoint));
+		result.append(String.format(" -e %03d", curExperiment));
+		result.append(String.format(" -E %03d", numberOfModelingExperints));
 		return result;
 	}
 	
@@ -286,14 +300,36 @@ public class SystemStarter {
 	}
 	
 	private static void createSettingsFolder() {
-		File settingsFolder = new File(Shared.SETTINGS_FOLDER+"/");
-		if (!settingsFolder.exists())
-			settingsFolder.mkdir();
+		String outputFolder = (String) Argument.OUTPUTS_FOLDER.getValue();
+		String settingsFolder = buildPathName(outputFolder, Shared.SETTINGS_FOLDER);
+		File settingsFolderFile = new File(settingsFolder);
+		if (!settingsFolderFile.exists())
+			settingsFolderFile.mkdir();
 	}
 	
 	private static void createStatisticFolder() {
-		File statisticsFolder = new File(Shared.STATISTICS_FOLDER+"/");
-		if (!statisticsFolder.exists())
-			statisticsFolder.mkdir();
+		String outputFolder = (String) Argument.OUTPUTS_FOLDER.getValue();
+		String statisticcFolder = buildPathName(outputFolder, Shared.STATISTICS_FOLDER);
+		File statisticsFolderFile = new File(statisticcFolder);
+		if (!statisticsFolderFile.exists())
+			statisticsFolderFile.mkdir();
+	}
+	
+	private static String buildPathName(String prefix, String suffix) {
+		prefix = deleteSlashes(prefix);
+		suffix = deleteSlashes(suffix);
+		if (prefix.isEmpty())
+			return suffix + "/";
+		return prefix + "/" + suffix + "/";
+	}
+	
+	private static String deleteSlashes(String string) {
+		int numberOfFirstSlashes = 0;
+		int numberOfLastSlashes = 0;
+		for (int i=0; i<string.length() && string.charAt(i)=='/'; i++)
+			numberOfFirstSlashes++;
+		for (int i=string.length()-1; i>=0 && string.charAt(i)=='/'; i--)
+			numberOfLastSlashes++;
+		return string.substring(numberOfFirstSlashes, string.length()-numberOfLastSlashes);
 	}
 }
