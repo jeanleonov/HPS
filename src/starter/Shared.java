@@ -19,6 +19,7 @@ public final class Shared {
 	DEFAULT_STATISTIC_MODE = "ages with_immatures after_each",
 	DEFAULT_NAME = "modeling",
 	DEFAULT_OUTPUTS_FOLDER = "",
+	DEFAULT_LOG4J_FOLDER = "log4j.xml",
 	LOGS_FOLDER = "log",
 	SETTINGS_FOLDER = "settings",
 	STATISTICS_FOLDER = "statistics",

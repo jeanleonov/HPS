@@ -13,7 +13,6 @@ import java.util.List;
 import statistic.LastYearStatisticWriter;
 import statistic.StatisticDispatcher;
 import statistic.StatisticSettings;
-import utils.cmd.line.parser.CmdLineParser;
 import utils.parser.ParseException;
 import utils.parser.Parser;
 import experiment.Experiment;
@@ -21,8 +20,6 @@ import experiment.ZoneSettings;
 import experiment.scenario.Scenario;
 
 public class SystemStarter {
-	
-	private static String startArgs="";
 
 	private String	viabilitySettingsPath,
 					posteritySettingPath,
@@ -54,9 +51,7 @@ public class SystemStarter {
 	
 	private long timeOfStart;
 
-	public SystemStarter(String[] args) throws Exception {
-		saveStartArgs(args);
-		parseArgs(args);
+	public SystemStarter() throws Exception {
 		createFolders();
 		this.curExperiment = (Integer) Argument.CURRENT_EXPERIMENT.getValue();
 		this.curPoint = (Integer) Argument.POINT_NUMBER.getValue();
@@ -90,7 +85,7 @@ public class SystemStarter {
 		if (numberOfModelingExperints == -1)
 			numberOfModelingExperints = 1;
 		if (curPoint == -1)
-			curPoint = 0;
+			curPoint = 1;
 		else
 			numberOfPoints = 1;
 		runPoints();
@@ -131,7 +126,7 @@ public class SystemStarter {
 	
 	private void runPoints() throws IOException, ParseException {
 		int startExperiment = curExperiment;
-		while (curPoint < numberOfPoints) {
+		while (curPoint <= numberOfPoints) {
 			dataFiller = null;
 			dataFiller = getDataFiller();
 			dataFiller.read();
@@ -143,7 +138,7 @@ public class SystemStarter {
 	}
 	
 	private DataFiller getDataFiller() throws IOException {
-		inputsPreparer.setPoint(curPoint);
+		inputsPreparer.setPoint(curPoint-1);
 		String viability = inputsPreparer.getPreparedContent(viabilitySettingsContent);
 		String posterity = inputsPreparer.getPreparedContent(posteritySettingContent);
 		String movePossibility = inputsPreparer.getPreparedContent(movePossibilitiesContent);
@@ -211,8 +206,10 @@ public class SystemStarter {
 		}
 		StringBuilder result = new StringBuilder(folderName).append("/");
 		result.append(experimentSeriesName);
-		result.append(String.format(" -p %03d", curPoint));
+		int x = signsInPointNumber();
+		result.append(String.format(" -p %0"+x+"d", curPoint));
 		result.append(String.format(" -e %03d", curExperiment));
+		result.append(String.format(" -E %03d", numberOfModelingExperints));
 		Date d = new Date();
 		result.append(String.format(" %tY_%tm_%td %tH-%tM-%tS", d, d, d, d, d, d));
 		return result;
@@ -227,9 +224,12 @@ public class SystemStarter {
 		}
 		StringBuilder result = new StringBuilder(folderName).append("/");
 		result.append(experimentSeriesName);
-		result.append(String.format(" -p %03d", curPoint));
+		int x = signsInPointNumber();
+		if (curPoint == -1)
+			result.append(String.format(" -p %0"+x+"d-%0"+x+"d", 1, inputsPreparer.maxPointNumber()+1));
+		else
+			result.append(String.format(" -p %0"+x+"d", curPoint));
 		result.append(String.format(" -e %03d", curExperiment));
-		result.append(String.format(" -E %03d", numberOfModelingExperints));
 		return result;
 	}
 	
@@ -256,41 +256,12 @@ public class SystemStarter {
 			 min = executingTime/1000/60 - hour*60,
 			 sec = executingTime/1000 - min*60 - hour*3600,
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
-		Shared.infoLogger.info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + getStartArgs());
+		Shared.infoLogger.info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
 		statisticDispatcher.finish();
 	}
 	
 	static private String getPathOf(Argument argument, String projectPath) throws Exception {
 		return projectPath + '/' + (String) argument.getValue();
-	}
-	
-	/**
-	 * Saves program arguments for future logging.
-	 */
-	static private void saveStartArgs(String[] args){
-		for (int i=0; i<args.length; i++)
-			startArgs += args[i]+" ";
-	}
-	 /**
-	  * Get program arguments which was saved on start.
-	  */
-	public static String getStartArgs(){
-		return startArgs;
-	}
-		
-	private static void parseArgs(String[] args) {
-		try {
-            Argument.parse(args);
-        }
-        catch(CmdLineParser.OptionException e) {
-        	Shared.problemsLogger.error(e.getMessage());
-            System.out.println(Shared.HELP_TEXT);
-            System.exit(2);
-        }
-		if((Boolean) Argument.HELP.getValue()) {
-            System.out.println(Shared.HELP_TEXT);
-            System.exit(0);
-		}
 	}
 	
 	private static void createLogsFolder() {
@@ -331,5 +302,13 @@ public class SystemStarter {
 		for (int i=string.length()-1; i>=0 && string.charAt(i)=='/'; i--)
 			numberOfLastSlashes++;
 		return string.substring(numberOfFirstSlashes, string.length()-numberOfLastSlashes);
+	}
+	
+	private int signsInPointNumber() {
+		int number = inputsPreparer.maxPointNumber() + 1;
+		int signs;
+		for (signs=0; number>0; signs++)
+			number /= 10;
+		return signs==0? 1 : signs;
 	}
 }

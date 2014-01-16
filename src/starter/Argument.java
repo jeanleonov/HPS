@@ -27,7 +27,8 @@ public enum Argument {
 	STATISTIC ('S', "statistic", Shared.DEFAULT_STATISTIC_MODE, String.class),
 	EXPERIMENTS_SERIES_NAME ("name", Shared.DEFAULT_NAME, String.class),
 	DIMENSIONS_TO_TEST("dimensions", Shared.DEFAULT_DIMENSIONS_TO_TEST, String.class),
-	OUTPUTS_FOLDER('o', "outputs_folder", Shared.DEFAULT_OUTPUTS_FOLDER, String.class);
+	OUTPUTS_FOLDER('o', "outputs_folder", Shared.DEFAULT_OUTPUTS_FOLDER, String.class),
+	LOG4J_FOLDER("log4j", Shared.DEFAULT_LOG4J_FOLDER, String.class);
 	
 	private static CmdLineParser parser;
 	private Character shortName;
