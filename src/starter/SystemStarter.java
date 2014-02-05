@@ -87,7 +87,7 @@ public class SystemStarter {
 		if (curPoint == -1)
 			curPoint = 1;
 		else
-			numberOfPoints = 1;
+			numberOfPoints = curPoint;
 		runPoints();
 		lastYearStatisticWriter.finish();
 	}
@@ -256,7 +256,14 @@ public class SystemStarter {
 			 min = executingTime/1000/60 - hour*60,
 			 sec = executingTime/1000 - min*60 - hour*3600,
 			 msec = executingTime - sec*1000 - min*60000 - hour*3600000;
-		Shared.infoLogger.info(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec) + "  With args: " + MainClass.getStartArgs());
+		StringBuilder message = new StringBuilder();
+		int x = signsInPointNumber();
+		message.append(String.format("Point: %0"+x+"d, ", curPoint));
+		message.append(String.format("Experiment %03d, ", curExperiment));
+		message.append(String.format("Executing time:	[%2s:%2s:%2s.%3s]",hour,min,sec,msec));
+		Shared.infoLogger.info(message.toString());
+		message.append("  With args: " + MainClass.getStartArgs());
+		Shared.debugLogger.debug(message.toString());
 		statisticDispatcher.finish();
 	}
 	
