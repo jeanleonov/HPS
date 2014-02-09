@@ -1,9 +1,11 @@
 package statistic;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
 import statistic.StatisticSettings.Subiteration;
+import utils.MemoryLogger;
 import experiment.individual.Individual;
 import experiment.zone.Zone;
 
@@ -39,6 +41,11 @@ public class YearStatisticCollector {
 		if (isYearLast && subiteration == Subiteration.AFTER_MOVE_AND_SCENARIO)
 			collectLastYearStatistic();
 		collectInteresting();
+		try {
+			MemoryLogger.get().saveMemoryStateToCsv(""+year+";"+subiteration.getShortName(), "");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public YearStatistic getLastYearStatistic() {
@@ -64,12 +71,13 @@ public class YearStatisticCollector {
 	}
 	
 	private void collectLastYearStatistic() {
+		Map<Integer, Map<String, Map<Integer, Map<Integer, Integer>>>> temp = yearStatistic;
+		yearStatistic = new TreeMap<>();
 		Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap = initSubiterationStatMap();
 		sumWithoutImmatures(subiterationMap);
 		lastYearStatistic = null;
 		lastYearStatistic = new YearStatistic(year, yearStatistic);
-		yearStatistic = null;
-		yearStatistic = new TreeMap<>();
+		yearStatistic = temp;
 	}
 	
 	private void collectWithImmatures(Map<String, Map<Integer, Map<Integer, Integer>>> subiterationMap) {

@@ -26,20 +26,28 @@ public final class Shared {
 			
 	RESOURCES = "-RESOURCES-",
 	
-	HELP_TEXT = "Usage: [--help] " +
-				"	[{--name} string]  name of experiments series | DEFAULT \"modeling\"\n" +
-				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" +
-				"	[{-e, --cur_experiment} int]  current experiment number | DEFAULT -1" +
-				"	[{-p, --point} int]  number of point to test | DEFAULT -1\n" +
-				"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" +
-				"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n" +
-				"	[{--project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
-				"	[{--viability} string]  name of the file with viability settings | DEFAULT \'Viability.csv\'\n" +
-				"	[{--posterity} string]  name of the file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
-				"	[{--scenario} string]  name of the file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
-				"	[{--initiation} string]  name of the file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
-				"	[{--map} string]  name of the file with map settings | DEFAULT \'Map.csv\'\n"+
-				"	[{--dimensions} string]  name of the file with dimensions to test | DEFAULT \'Map.csv\'\n"+
+	HELP_TEXT = "Usage:\n" +
+				" 	[--help] show list of expected arguments. \n\n" +
+				"	[{--name} string]  name of experiments series | DEFAULT \"modeling\"\n"	+ 
+				"			Examples:\n" +
+				"			--name \"some modeling\"\n" +
+				"			--name some_modeling\n\n" +
+
+				"	[{-y, --years} int]  number of simulated years | DEFAULT 1\n" + 
+				"			Examples:\n" +
+				"			-y 200\n" +
+				"			--years 200\n\n" +
+
+				"	[{-E, --number_of_experiments} int]  number of simulated experiments | DEFAULT -1\n" + 
+				"			Examples:\n" +
+				"			-E 100\n" +
+				"			--number_of_experiments 100\n\n" +
+
+				"	[{-p, --point} int]  number of point to test | DEFAULT -1\n" + 
+				"			Examples:\n" +
+				"			-p 17\n" +
+				"			--point 17\n\n" +
+
 				"   [{-S, --statistic} string] statistic collecting properties which match to regexp:\n"+
 				"                              ( ages\n"+
 				"                               |genotypes\n"+
@@ -51,7 +59,26 @@ public final class Shared {
 				"                               |after_reproduction\n"+
 				"                               |after_competition\n"+
 				"                               |after_dieing\n"+
-				"                              )*\n";
+				"                              )*\n" + 
+				"			Examples:\n" +
+				"			-S \"ages with_immatures after_reproduction after_competition\"\n" +
+				"			-S \"ages without_immatures after_each\"\n" +
+				"			-S \"ageswithout_immatures after_dieing\"\n" +
+				"			-S \"genotypes with_immatures after_dieing\"\n" +
+				"			--statistic \"genotypes with_immatures after_dieing\"\n" +
+				"			--statistic \"ageswithout_immatures after_dieing\"\n\n\n" +
+
+				
+				"	[{--project_path} string]  directory for files with settings | DEFAULT user.dir\n" +
+				"	[{--viability} string]  name of the file with viability settings | DEFAULT \'Viability.csv\'\n" +
+				"	[{--posterity} string]  name of the file with posterity settings | DEFAULT \'Posterity.csv\'\n" +
+				"	[{--scenario} string]  name of the file with scenario settings | DEFAULT \'Scenario.scn\'\n" +
+				"	[{--initiation} string]  name of the file with initiation settings | DEFAULT \'Initiation.hpsi\'\n"+
+				"	[{--map} string]  name of the file with map settings | DEFAULT \'Map.csv\'\n"+
+				"	[{--dimensions} string]  name of the file with dimensions to test | DEFAULT \'Map.csv\'\n\n"+
+				
+				"	[{-e, --cur_experiment} int]  current experiment number | DEFAULT -1" +
+				"	[{-M, --capacity_multiplier} double]  argument for multipling capacity of zones | DEFAULT 1\n\n";
 	
 	public final static 
 	int	DEFAULT_MAX_SIZE_OF_LIST_OF_FEMALES = 10,

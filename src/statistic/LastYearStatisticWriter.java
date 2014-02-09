@@ -27,6 +27,7 @@ public class LastYearStatisticWriter {
 	public void write(YearStatistic statistic) throws IOException {
 		String rendered = renderYear(statistic);
 		shortStatisticWriter.write(rendered);
+		shortStatisticWriter.flush();
 	}
 	
 	public void openNewPoint(Map<String, String> pointValues, int pointNumber) {

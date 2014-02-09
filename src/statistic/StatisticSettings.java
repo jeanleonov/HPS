@@ -6,11 +6,11 @@ import java.util.Set;
 public class StatisticSettings {
 
 	public enum Subiteration {
-		AFTER_EVOLUTION ("evol"),
 		AFTER_REPRODACTION ("repr"),
 		AFTER_COMPETITION ("comp"),
 		AFTER_DIEING ("die_"),
-		AFTER_MOVE_AND_SCENARIO ("move");
+		AFTER_MOVE_AND_SCENARIO ("move"),
+		AFTER_EVOLUTION ("evol");
 		private String shortName;
 		private Subiteration(String shortName) {
 			this.shortName = shortName;

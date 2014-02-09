@@ -27,7 +27,7 @@ public class Scenario {
 	}
 	
 	private void reset(List<Rule> rules) {
-		unstartedRules.clear();;
+		unstartedRules.clear();
 		activeRules.clear();
 		finishedRules.clear();
 		for (Rule rule : rules) {

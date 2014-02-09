@@ -64,7 +64,6 @@ public class Experiment {
 	private void modelYear(int experimentNumber, int year, boolean isYearLast) throws IOException {
 		Shared.debugLogger.debug("YEAR NUMBER\t" + yearCursor + "\tSTARTED IN\tEXPERIMENT_" + experimentNumber);
 		collector.openNewYear(experimentNumber, yearCursor, isYearLast);
-		updateListsAndIndividualSettings();
 		reproductionPhaseProcessing();
 		competitionPhaseProcessing();
 		diePhaseProcessing();
@@ -72,6 +71,7 @@ public class Experiment {
 			scenarioCommandsProcessing();
 		} catch (IOException e) {e.printStackTrace();}
 		movePhaseProcessing();
+		updateListsAndIndividualSettings();
 		collector.commitLastYearStatistic();
 	}
 	

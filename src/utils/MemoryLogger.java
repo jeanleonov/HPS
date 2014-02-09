@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import starter.Shared;
+
 public class MemoryLogger {
 
 	private final static int KB = 1024;
@@ -28,14 +30,23 @@ public class MemoryLogger {
 		return instance;
 	}
 	
-	public void saveMemoryStateToCsv(String suffix) {
+	public void saveMemoryStateToCsv(String prefix, String suffix) {
     	long used = (runtime.totalMemory() - runtime.freeMemory()) / KB;
     	long free = runtime.freeMemory() / KB;
     	long total = runtime.totalMemory() / KB;
     	long max = runtime.maxMemory() / KB;
         try {
-			fileWriter.write(""+used+";"+free+";"+total+";"+max+";"+suffix+"\n");
+			fileWriter.write(prefix+";"+used+";"+free+";"+total+";"+max+";"+suffix+"\n");
 			fileWriter.flush();
+			double usedPart = (double)(max-used)/max;
+			if (usedPart < 0.15) {
+				System.gc();
+				Shared.problemsLogger.warn("Used "+((1-usedPart)*100)+"% of available memory.");
+			}
+			if (usedPart < 0.05) {
+				Shared.problemsLogger.warn("Less than 5% of available memory is used. The program should be stopped.");
+				System.exit(-1);
+			}
 		} catch (IOException e1) {}
 	}
 	

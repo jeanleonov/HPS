@@ -27,6 +27,8 @@ public class Male extends Individual {
 	public LinkedList<Female> getFemaleListForUpdating() {
 		if (femalesList == null)
 			femalesList = new LinkedList<>();
+		else
+			femalesList.clear();
 		return femalesList;
 	}
 
