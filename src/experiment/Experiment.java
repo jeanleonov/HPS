@@ -50,9 +50,7 @@ public class Experiment {
 		boolean isYearLast = yearCursor>=numberOfModelingYears-1;
 		while (!isYearLast) {
 			isYearLast = yearCursor==numberOfModelingYears-1;
-			//MemoryLogger.get().saveMemoryStateToCsv("    <year>");
 			modelYear(experimentNumber, yearCursor, isYearLast);
-			//MemoryLogger.get().saveMemoryStateToCsv("    </year>");
 			yearCursor++;
 		}
 	}

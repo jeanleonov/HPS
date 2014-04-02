@@ -33,16 +33,16 @@ public class Male extends Individual {
 	}
 
 	public void chooseFemale() {
-		if(femalesList.size()==0 || Math.random()>=curReproduction)
+		if(femalesList.size()==0)
 			return;
 		Female myLover = null;
 		double attractivnessesSum=0;
 		for(Female female : femalesList)
-			attractivnessesSum += female.getAttractivness();
+			attractivnessesSum += female.curReproduction;
 		double point = Math.random() * attractivnessesSum;
 		double curSum = 0;
 		for(Female female : femalesList) {
-			curSum += female.getAttractivness();
+			curSum += female.curReproduction;
 			if(point <= curSum + 0.000001) {
 				myLover = female;
 				break;
@@ -50,10 +50,6 @@ public class Male extends Individual {
 		}
 		myLover.addLover(this);
 		readyToReproduction = (Math.random()<curAmplexusRepeat)?true:false;
-	}
-	
-	double getAttractivness(){
-		return 0.5;			//#Stub
 	}
 
 	@Override

@@ -35,17 +35,16 @@ public class YearStatisticCollector {
 	}
 	
 	public void collect(Subiteration subiteration) {
-		this.subiteration = subiteration.ordinal();
-		if (!isDispatcherInterestedIn() && !isYearLast)
-			return;
-		if (isYearLast && subiteration == Subiteration.AFTER_MOVE_AND_SCENARIO)
-			collectLastYearStatistic();
-		collectInteresting();
 		try {
 			MemoryLogger.get().saveMemoryStateToCsv(""+year+";"+subiteration.getShortName(), "");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.subiteration = subiteration.ordinal();
+		if (isYearLast && subiteration == Subiteration.AFTER_MOVE_AND_SCENARIO)
+			collectLastYearStatistic();
+		if (isDispatcherInterestedIn())
+			collectInteresting();
 	}
 	
 	public YearStatistic getLastYearStatistic() {

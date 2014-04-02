@@ -29,7 +29,7 @@ public class Female extends Individual {
 	}
 
 	public ZoneDistribution getPosterity() {
-		if(lovers == null || lovers.size()==0 || Math.random()>=curReproduction)
+		if(lovers == null || lovers.size()==0)
 			return null;
 		Male myLover = chooseLover();
 		lovers.clear();
@@ -41,11 +41,11 @@ public class Female extends Individual {
 		Male myLover = null;
 		double attractivnessesSum=0;
 		for (Male lover : lovers)
-			attractivnessesSum += lover.getAttractivness();
+			attractivnessesSum += lover.curReproduction;
 		double point = Math.random() * attractivnessesSum;
 		double curSum=0;
 		for(Male lover : lovers) {
-			curSum += lover.getAttractivness();
+			curSum += lover.curReproduction;
 			if (point <= curSum + 0.000001) {
 				myLover = lover;
 				break;
@@ -68,10 +68,6 @@ public class Female extends Individual {
 				posterity.addGenotypeDistribution(genotypeDistribution);
 			}
 		return posterity;
-	}
-	
-	double getAttractivness(){
-		return 0.5;			//#Stub
 	}
 	
 	void addLover(Male male){

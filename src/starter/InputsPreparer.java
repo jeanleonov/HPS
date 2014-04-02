@@ -18,20 +18,32 @@ public class InputsPreparer {
 	private FileReader fileReader;
 	private BufferedReader dimensionsConfigurationsReader;
 	private List<String> dimensionsIDs;
-	private List<Class<?>> dimensionValueClasses;
+	private List<DimensionType> dimensionTypes;
 	private List<Integer> totalSteps;
 	private List<Integer> currentSteps;
 	private Map<String,String> onPointValues;
 	private int pointNumber;
+	
+	private enum DimensionType {
+		INTEGER,
+		FLOAT,
+		ENUMERATION
+	}
 
-	private static final String contentRegex = "(?<static>(?s).+?)?(:?#\\{(?<dinamic>.*?)\\})|(?<juststatic>(?s).*)";
-	private static final String templateRegex = "(?<dimension>\\w+)(:?\\((?<valueName>\\w+)\\))?:(?<first>[\\d.,]+)-(?<last>[\\d.,]+)";
+	//private static final String enumeratedValuesRegex = "(?<static>(?s).+?)?(:?(:?#\\{(?<dimension>.*?)\\})(?<values>(:?(:?(?s).*?)#\\{\\})*))|(?<juststatic>(?s).*)";
+	//private static final String enumerationItem = "(?<value>(?s).*?)#\\{\\}";
+	
+	private static final String enumeratedValuesRegex = "(?<static>.+?)?(:?(:?#\\{(?<dimension>.*?)\\})(?<values>(:?(:?.*?)#\\{\\})*))|(?<juststatic>.*)";
+	private static final String enumerationItem = "(?<value>.*?)#\\{\\}";
+	
+	private static final String computedValuesRegex = "(?<static>(?s).+?)?(:?#\\[(?<dinamic>.*?)\\])|(?<juststatic>(?s).*)";
+	private static final String computedValueTemplateRegex = "(?<dimension>\\w+)(:?\\((?<valueName>\\w+)\\))?:(?<first>[\\d.,]+)-(?<last>[\\d.,]+)";
 
 	public InputsPreparer(String dimensionsToTestPath) throws IOException {
 		this.fileReader = new FileReader(dimensionsToTestPath);
 		this.dimensionsConfigurationsReader = new BufferedReader(fileReader);
 		this.dimensionsIDs = new ArrayList<>();
-		this.dimensionValueClasses = new ArrayList<>();
+		this.dimensionTypes = new ArrayList<DimensionType>();
 		this.totalSteps = new ArrayList<>();
 		this.currentSteps = new ArrayList<>();
 		this.onPointValues = new HashMap<>();
@@ -42,8 +54,6 @@ public class InputsPreparer {
 		pointNumber = point;
 		onPointValues.clear();
 		currentSteps.clear();
-		for (int i=0; i<dimensionsIDs.size(); i++)
-			currentSteps.add(0);
 		initCurrentSteps();
 	}
 	
@@ -54,27 +64,35 @@ public class InputsPreparer {
 				continue;
 			String[] cells = line.replace(" ", "").split(";");
 			String dimensionID = cells[0];
-			String clazz = cells[1];
+			String type = cells[1];
 			Integer steps = Integer.parseInt(cells[2]);
 			dimensionsIDs.add(dimensionID);
-			dimensionValueClasses.add(getClassByString(clazz));
+			dimensionTypes.add(getTypeByString(type));
 			totalSteps.add(steps);
 		}
 	}
 	
-	private Class<?> getClassByString(String clazz) throws IOException {
+	private DimensionType getTypeByString(String clazz) throws IOException {
 		if (clazz.equals("integer"))
-			return Integer.class;
+			return DimensionType.INTEGER;
 		if (clazz.equals("float"))
-			return Double.class;
+			return DimensionType.FLOAT;
+		if (clazz.equals("enumeration"))
+			return DimensionType.ENUMERATION;
 		throw new IOException("Wrong content of file with dimensions configurations. \n");
 	}
 	
 	private void initCurrentSteps() throws IOException {
 		if (pointNumber > maxPointNumber())
 			throw new IOException("Too big point number.");
-		for (int i=0; i<pointNumber; i++)
-			moveToNextPoint(0);
+		int summaryStepsLeft = pointNumber;
+		for (int i=0; i<dimensionsIDs.size(); i++) {
+			int totalsProduct = 1;
+			for (int j=i+1; j<dimensionsIDs.size(); j++)
+				totalsProduct *= totalSteps.get(j);
+			currentSteps.add(summaryStepsLeft/totalsProduct);
+			summaryStepsLeft = summaryStepsLeft%totalsProduct;
+		}
 	}
 	
 	public int maxPointNumber() {
@@ -84,18 +102,13 @@ public class InputsPreparer {
 		return result-1;
 	}
 	
-	private void moveToNextPoint(int index) {
-		int currentValueOnDimension = currentSteps.get(index);
-		if (currentValueOnDimension < totalSteps.get(index))
-			currentSteps.set(index, currentValueOnDimension+1);
-		else {
-			currentSteps.set(index, 0);
-			moveToNextPoint(index+1);
-		}
+	public String getPreparedContent(String content) throws IOException {
+		String withComputed = replaceComputed(content);
+		return replaceEnumerated(withComputed);
 	}
 	
-	public String getPreparedContent(String content) throws IOException {
-		Matcher matcher = Pattern.compile(contentRegex).matcher(content);
+	public String replaceComputed(String content) throws IOException {
+		Matcher matcher = Pattern.compile(computedValuesRegex).matcher(content);
 		StringBuilder prepared = new StringBuilder("");
 		while(matcher.find()) {
 			String staticPart = matcher.group("juststatic");
@@ -103,39 +116,67 @@ public class InputsPreparer {
 			if (staticPart == null) {
 				staticPart = matcher.group("static");
 				String dinamicTemplate = matcher.group("dinamic");
-				dinamic = compileTemplate(dinamicTemplate);
+				dinamic = compileComputedTemplate(dinamicTemplate);
 			}
 			prepared.append(staticPart).append(dinamic);
 		}
 		return prepared.toString();
 	}
 	
-	private String compileTemplate(String template) throws IOException {
+	public String replaceEnumerated(String content) throws IOException {
+		Matcher matcher = Pattern.compile(enumeratedValuesRegex).matcher(content);
+		StringBuilder prepared = new StringBuilder("");
+		while(matcher.find()) {
+			String staticPart = matcher.group("juststatic");
+			String dinamic = "";
+			if (staticPart == null) {
+				staticPart = matcher.group("static");
+				String dimension = matcher.group("dimension").replace(" ", "");
+				String values = matcher.group("values");
+				dinamic = compileEnumeratedTemplate(dimension, values);
+			}
+			prepared.append(staticPart).append(dinamic);
+		}
+		return prepared.toString();
+	}
+	
+	private String compileComputedTemplate(String template) throws IOException {
 		template = template.replace(" ", "");
-		Matcher matcher = Pattern.compile(templateRegex).matcher(template);
+		Matcher matcher = Pattern.compile(computedValueTemplateRegex).matcher(template);
 		String dim=null, valueName=null, first=null, last=null;
 		matcher.find();
 		dim = matcher.group("dimension");
 		valueName = matcher.group("valueName");
 		first = matcher.group("first");
 		last = matcher.group("last");
-		String result = translate(dim, first, last);
+		String result = translateComputed(dim, first, last);
 		if (valueName == null)
 			valueName = dim;
 		onPointValues.put(valueName, result);
 		return result;
 	}
 	
-	private String translate(String dimID, String firstValStr, String lastValStr) throws IOException {
+	private String compileEnumeratedTemplate(String dimension, String values) throws IOException {
+		int dimensionIndex = dimensionsIDs.indexOf(dimension);
+		Matcher valuesMatcher = Pattern.compile(enumerationItem).matcher(values);
+		for(int i=0; i<currentSteps.get(dimensionIndex)+1; i++)
+			if (!valuesMatcher.find())
+				throw new IOException("Enumerated values are too low for dimensions "+dimension);
+		String value = valuesMatcher.group("value");
+		onPointValues.put(dimension, value.replace(';', '|').replace("\n", "  //  "));
+		return value;
+	}
+	
+	private String translateComputed(String dimID, String firstValStr, String lastValStr) throws IOException {
 		int dimensionIndex = dimensionsIDs.indexOf(dimID);
 		Integer steps = totalSteps.get(dimensionIndex);
 		Integer currentStep = currentSteps.get(dimensionIndex);
-		if (dimensionValueClasses.get(dimensionIndex).equals(Integer.class)) {
+		if (dimensionTypes.get(dimensionIndex).equals(DimensionType.INTEGER)) {
 			Integer first = Integer.parseInt(firstValStr);
 			Integer last = Integer.parseInt(lastValStr);
 			return ((Integer)(first + ((last-first)*currentStep)/(steps-1))).toString();
 		}
-		if (dimensionValueClasses.get(dimensionIndex).equals(Double.class)) {
+		if (dimensionTypes.get(dimensionIndex).equals(DimensionType.FLOAT)) {
 			Double firstInt = Double.parseDouble(firstValStr);
 			Double lastInt = Double.parseDouble(lastValStr);
 			return ((Double)(firstInt + ((lastInt-firstInt)*currentStep)/(steps-1))).toString();
