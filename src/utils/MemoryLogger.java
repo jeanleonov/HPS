@@ -35,9 +35,9 @@ public class MemoryLogger {
     	long free = runtime.freeMemory() / KB;
     	long total = runtime.totalMemory() / KB;
     	long max = runtime.maxMemory() / KB;
-        try {
-			fileWriter.write(prefix+";"+used+";"+free+";"+total+";"+max+";"+suffix+"\n");
-			fileWriter.flush();
+        //try {
+			//fileWriter.write(prefix+";"+used+";"+free+";"+total+";"+max+";"+suffix+"\n");
+			//fileWriter.flush();
 			double usedPart = (double)(max-used)/max;
 			if (usedPart < 0.15) {
 				System.gc();
@@ -47,7 +47,7 @@ public class MemoryLogger {
 				Shared.problemsLogger.warn("Less than 5% of available memory is used. The program should be stopped.");
 				System.exit(-1);
 			}
-		} catch (IOException e1) {}
+		//} catch (IOException e1) {}
 	}
 	
 	public void finish() {

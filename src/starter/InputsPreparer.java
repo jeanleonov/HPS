@@ -32,9 +32,12 @@ public class InputsPreparer {
 
 	//private static final String enumeratedValuesRegex = "(?<static>(?s).+?)?(:?(:?#\\{(?<dimension>.*?)\\})(?<values>(:?(:?(?s).*?)#\\{\\})*))|(?<juststatic>(?s).*)";
 	//private static final String enumerationItem = "(?<value>(?s).*?)#\\{\\}";
+
+	private static final String enumeratedValuesRegex = "(:?\\{#(?<value>(?s).*?)#\\})|(:?(?<static>(?s).+?)?(:?#\\{(?<dimension>.*?)\\}))|(?<juststatic>(?s).*)";
+	private static final String enumerationItem = "(?<value>(?s).*?)#\\{\\}";
 	
-	private static final String enumeratedValuesRegex = "(?<static>.+?)?(:?(:?#\\{(?<dimension>.*?)\\})(?<values>(:?(:?.*?)#\\{\\})*))|(?<juststatic>.*)";
-	private static final String enumerationItem = "(?<value>.*?)#\\{\\}";
+	//private static final String enumeratedValuesRegex = "(?<static>.+?)?(:?(:?#\\{(?<dimension>.*?)\\})(?<values>(:?(:?.*?)#\\{\\})*))|(?<juststatic>.*)";
+	//private static final String enumerationItem = "(?<value>.*?)#\\{\\}";
 	
 	private static final String computedValuesRegex = "(?<static>(?s).+?)?(:?#\\[(?<dinamic>.*?)\\])|(?<juststatic>(?s).*)";
 	private static final String computedValueTemplateRegex = "(?<dimension>\\w+)(:?\\((?<valueName>\\w+)\\))?:(?<first>[\\d.,]+)-(?<last>[\\d.,]+)";
@@ -132,8 +135,15 @@ public class InputsPreparer {
 			if (staticPart == null) {
 				staticPart = matcher.group("static");
 				String dimension = matcher.group("dimension").replace(" ", "");
-				String values = matcher.group("values");
-				dinamic = compileEnumeratedTemplate(dimension, values);
+				int dimensionIndex = dimensionsIDs.indexOf(dimension);
+				String value = null;
+				for(int i=0; i<totalSteps.get(dimensionIndex); i++) {
+					if (!matcher.find() || (value = matcher.group("value")) == null)
+						throw new IOException("Enumerated values are too low for dimension "+dimension);
+					if (i == currentSteps.get(dimensionIndex))
+						dinamic = value;
+				}
+				onPointValues.put(dimension, dinamic.replace(';', '|').replace("\n", "  //  "));
 			}
 			prepared.append(staticPart).append(dinamic);
 		}
@@ -154,17 +164,6 @@ public class InputsPreparer {
 			valueName = dim;
 		onPointValues.put(valueName, result);
 		return result;
-	}
-	
-	private String compileEnumeratedTemplate(String dimension, String values) throws IOException {
-		int dimensionIndex = dimensionsIDs.indexOf(dimension);
-		Matcher valuesMatcher = Pattern.compile(enumerationItem).matcher(values);
-		for(int i=0; i<currentSteps.get(dimensionIndex)+1; i++)
-			if (!valuesMatcher.find())
-				throw new IOException("Enumerated values are too low for dimensions "+dimension);
-		String value = valuesMatcher.group("value");
-		onPointValues.put(dimension, value.replace(';', '|').replace("\n", "  //  "));
-		return value;
 	}
 	
 	private String translateComputed(String dimID, String firstValStr, String lastValStr) throws IOException {
